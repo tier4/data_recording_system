@@ -16,6 +16,13 @@
           interface_name: eth0
     - ptp4l_client_interface: eqos0
     - ptp4l_host_interface: eth0
+  vars_prompt:
+    - name: drs_ecu_id
+      prompt: |-
+        Enter ECU ID to be setup
+      private: false
+      confirm: yes
+
   roles:
     - role: drs_env_setting
     - role: rosbag_record_service
@@ -23,5 +30,6 @@
     - role: rosbag_restart_cron
     - role: auto_storage_mount
     - role: can_network_setting
+      when: drs_ecu_id == '0'
   environment:
     DEBIAN_FRONTEND: noninteractive
