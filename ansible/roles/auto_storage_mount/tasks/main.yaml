@@ -1,0 +1,24 @@
+- name: Install nfs-common package to support NFS mount
+  ansible.builtin.apt:
+    name:
+      - nfs-common
+    update_cache: true
+  become: true
+
+- name: Create mount point
+  ansible.builtin.file:
+    path: "{{ record_root_directory }}"
+    state: directory
+
+- name: Configure auto mount NAS
+  ansible.posix.mount:
+    src: 192.168.10.100:/data
+    path: "{{ record_root_directory }}"
+    fstype: nfs
+    opts: v4.1,user,rw,x-systemd.automount,x-systemd.requires=network-online.target
+    state: present
+    boot: true
+
+- name: Force systemd to reload config
+  ansible.builtin.systemd:
+    daemon_reload: true

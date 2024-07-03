@@ -1,0 +1,14 @@
+[Unit]
+Description=Rosbag record service
+After=network-online.target {{ record_root_directory | regex_replace('^/?(\\w.+\\w)/?$', '\\1') | regex_replace('/', '-') }}.mount
+
+[Service]
+Type=simple
+ExecStart=/opt/drs/rosbag_record.sh
+ExecReload=kill -SIGINT $MAINPID
+ExecStop=kill -SIGINT $MAINPID
+Restart=always
+User="{{ drs_user_name }}"
+
+[Install]
+WantedBy=multi-user.target network-online.target

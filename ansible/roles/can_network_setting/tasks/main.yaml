@@ -1,0 +1,27 @@
+- name: Install dependency
+  ansible.builtin.apt:
+    name:
+      - can-utils
+    update_cache: true
+  become: true
+
+- name: Copy script file
+  ansible.builtin.template:
+    src: can_network_setting.sh.jinja2
+    dest: /opt/drs/can_network_setting.sh
+    mode: 0755
+  become: true
+
+- name: Copy service file
+  ansible.builtin.copy:
+    src: drs_can_network_setting.service
+    dest: /etc/systemd/system/
+  become: true
+
+- name: Install can_network_setting service
+  ansible.builtin.systemd:
+    name: drs_can_network_setting.service
+    daemon_reload: true
+    enabled: true
+    masked: false
+  become: true

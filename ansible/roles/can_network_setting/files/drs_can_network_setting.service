@@ -1,0 +1,11 @@
+[Unit]
+Description=CAN network setting
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/drs/can_network_setting.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target network-online.target

@@ -4,7 +4,7 @@ Forked from [edge-auto-jetson](https://github.com/tier4/edge-auto-jetson)
 
 [Edge.Auto](https://sensor.tier4.jp/) sensor fusion system can be realized by using this with [edge-auto](https://github.com/tier4/edge-auto) repository.
 
-![object detection example](docs/sample.png "edge-auto-jetson object detection example")
+<!-- ![object detection example](docs/sample.png "edge-auto-jetson object detection example") -->
 
 # Prerequisites
 
@@ -12,18 +12,25 @@ Forked from [edge-auto-jetson](https://github.com/tier4/edge-auto-jetson)
 
 This repository is based on a natively built ROS2 environment. The system overview is shown below.
 
-![system overview](docs/overview.drawio.svg "edge-auto-jetson overview")
+<!-- ![system overview](docs/overview.drawio.svg "edge-auto-jetson overview") -->
 
 ### System Requirement
 
-- Camera: v4l2 compatible cameras, including [TIER IV Automotive HDR Camera C1](https://sensor.tier4.jp/automotive-hdr-camera)
-- ECU: Jetson AGX Xavier based ECU, including [RQX-58G](https://www.adlinktech.com/Products/ROS2_Solution/ROS2_Controller/RQX-580_58G) from ADLINK Technology Inc. and [Developer Kit](https://www.nvidia.com/ja-jp/autonomous-machines/embedded-systems/jetson-agx-xavier) from NVIDIA Corp.
-- NVIDIA L4T: R32.6.1 (including Ubuntu 18.04)
+- Camera: v4l2 compatible cameras, including TIER IV Automotive HDR Camera C2
+- ECU: Jetson AGX Orin based ECU, including [Anvil](https://connecttech.com/product/anvil-embedded-system-with-nvidia-jetson-agx-orin/) from ConnectTech Inc.
+- NVIDIA L4T: R35.4.1 (including Ubuntu 20.04). BSP can be downloaded [here](https://connecttech.com/product/anvil-embedded-system-with-nvidia-jetson-agx-orin/)
 - ROS: ROS2 Humble (native build)
 
 ## Getting Started
 
-Please see [Tutorials](https://github.com/tier4/edge-auto/tree/main/docs/tutorials.md).
+```shell
+git clone git@github.com:tier4/data_recording_system.git
+cd data_recording_system
+./setup-dev-env.sh
+./setup-drs.sh
+vcs import src < autoware.repos
+./build.sh
+```
 
 ## Related repositories
 

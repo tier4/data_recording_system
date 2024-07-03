@@ -1,0 +1,35 @@
+- name: Copy record script
+  ansible.builtin.template:
+    src: rosbag_record.sh.jinja2
+    dest: /opt/drs/rosbag_record.sh
+    mode: 0755
+  become: true
+
+- name: Copy rosbag configuration
+  block:
+    - name: Copy mcap option
+      ansible.builtin.copy:
+        src: mcap_options.yaml
+        dest: /opt/drs
+    - name: Copy target topic list
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /opt/drs
+      with_fileglob:
+        - "files/record_topics_ecu*.conf"
+  become: true
+
+- name: Copy service template file
+  ansible.builtin.template:
+    src: drs_rosbag_record.service.jinja2
+    dest: /etc/systemd/system/drs_rosbag_record.service
+    mode: 0755
+  become: true
+
+- name: Install record service
+  ansible.builtin.systemd:
+    name: drs_rosbag_record.service
+    daemon_reload: true
+    enabled: true
+    masked: false
+  become: true

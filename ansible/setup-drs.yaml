@@ -1,0 +1,27 @@
+- name: Setup DRS related stuff
+  hosts: localhost
+  vars:
+    - drs_use_name: nvidia
+    - record_root_directory: /home/nvidia/nas
+    - autoware_env_dir: /opt/autoware/env
+    - ros_distro: humble
+    - network_config:
+        ros:
+          interface_address: 192.168.2.2
+          interface_name: eqos0
+        dhcp:
+          interface_name: mgbe1
+        lidar:
+          interface_address: 192.168.1.100
+          interface_name: eth0
+    - ptp4l_client_interface: eqos0
+    - ptp4l_host_interface: eth0
+  roles:
+    - role: drs_env_setting
+    - role: rosbag_record_service
+    - role: drs_launch_service
+    - role: rosbag_restart_cron
+    - role: auto_storage_mount
+    - role: can_network_setting
+  environment:
+    DEBIAN_FRONTEND: noninteractive

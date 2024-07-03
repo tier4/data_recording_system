@@ -1,0 +1,21 @@
+- name: Copy script file
+  ansible.builtin.template:
+    src: run.sh.jinja2
+    dest: /opt/drs/run.sh
+    mode: 0755
+  become: true
+
+- name: Copy service file
+  ansible.builtin.template:
+    src: drs_launch.service.jinja2
+    dest: /etc/systemd/system/drs_launch.service
+    mode: 0755
+  become: true
+
+- name: Install drs-launch service
+  ansible.builtin.systemd:
+    name: drs_launch.service
+    daemon_reload: true
+    enabled: true
+    masked: false
+  become: true

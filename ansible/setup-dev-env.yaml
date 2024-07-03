@@ -21,6 +21,7 @@
     - name: prompt_configure_user_resources
       prompt: |-
         [Warning] Do you want to configure user resources? Only necessary if CONFIG_RT_GROUP_SCHED is enabled [y/N]
+      private: false
   roles:
     - role: autoware
     - role: cuda

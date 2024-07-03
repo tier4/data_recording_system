@@ -1,0 +1,15 @@
+- name: Add settings to autoware.env
+  ansible.builtin.blockinfile:
+    path: "{{ autoware_env_dir }}/autoware.env"
+    state: present
+    create: true
+    mode: 0644
+    marker: "# {mark} DRS"
+    block: |
+      export DRS_ECU_ID={{ drs_ecu_id }}
+  become: true
+
+- name: Create DRS related directory
+  ansible.builtin.file:
+    path: /opt/drs
+    state: directory

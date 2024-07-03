@@ -1,0 +1,3 @@
+#!/bin/bash
+ip link set {{ can_interface_name }} type can bitrate {{ can_bitrate }}
+ip link set up {{ can_interface_name }}

@@ -1,0 +1,14 @@
+- name: Install dependency
+  ansible.builtin.apt:
+    name:
+      - cron
+    update_cache: true
+  become: true
+
+# The following command creates entry under /var/spool/cron/<username>
+- name: Register cron job that restart record job every top of hour
+  ansible.builtin.cron:
+    name: "Restart rosbag_record service every Top of hour"
+    minute: "0"
+    job: "systemctl restart drs_rosbag_record.service"
+  become: true
