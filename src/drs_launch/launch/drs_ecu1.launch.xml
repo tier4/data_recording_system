@@ -2,12 +2,57 @@
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="True"/>
 
+  <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+
   <!-- trigger -->
+  <group if="$(var live_sensor)">
+    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger">
+      <param from="$(var param_root_dir)/ecu0_trigger.param.yaml"/>
+    </node>
+  </group>
+
   <!-- camera4 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="4"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera5 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="5"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera6 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="6"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera7 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="7"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- rear LiDAR -->
+  <include file="$(find-pkg-share nebula_ros)/launch/seyond_launch.xml">
+    <arg name="sensor_model" value="Falcon"/>
+    <arg name="launch_hw" value="$(var live_sensor)"/>
+  </include>
+
   <!-- left LiDAR -->
+  <include file="$(find-pkg-share nebula_ros)/launch/seyond_launch.xml">
+    <arg name="sensor_model" value="RobinW"/>
+    <arg name="launch_hw" value="$(var live_sensor)"/>
+  </include>
+
   <!-- topic monitor -->
+  <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
+    <param name="topic_list" value="/opt/drs/record_topics_ecu1.conf"/>
+  </node>
 </launch>
