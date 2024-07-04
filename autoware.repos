@@ -11,3 +11,19 @@ repositories:
     type: git
     url: git@github.com:tier4/ros-topic-monitor.git
     version: drs
+  dependencies/ros2_socketcan:
+    type: git
+    url: git@github.com:autowarefoundation/ros2_socketcan.git
+    version: 1.1.0
+  dependencies/ros_canopen:
+    type: git
+    url: git@github.com:ros-industrial/ros_canopen.git
+    version: 2.0.0
+  dependencies/pacmod3:
+    type: git
+    url: git@github.com:astuff/pacmod3.git
+    version: 2002.1.1
+  dependencies/pacmod3_msgs:
+    type: git
+    url: git@github.com:astuff/pacmod3_msgs.git
+    version: 1.0.0
