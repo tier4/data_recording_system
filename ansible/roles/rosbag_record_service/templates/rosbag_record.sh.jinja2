@@ -12,19 +12,19 @@ STORAGE="mcap"                  # Recorded in mcap format
 MCAP_OPTIONS_FILE=${SCRIPT_DIR}/mcap_options.yaml
 
 parse_topics() {
-    # load file contents and remove comments
-    topics=$(cat $1 | sed -e 's/#.*$/\n/g')
+    # load file contents, remove comments, and extract topic name
+    topics=$(cat $1 | sed -e 's/#.*$/\n/g' | grep 'name:' | cut -d ':' -f 2)
     # replace line-break to space
     topics=$(echo ${topics} | tr '\n' ' ')
     # unify duplicated spaces into one
     topics=$(echo ${topics} | tr -s "[:space:]")
     # remove the last space
     topics=$(echo ${topics} | sed -e 's/ $//g')
-    # replace ' |' to '|'
-    topics=$(echo ${topics} | sed -e 's/ |/|/g')
+    # replace ' ' to '|'
+    topics=$(echo ${topics} | sed -e 's/ /|/g')
     echo ${topics}
 }
-TOPICS=$(parse_topics ${SCRIPT_DIR}/record_topics_ecu${DRS_ECU_ID}.conf)
+TOPICS=$(parse_topics ${SCRIPT_DIR}/record_topics_ecu${DRS_ECU_ID}.yaml)
 
 RECORD_DIR={{ record_root_directory }}/ecu${DRS_ECU_ID}
 
