@@ -10,6 +10,13 @@
   <!-- front LiDAR -->
   <!-- right LiDAR -->
   <!-- CAN -->
+  <!-- vehicle interface -->
+  <group if="$(var live_sensor)">
+    <include file="$(var vehicle_launch_pkg)/launch/can_interface.launch.xml">
+      <arg name="vehicle_id" value="$(var vehicle_id)"/>
+    </include>
+  </group>
+
   <!-- topic monitor -->
   <!-- Driver Interface -->
 </launch>
