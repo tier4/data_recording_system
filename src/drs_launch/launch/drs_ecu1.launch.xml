@@ -1,0 +1,13 @@
+<launch>
+  <arg name="vehicle_id" default="default"/>
+  <arg name="live_sensor" default="True"/>
+
+  <!-- trigger -->
+  <!-- camera4 -->
+  <!-- camera5 -->
+  <!-- camera6 -->
+  <!-- camera7 -->
+  <!-- rear LiDAR -->
+  <!-- left LiDAR -->
+  <!-- topic monitor -->
+</launch>

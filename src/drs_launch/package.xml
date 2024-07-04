@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>drs_launch</name>
+  <version>0.0.0</version>
+  <description>Launchers for Data Recording Sysmtem</description>
+  <maintainer email="manato.hirabayashi@tier4.jp">manatohirabayashi</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <exec_depend>v4l2_camera</exec_depend>
+  <exec_depend>sensor_trigger</exec_depend>
+  <exec_depend>nebula_ros</exec_depend>
+  <exec_depend>individual_params</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
