@@ -3,7 +3,7 @@
 <package format="3">
   <name>drs_launch</name>
   <version>0.0.0</version>
-  <description>Launchers for Data Recording Sysmtem</description>
+  <description>Launchers for Data Recording System</description>
   <maintainer email="manato.hirabayashi@tier4.jp">manatohirabayashi</maintainer>
   <license>TODO: License declaration</license>
 
