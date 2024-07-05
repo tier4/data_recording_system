@@ -47,3 +47,7 @@ repositories:
     type: git
     url: https://github.com/MapIV/oxts_ros2_driver.git
     version: master
+  dependencies/tamagawa_imu_driver:
+    type: git
+    url: https://github.com/tier4/tamagawa_imu_driver.git
+    version: ros2
