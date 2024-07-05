@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
+  <arg name="socketcan_device" default="can0"/>
+
+  <!-- <arg name="pacmod_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod.param.yaml"/> -->
+  <!-- <arg name="pacmod_extra_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod_extra.param.yaml"/> -->
+
+  <!-- pacmod3 -->
+  <group>
+    <include file="$(find-pkg-share pacmod3)/launch/pacmod3.launch.xml" >
+      <arg name="use_socketcan" value="true"/>
+      <arg name="socketcan_device" value="$(var socketcan_device)" />
+    </include>
+  </group>
+
+  <!-- pacmod_interface -->
+  <!-- <include file="$(find-pkg-share pacmod_interface)/launch/pacmod_interface.launch.xml">
+    <arg name="pacmod_param_path" value="$(var pacmod_param_path)"/>
+    <arg name="pacmod_extra_param_path" value="$(var pacmod_extra_param_path)"/>
+  </include> -->
+
+</launch>
