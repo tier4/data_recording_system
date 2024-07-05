@@ -1,0 +1,14 @@
+[Unit]
+Description=Precision Time Protocol (PTP) service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/ptpd -i eqos0 -M -C -V -L
+ExecStop=/usr/bin/pkill -f ptpd
+Restart=always
+# RestartSec=5
+
+[Install]
+WantedBy=multi-user.target network-online.target
+

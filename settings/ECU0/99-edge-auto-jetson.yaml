@@ -1,0 +1,29 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    mgbe1:
+      addresses: [192.168.10.1/24]
+      dhcp4: false
+      mtu: 9000
+#      dhcp4: true
+#      dhcp-identifier: mac
+#      optional: true
+    mgbe0:
+       addresses: [192.168.2.1/24] # Aeva
+       dhcp4: false
+       dhcp6: false
+       optional: true
+    eqos0:
+      addresses: [192.168.3.1/24] # Robin W
+      dhcp4: false
+      dhcp6: false
+    eth0:
+      addresses: [192.168.20.1/24]
+      dhcp4: false
+      dhcp6: false
+      optional: true
+    eth1:
+      addresses: [192.168.4.1/24]
+      dhcp4: false
+      dhcp6: false

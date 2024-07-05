@@ -1,0 +1,30 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    #    mgbe1:
+    #      dhcp4: true
+    #      dhcp6: false
+    #eqos0:
+    #  dhcp4: true
+    #  dhcp-identifier: mac
+    #  optional: true
+    #    eth0:
+    #      dhcp4: true
+    #      dhcp6: false
+    eqos0:
+      addresses: [192.168.3.2/24] # Robin W
+      dhcp4: false
+      dhcp6: false 
+    eth0:
+      addresses: [192.168.20.2/24]
+      dhcp4: false
+      dhcp6: false
+    mgbe0:
+      addresses: [192.168.2.2/24]
+      dhcp4: false
+      dhcp6: false
+    mgbe1:
+      addresses: [192.168.10.2/24]
+      dhcp4: false
+      dhcp6: false
