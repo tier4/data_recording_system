@@ -31,3 +31,11 @@ repositories:
     type: git
     url: git@github.com:tier4/accelerated_image_processor.git
     version: perf/modify_cuda_utilization
+  dependencies/velodyne:
+    type: git
+    url: git@github.com:ros-drivers/velodyne.git
+    version: 2.4.0
+  dependencies/nebula:
+    type: git
+    url: https://github.com/tier4/nebula.git
+    version: experiment/anvil
