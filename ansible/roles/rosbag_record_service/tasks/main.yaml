@@ -16,7 +16,7 @@
         src: "{{ item }}"
         dest: /opt/drs
       with_fileglob:
-        - "files/record_topics_ecu*.conf"
+        - "files/record_topics_ecu*.yaml"
   become: true
 
 - name: Copy service template file

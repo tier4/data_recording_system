@@ -1,0 +1,42 @@
+<launch>
+  <!-- image topic name to be subscribed -->
+  <arg name="image_topic" default="image_raw" />
+  <!-- camera_info topic name to be subscribed -->
+  <arg name="camera_info_topic" default="camera_info" />
+  <!-- path to the yaml file that contains parameters for accelerated_image_processor node -->
+  <arg name="accelerated_image_processor_param_path" default="$(find-pkg-share edge_auto_jetson_launch)/config/accelerated_image_processor.yaml" />
+
+
+  <!-- container name that this ROS node to be loaded -->
+  <arg name="container_name" default="" />
+  <!-- flag to use ROS2 intra process -->
+  <arg name="use_intra_process" default="True" />
+
+  <let name="empty_container_is_specified" value="$(eval 'not &quot;$(var container_name)&quot;')" />
+  <!-- If container name is not specified,
+       execute function as an individual node  -->
+  <group if="$(var empty_container_is_specified)">
+    <node pkg="accelerated_image_processor" exec="accelerated_image_processor_node"
+          name="accelerated_img_proc">
+      <remap from="image_raw" to="$(var image_topic)" />
+      <remap from="camera_info" to="$(var camera_info)" />
+      <remap from="image_raw/compressed" to="$(var image_topic)/compressed" />
+      <param from="$(var accelerated_image_processor_param_path)"/>
+    </node>
+  </group>
+
+  <!-- If container name is specified,
+       execute function as a composable node and load it into the container  -->
+  <group unless="$(var empty_container_is_specified)">
+    <load_composable_node target="$(var container_name)">
+      <composable_node pkg="accelerated_image_processor" plugin="gpu_imgproc::GpuImgProc"
+                       name="accelerated_img_proc">
+        <remap from="image_raw" to="$(var image_topic)" />
+        <remap from="camera_info" to="$(var camera_info)" />
+        <remap from="image_raw/compressed" to="$(var image_topic)/compressed" />
+        <param from="$(var accelerated_image_processor_param_path)"/>
+        <extra_arg name="use_intra_process_comms" value="$(var use_intra_process)" />
+      </composable_node>
+    </load_composable_node>
+  </group>
+</launch>

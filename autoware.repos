@@ -27,3 +27,7 @@ repositories:
     type: git
     url: git@github.com:astuff/pacmod3_msgs.git
     version: 1.0.0
+  dependencies/accelerated_image_processor:
+    type: git
+    url: git@github.com:tier4/accelerated_image_processor.git
+    version: perf/modify_cuda_utilization

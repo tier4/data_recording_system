@@ -1,0 +1,5 @@
+topics:
+  - name: /sensing/camera/camera(0|1|2|3)/image_raw/compressed # camera
+    hz_range: [0.9, 10.1]
+  - name: /sensing/lidar/(front|right)/nebula_packets         # LiDAR
+    hz_range: [0.9, 10.1]

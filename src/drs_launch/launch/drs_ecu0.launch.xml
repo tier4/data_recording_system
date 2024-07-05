@@ -2,13 +2,55 @@
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="True"/>
 
+  <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+
   <!-- trigger -->
+  <group if="$(var live_sensor)">
+    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger">
+      <param from="$(var param_root_dir)/ecu0_trigger.param.yaml"/>
+    </node>
+  </group>
+
   <!-- camera0 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="0"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera1 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="1"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera2 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="2"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- camera3 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="3"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <!-- front LiDAR -->
+  <include file="$(find-pkg-share nebula_ros)/launch/aeva_launch_all_hw.xml">
+    <arg name="sensor_model" value="Aeries2"/>
+    <arg name="launch_hw" value="$(var live_sensor)"/>
+  </include>
+
   <!-- right LiDAR -->
+  <include file="$(find-pkg-share nebula_ros)/launch/seyond_launch.xml">
+    <arg name="sensor_model" value="RobinW"/>
+    <arg name="launch_hw" value="$(var live_sensor)"/>
+  </include>
+
   <!-- CAN -->
   <!-- vehicle interface -->
   <group if="$(var live_sensor)">
@@ -18,5 +60,10 @@
   </group>
 
   <!-- topic monitor -->
+  <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
+    <param name="topic_list" value="/opt/drs/record_topics_ecu0.conf"/>
+  </node>
+
   <!-- Driver Interface -->
+  <!-- TODO: need to consider to display GUI -->
 </launch>
