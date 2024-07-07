@@ -1,8 +1,9 @@
 - name: Setup DRS related stuff
   hosts: localhost
   vars:
-    - drs_use_name: nvidia
-    - record_root_directory: /home/nvidia/nas
+    - drs_user_name: "{{ lookup('env', 'USER') }}"
+    - record_root_directory: "{{ lookup('env', 'HOME') }}/nas"
+    - drs_source_dir: "{{ playbook_dir | dirname }}" # `dirname` get the parent directory
     - autoware_env_dir: /opt/autoware/env
     - ros_distro: humble
     - network_config:
@@ -30,6 +31,10 @@
     - role: rosbag_restart_cron
     - role: auto_storage_mount
     - role: can_network_setting
+      when: drs_ecu_id == '0'
+    - role: enable_auto_login
+      when: drs_ecu_id == '0'
+    - role: install_autoboot_interface
       when: drs_ecu_id == '0'
   environment:
     DEBIAN_FRONTEND: noninteractive

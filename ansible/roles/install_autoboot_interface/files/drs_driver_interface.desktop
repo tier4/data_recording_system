@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=DRS Driver interface
+Exec=/opt/drs/driver_interface.sh
+Type=Application

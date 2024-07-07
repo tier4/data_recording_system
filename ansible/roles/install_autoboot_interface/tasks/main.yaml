@@ -1,0 +1,17 @@
+- name: Copy script file
+  ansible.builtin.template:
+    src: driver_interface.sh.jinja2
+    dest: /opt/drs/driver_interface.sh
+    mode: 0755
+  become: true
+
+- name: Create autostart dirctory for the user
+  ansible.builtin.file:
+    path: "/home/{{ drs_user_name }}/.config/autostart/"
+    state: directory
+
+- name: Copy configuration file to start application automatically on login
+  ansible.builtin.copy:
+    src: drs_driver_interface.desktop
+    dest: "/home/{{ drs_user_name }}/.config/autostart/"
+

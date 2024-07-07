@@ -73,7 +73,4 @@
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
     <param name="topic_list" value="/opt/drs/record_topics_ecu0.conf"/>
   </node>
-
-  <!-- Driver Interface -->
-  <!-- TODO: need to consider to display GUI -->
 </launch>

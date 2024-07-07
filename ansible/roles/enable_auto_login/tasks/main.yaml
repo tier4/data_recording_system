@@ -1,0 +1,7 @@
+- name: Enable auto user loggin
+  ansible.builtin.blockinfile:
+    path: /etc/gdm3/custom.conf
+    insertafter: '# Enabling automatic login'
+    block: |
+      AutomaticLoginEnable = true
+      AutomaticLogin = {{ drs_user_name }}
