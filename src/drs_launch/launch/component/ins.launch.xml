@@ -1,13 +1,14 @@
 <launch>
   <arg name="launch_driver" default="true" />
-  <arg name="config" default="0.01" />
 
   <group>
     <push-ros-namespace namespace="ins"/>
     <group>
       <push-ros-namespace namespace="oxts"/>
       <include file="$(find-pkg-share oxts)/launch/run.py">
-        <arg name="wait_for_init" value="False" />
+        <arg name="driver_param_path" value="$(find-pkg-share individual_params)/config/default/oxts_driver.param.yaml"/>
+        <arg name="ins_param_path" value="$(find-pkg-share individual_params)/config/default/oxts_ins.param.yaml"/>
+        <arg name="launch_driver" value="$(var launch_driver)"/>
       </include>
     </group>
   </group>

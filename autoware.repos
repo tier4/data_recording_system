@@ -45,7 +45,7 @@ repositories:
     version: mutable-buffer-in-udp-callback
   dependencies/oxts_ros2_driver:
     type: git
-    url: https://github.com/miursh/oxts_ros2_driver.git
+    url: https://github.com/tier4/oxts_ros2_driver.git
     version: feat/data_recording_system
   dependencies/tamagawa_imu_driver:
     type: git
