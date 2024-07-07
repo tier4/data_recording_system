@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="simple_frontend" exec="switch_monitor" name="switch_monitor">
+  </node>
+
+  <node pkg="simple_frontend" exec="simple_frontend" name="simple_frontend">
+    <param name="usage_monitored_disk" value="$(env DRS_RECORD_ROOT_DIR)"/>
+  </node>
+</launch>

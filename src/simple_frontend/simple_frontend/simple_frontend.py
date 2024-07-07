@@ -116,10 +116,10 @@ class SimpleFrontend(Node):
 
         self.disk_usage_indicator = LabelAndBar(parent=self.top_widget, title='Disk Usage:')
         layout.addLayout(self.disk_usage_indicator.layout, 0, 2)
-        self.disk_usage_monitor_path_str = self.declare_parameter('usage_monitored_disk',
-                                                                  rclpy.Parameter.Type.STRING).value
-        self.disk_usage_check_interval_sec = self.declare_parameter(name='disk_check_inteval_sec',
-                                                                    value=60).value
+        self.declare_parameter('usage_monitored_disk', rclpy.Parameter.Type.STRING)
+        self.disk_usage_monitor_path_str = self.get_parameter('usage_monitored_disk').value
+        self.declare_parameter(name='disk_check_interval_sec', value=60)
+        self.disk_usage_check_interval_sec = self.get_parameter('disk_check_interval_sec').value
         # Because usage check query may take a while, which affects to the UI response,
         # execute usage monitoring in another thread
         self.disk_usage_check_thread = threading.Thread(target=self.check_disk_usage, daemon=True)
