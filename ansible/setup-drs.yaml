@@ -1,8 +1,9 @@
 - name: Setup DRS related stuff
   hosts: localhost
   vars:
-    - drs_user_name: nvidia
-    - record_root_directory: /home/nvidia/nas
+    - drs_user_name: "{{ lookup('env', 'USER') }}"
+    - record_root_directory: "{{ lookup('env', 'HOME') }}/nas"
+    - drs_source_dir: "{{ playbook_dir | dirname }}" # `dirname` get the parent directory
     - autoware_env_dir: /opt/autoware/env
     - ros_distro: humble
     - network_config:

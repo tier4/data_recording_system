@@ -4,6 +4,6 @@ SCRIPT_DIR=$(readlink -f "$(dirname $0)")
 # Load ROS related settings
 source {{ autoware_env_dir }}/autoware.env
 source /opt/ros/humble/install/setup.bash
-source /home/{{ drs_user_name }}/data_recording_system/install/setup.bash
+source {{ drs_source_dir }}/install/setup.bash
 
 ros2 launch drs_launch drs.launch.xml
