@@ -33,5 +33,7 @@
       when: drs_ecu_id == '0'
     - role: enable_auto_login
       when: drs_ecu_id == '0'
+    - role: install_autoboot_interface
+      when: drs_ecu_id == '0'
   environment:
     DEBIAN_FRONTEND: noninteractive

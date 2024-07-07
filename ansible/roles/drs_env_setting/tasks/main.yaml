@@ -7,6 +7,7 @@
     marker: "# {mark} DRS"
     block: |
       export DRS_ECU_ID={{ drs_ecu_id }}
+      export DRS_RECORD_ROOT_DIR={{ record_root_directory }}
   become: true
 
 - name: Create DRS related directory
