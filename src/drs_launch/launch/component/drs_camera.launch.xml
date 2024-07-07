@@ -24,6 +24,10 @@
       <include file="$(find-pkg-share drs_launch)/launch/component/accelerated_image_processor.launch.xml">
         <arg name="accelerated_image_processor_param_path" value="$(var camera_param_dir)/accelerated_image_processor.param.yaml"/>
       </include>
+      <!-- Launch TF between camera and LiDAR -->
+      <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+        <arg name="tf_file_path" value="$(var camera_param_dir)/lidar_to_camera.json"/>
+      </include>
     </group>
 
     <group unless="$(var live_sensor)"> <!-- Boot decompressor for offline mode -->
