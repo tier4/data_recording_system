@@ -1,0 +1,27 @@
+oxts_driver:
+  ros__parameters:
+#===============================================================================
+    # INS configuration (set up to match the unit)
+    ## Unit IP address
+    unit_ip: 192.168.4.250
+    ## Unit Port (3000 unless intentionally configured otherwise on the INS)
+    unit_port: 3000
+    ## Path of NCOM to replay (optional, must be absolute path)
+    # ncom: /default/ncom/path.ncom
+    ## Topic to publish NCOM messages to
+    ncom_topic: "ncom"
+
+#===============================================================================
+    ## Rate is in Hz. 0 Hz => Message will not be published
+    ### Configure sample rate of NCom (do not exceed output rate of ncom)
+    ncom_rate               : 100
+
+#===============================================================================
+    ## Timing - how to timestamp messages published by the ROS driver
+
+    # 0 => Timestamped by the ROS node time (future default)
+    # 1 => Timestamped from NCom
+    timestamp_mode : 0
+#===============================================================================
+    use_sim_time : false
+    wait_for_init : false
