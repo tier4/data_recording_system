@@ -1,7 +1,7 @@
 - name: Setup DRS related stuff
   hosts: localhost
   vars:
-    - drs_use_name: nvidia
+    - drs_user_name: nvidia
     - record_root_directory: /home/nvidia/nas
     - autoware_env_dir: /opt/autoware/env
     - ros_distro: humble
@@ -30,6 +30,8 @@
     - role: rosbag_restart_cron
     - role: auto_storage_mount
     - role: can_network_setting
+      when: drs_ecu_id == '0'
+    - role: enable_auto_login
       when: drs_ecu_id == '0'
   environment:
     DEBIAN_FRONTEND: noninteractive
