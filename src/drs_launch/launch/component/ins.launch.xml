@@ -1,0 +1,16 @@
+<launch>
+  <arg name="launch_driver" default="true" />
+  <arg name="config" default="0.01" />
+
+  <group>
+    <push-ros-namespace namespace="ins"/>
+    <group>
+      <push-ros-namespace namespace="oxts"/>
+      <include file="$(find-pkg-share oxts)/launch/run.py">
+        <arg name="interface" value="$(var interface)" />
+        <arg name="wait_for_init" value="False" />
+        <arg name="interval_sec" value="$(var receiver_interval_sec)" />
+      </include>
+    </group>
+  </group>
+</launch>

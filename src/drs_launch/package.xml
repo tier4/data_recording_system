@@ -10,11 +10,14 @@
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <exec_depend>can_interface</exec_depend>
-  <exec_depend>v4l2_camera</exec_depend>
-  <exec_depend>sensor_trigger</exec_depend>
-  <exec_depend>nebula_ros</exec_depend>
   <exec_depend>individual_params</exec_depend>
   <exec_depend>image_transport</exec_depend>
+  <exec_depend>nebula_ros</exec_depend>
+  <exec_depend>oxts</exec_depend>
+  <exec_depend>pacmod3</exec_depend>
+  <exec_depend>sensor_trigger</exec_depend>
+  <exec_depend>tamagawa_imu_driver</exec_depend>
+  <exec_depend>v4l2_camera</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
