@@ -28,6 +28,7 @@ git clone git@github.com:tier4/data_recording_system.git
 cd data_recording_system
 ./setup-dev-env.sh
 vcs import src < autoware.repos
+rosdep install -y --from-paths `colcon list --packages-up-to edge_auto_launch -p` --ignore-src
 ./build.sh
 ./setup-drs.sh
 ```
