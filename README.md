@@ -27,9 +27,9 @@ This repository is based on a natively built ROS2 environment. The system overvi
 git clone git@github.com:tier4/data_recording_system.git
 cd data_recording_system
 ./setup-dev-env.sh
-./setup-drs.sh
 vcs import src < autoware.repos
 ./build.sh
+./setup-drs.sh
 ```
 
 ## Related repositories
