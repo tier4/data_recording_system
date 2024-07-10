@@ -43,3 +43,11 @@ repositories:
     type: git
     url: https://github.com/mojomex/transport_drivers
     version: mutable-buffer-in-udp-callback
+  dependencies/oxts_ros2_driver:
+    type: git
+    url: https://github.com/tier4/oxts_ros2_driver.git
+    version: feat/data_recording_system
+  dependencies/tamagawa_imu_driver:
+    type: git
+    url: https://github.com/tier4/tamagawa_imu_driver.git
+    version: ros2

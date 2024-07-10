@@ -54,10 +54,20 @@
   <!-- CAN -->
   <!-- vehicle interface -->
   <group if="$(var live_sensor)">
-    <include file="$(var vehicle_launch_pkg)/launch/can_interface.launch.xml">
+    <include file="$(find-pkg-share drs_launch)/launch/component/can_interface.launch.xml">
       <arg name="vehicle_id" value="$(var vehicle_id)"/>
     </include>
   </group>
+
+  <!-- IMU -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/imu.launch.xml">
+    <arg name="launch_driver" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- INS -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/ins.launch.xml">
+    <arg name="launch_driver" value="$(var live_sensor)"/>
+  </include>
 
   <!-- topic monitor -->
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
