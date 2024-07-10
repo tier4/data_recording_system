@@ -8,13 +8,19 @@
     - ros_distro: humble
     - network_config:
         ros:
-          interface_address: 192.168.2.2
-          interface_name: eqos0
-        dhcp:
-          interface_name: mgbe1
-        lidar:
-          interface_address: 192.168.1.100
+          interface_address_base: 192.168.20
           interface_name: eth0
+        nas:
+          interface_address_base: 192.168.10
+          interface_name: mgbe1
+          mtu: 9000
+        long_range_lidar:
+          interface_address_base: 192.168.2
+          interface_name: mgbe0
+        mid_range_lidar:
+          interface_address_base: 192.168.3
+          interface_name: eqos0
+
     - ptp4l_client_interface: eqos0
     - ptp4l_host_interface: eth0
   vars_prompt:
@@ -25,6 +31,9 @@
       confirm: yes
 
   roles:
+    - role: cyclonedds
+    - role: enlarge_txqueue
+    - role: netplan
     - role: drs_env_setting
     - role: rosbag_record_service
     - role: drs_launch_service
@@ -36,5 +45,26 @@
       when: drs_ecu_id == '0'
     - role: install_autoboot_interface
       when: drs_ecu_id == '0'
+    - role: ptpd_host
+      vars:
+        ptpd_host_interfaces:
+          - mgbe0
+          - eqos0
+    - role: ptpd_host
+      vars:
+        ptpd_host_interfaces:
+          - eth0
+      when: drs_ecu_id == '0'
+    - role: ptpd_client
+      vars:
+        ptpd_client_interfaces:
+          - eth1
+      when: drs_ecu_id == '0'
+    - role: ptpd_client
+      vars:
+        ptpd_client_interfaces:
+          - eth0
+      when: drs_ecu_id == '1'
+
   environment:
     DEBIAN_FRONTEND: noninteractive

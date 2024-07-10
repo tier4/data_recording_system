@@ -5,7 +5,7 @@
       <Interfaces>
 {% for key in network_config %}
 {% if 'ros' in key %}
-        <NetworkInterface address="{{ network_config[key].interface_address }}"/>
+        <NetworkInterface address="{{ network_config[key].interface_address_base }}.{{ (drs_ecu_id | int) + 1 }}"/>
 {% endif %}
 {% endfor %}
       </Interfaces>

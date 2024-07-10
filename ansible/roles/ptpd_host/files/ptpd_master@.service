@@ -1,0 +1,14 @@
+[Unit]
+Description=Precision Time Protocol (PTP) service
+After=network-online.target
+
+[Service]
+Type=simple
+# -M: --masteronly, -C: --foreground, -V: --verbose, -L: --ignore-lock
+ExecStart=/usr/sbin/ptpd -i %i --masteronly --foreground --verbose --ignore-lock
+ExecStop=/usr/bin/pkill -f ptpd
+Restart=always
+# RestartSec=5
+
+[Install]
+WantedBy=multi-user.target network-online.target
