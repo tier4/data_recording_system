@@ -18,6 +18,7 @@
   <exec_depend>sensor_trigger</exec_depend>
   <exec_depend>tamagawa_imu_driver</exec_depend>
   <exec_depend>v4l2_camera</exec_depend>
+  <exec_depend>accelerated_image_processor</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
