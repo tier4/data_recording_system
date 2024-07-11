@@ -33,7 +33,6 @@
   roles:
     - role: cyclonedds
     - role: enlarge_txqueue
-    - role: netplan
     - role: drs_env_setting
     - role: rosbag_record_service
     - role: drs_launch_service
@@ -65,6 +64,7 @@
         ptpd_client_interfaces:
           - eth0
       when: drs_ecu_id == '1'
+    - role: netplan  # This role should be come at the very last of roles
 
   environment:
     DEBIAN_FRONTEND: noninteractive
