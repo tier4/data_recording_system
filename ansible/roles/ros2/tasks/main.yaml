@@ -297,3 +297,23 @@
     install_recommends: false
     update_cache: true
   become: true
+
+- name: Update boost to 1.74.0
+  block:
+    - name: Check install destination existence
+      ansible.builtin.stat:
+        path: /usr/local/include/boost
+      register: boost_install_dir_exist
+    - name: Build boost if it is not installed
+      block:
+        - name: "Boost: Donwload and extract source"
+          ansible.builtin.unarchive:
+            src: https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz
+            dest: /tmp
+            remote_src: true
+        - name: "Boost: build boost"
+          shell: ./bootstrap.sh --prefix=/usr/local --with-python=python3 && ./b2 install -j7
+          args:
+            chdir: /tmp/boost_1_74_0
+          become: true
+      when: not boost_install_dir_exist.stat.exists
