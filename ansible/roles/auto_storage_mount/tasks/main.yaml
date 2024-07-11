@@ -12,13 +12,15 @@
 
 - name: Configure auto mount NAS
   ansible.posix.mount:
-    src: 192.168.10.100:/data
+    src: 192.168.10.100:/volume1/data
     path: "{{ record_root_directory }}"
     fstype: nfs
     opts: v4.1,user,rw,x-systemd.automount,x-systemd.requires=network-online.target
     state: present
     boot: true
+  become: true
 
 - name: Force systemd to reload config
   ansible.builtin.systemd:
     daemon_reload: true
+  become: true

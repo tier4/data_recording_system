@@ -5,3 +5,4 @@
     block: |
       AutomaticLoginEnable = true
       AutomaticLogin = {{ drs_user_name }}
+  become: true

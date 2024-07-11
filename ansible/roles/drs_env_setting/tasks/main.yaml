@@ -14,3 +14,4 @@
   ansible.builtin.file:
     path: /opt/drs
     state: directory
+  become: true
