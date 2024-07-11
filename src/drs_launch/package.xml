@@ -9,7 +9,6 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
-  <exec_depend>can_interface</exec_depend>
   <exec_depend>individual_params</exec_depend>
   <exec_depend>image_transport</exec_depend>
   <exec_depend>nebula_ros</exec_depend>
