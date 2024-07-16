@@ -8,7 +8,7 @@ ExecStart=/opt/drs/rosbag_record.sh
 ExecReload=kill -SIGINT $MAINPID
 ExecStop=kill -SIGINT $MAINPID
 Restart=always
-User="{{ drs_user_name }}"
+User={{ drs_user_name }}
 
 [Install]
 WantedBy=multi-user.target network-online.target

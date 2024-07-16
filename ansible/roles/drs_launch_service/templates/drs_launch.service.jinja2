@@ -10,7 +10,7 @@ ExecReload=kill -SIGINT $MAINPID
 ExecStop=kill -SIGINT $MAINPID
 Restart=always
 User={{ drs_user_name }}
-Environment="HOME={{ drs_user_name }}"
+Environment="HOME=/home/{{ drs_user_name }}"
 
 [Install]
 WantedBy=multi-user.target network-online.target
