@@ -1,2 +1,8 @@
-can_interface_name: can0
+can_interfaces:
+  imu:
+    name: canImu
+    devpath: 2.3
+  vehicle:
+    name: canVehicle
+    devpath: 2.4
 can_bitrate: 500000

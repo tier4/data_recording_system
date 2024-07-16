@@ -1,3 +1,6 @@
+#jinja2: trim_blocks: False
 #!/bin/bash
-ip link set {{ can_interface_name }} type can bitrate {{ can_bitrate }}
-ip link set up {{ can_interface_name }}
+{%- for key in can_interfaces %}
+ip link set {{ can_interfaces[key].name }} type can bitrate {{ can_bitrate }}
+ip link set up {{ can_interfaces[key].name }}
+{%- endfor %}

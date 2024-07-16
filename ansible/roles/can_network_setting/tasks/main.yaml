@@ -5,6 +5,13 @@
     update_cache: true
   become: true
 
+- name: Copy udev rule file
+  ansible.builtin.template:
+    src: 50-can.rules.jinja2
+    dest: /etc/udev/rules.d/50-can.rules
+    mode: 0644
+  become: true
+
 - name: Copy script file
   ansible.builtin.template:
     src: can_network_setting.sh.jinja2

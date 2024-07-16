@@ -1,0 +1,4 @@
+#jinja2: trim_blocks: False
+{%- for key in can_interfaces %}
+SUBSYSTEM=="net" ATTRS{idVendor}=="0bfd", ATTRS{idProduct}=="0120", ATTRS{devpath}=="{{ can_interfaces[key].devpath }}", NAME="{{ can_interfaces[key].name }}"
+{%- endfor %}
