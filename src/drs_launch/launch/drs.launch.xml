@@ -5,7 +5,7 @@
   <arg name="live_sensor" default="True"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
 
-  <include file="$(finc-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
