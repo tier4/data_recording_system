@@ -52,11 +52,14 @@ class LabelAndLed:
         self.led.setState(LedState.RED)
         self.layout.addWidget(self.led, 2, 0)
 
+        self.last_update_time_ms = None
+
     def set_state_text(self, text):
         self.state_label.setText(f'status: {text}')
         self.state_label.adjustSize()
 
-    def set_status(self, is_ok: bool):
+    def set_status(self, is_ok: bool, update_time_ns: float = None):
+        self.last_update_time_ms = update_time_ns / 10**6
         if is_ok:
             self.set_state_text('OK')
             self.led.setState(LedState.GREEN)
@@ -120,6 +123,8 @@ class SimpleFrontend(Node):
         self.disk_usage_monitor_path_str = self.get_parameter('usage_monitored_disk').value
         self.declare_parameter(name='disk_check_interval_sec', value=60)
         self.disk_usage_check_interval_sec = self.get_parameter('disk_check_interval_sec').value
+        self.declare_parameter(name='wait_statistics_up_to_ms', value=2000)
+        self.wait_statistics_up_to_ms = self.get_parameter('wait_statistics_up_to_ms').value
         # Because usage check query may take a while, which affects to the UI response,
         # execute usage monitoring in another thread
         self.disk_usage_check_thread = threading.Thread(target=self.check_disk_usage, daemon=True)
@@ -156,9 +161,12 @@ class SimpleFrontend(Node):
     def __set_init_state(self):
         self.ecu1_indicator.set_state_text("Initializing...")
         self.ecu1_indicator.led.setState(LedState.OFF)
+        self.ecu1_indicator.last_update_time_ms = None
 
         self.ecu2_indicator.set_state_text("Initializing...")
         self.ecu2_indicator.led.setState(LedState.OFF)
+        self.ecu2_indicator.last_update_time_ms = None
+
 
     def __set_ui_color(self, ui: QWidget, color: QColor):
         palette = QPalette(ui.palette())
@@ -180,6 +188,13 @@ class SimpleFrontend(Node):
             self.button_hold_indicator.reset()
             self.__set_ui_color(self.button_hold_indicator, QColor(QtCore.Qt.red))
 
+        # If status topic is not received over the specified period, consider the ECU is not responding
+        now_ms = self.get_clock().now().nanoseconds / 10**6
+        for indicator in [self.ecu1_indicator, self.ecu2_indicator]:
+            if (indicator.last_update_time_ms is not None and
+                now_ms - indicator.last_update_time_ms > self.wait_statistics_up_to_ms):
+                indicator.set_status(False, indicator.last_update_time_ms)
+
         # re-draw UI
         self.app.processEvents()
 
@@ -190,7 +205,7 @@ class SimpleFrontend(Node):
 
     def state_callback(self, msg: std_msgs.msg.Bool, indicator: LabelAndLed):
         print(f'{indicator.title.text()}: {msg.data}')
-        indicator.set_status(msg.data)
+        indicator.set_status(msg.data, self.get_clock().now().nanoseconds)
 
     def switch_push_callback(self, _: std_msgs.msg.Bool):
         self.push_detect_time = self.get_clock().now()
