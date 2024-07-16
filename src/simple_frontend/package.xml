@@ -8,9 +8,11 @@
   <license>TODO: License declaration</license>
 
   <depend>std_msgs</depend>
-  <depend>libgpiod-dev</depend>
 
-  <exec_depend>python4-pyside2.qtquickwidgets</exec_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>python3-pyside2</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

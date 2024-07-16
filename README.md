@@ -28,7 +28,8 @@ git clone git@github.com:tier4/data_recording_system.git
 cd data_recording_system
 ./setup-dev-env.sh
 vcs import src < autoware.repos
-rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch -p` --ignore-src
+rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch simple_frontend -p` --ignore-src
+python3 -m pip install gpiod==1.5.4  # Install additional dependency that rosdep can not handle
 ./build.sh
 ./setup-drs.sh
 ```
