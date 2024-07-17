@@ -10,6 +10,9 @@ from dataclasses import dataclass
 import gpiod
 import threading
 from datetime import timedelta
+from os.path import expanduser
+from pathlib import Path
+import subprocess
 
 @dataclass
 class GpioSpecifier:
@@ -28,6 +31,11 @@ class Gpio:
     # Anvil GP_OUT_1, PAC.05 (chip 0, line 143)
     power_supply: GpioSpecifier =  GpioSpecifier(chip_number=0,
                                                  line=143)
+
+@dataclass
+class RemoteHost:
+    ip: str
+    user: str
 
 class SwitchMonitor(Node):
     def __init__(self):
@@ -90,16 +98,58 @@ class SwitchMonitor(Node):
                     if elapsed_in_sec < self.long_push_sec_threshold:
                         # Short push: restart service
                         print(f'short press: {elapsed_in_sec}')
-                        pass
+                        self.__restart_drs_launch_services()
                     else:
                         # Long push: system shutdown
                         print(f'long press: {elapsed_in_sec}')
-                        pass
+                        self.__shutdown_drs_components()
                     msg = std_msgs.msg.Bool()
                     msg.data = True
                     self.fall_edge_pub.publish(msg)
 
+    def __generate_ssh_command(self, ip: str, user: str, cmd: str):
+        # suppress prompt to trust hosts for the first connection
+        ssh_option = 'StrictHostKeyChecking=no'
 
+        # The key should be registered during setup
+        ssh_key = Path(expanduser('~'))/'.ssh'/'drs_rsa'
+
+        return f'ssh -o {ssh_option} -i {ssh_key} {user}@{ip} {cmd}'
+
+    def __restart_drs_launch_services(self):
+        """
+        Very rough implementation to restart drs_launch.service on each ECU
+        """
+        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
+        # without password
+        restart_cmd = 'sudo systemctl restart drs_launch.service'
+
+        targets = [
+            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
+            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0
+        ]
+
+        for t in targets:
+            cmd = self.__generate_ssh_command(t.ip, t.user, restart_cmd)
+            subprocess.Popen(cmd, shell=True)  # execute in background
+
+    def __shutdown_drs_components(self):
+        """
+        Very rough implementation to shutdown each ECU components gently
+        """
+        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
+        # without password
+        poweroff_cmd = 'sudo poweroff'
+
+        targets = [
+            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
+            RemoteHost(ip='192.168.10.100', user='comlops'),  # NAS
+            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0, this entry have to come at the very last!
+        ]
+
+        for t in targets:
+            cmd = self.__generate_ssh_command(t.ip, t.user, poweroff_cmd)
+            subprocess.run(cmd, shell=True, capture_output=False)
 
 def main(args=None):
     rclpy.init(args=args)
