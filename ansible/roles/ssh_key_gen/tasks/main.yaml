@@ -1,0 +1,10 @@
+- name: Create key stored directory
+  ansible.builtin.file:
+    path: "/home/{{ drs_user_name }}/.ssh"
+    state: directory
+
+- name: Generate ssh key
+  openssh_keypair:
+    path: "/home/{{ drs_user_name }}/.ssh/drs_rsa"
+    comment: "ssh key for DRS"
+    owner: "{{ drs_user_name }}"

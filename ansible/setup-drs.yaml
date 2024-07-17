@@ -64,6 +64,8 @@
         ptpd_client_interfaces:
           - eth0
       when: drs_ecu_id == '1'
+    - role: ssh_key_gen
+      when: drs_ecu_id == '0'
     - role: netplan  # This role should be come at the very last of roles
 
   environment:
