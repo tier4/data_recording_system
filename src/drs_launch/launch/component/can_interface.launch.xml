@@ -2,7 +2,7 @@
 <launch>
 
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
-  <arg name="socketcan_device" default="can0"/>
+  <arg name="socketcan_device" default="canVehicle"/>
 
   <!-- <arg name="pacmod_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod.param.yaml"/> -->
   <!-- <arg name="pacmod_extra_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod_extra.param.yaml"/> -->
