@@ -1,0 +1,15 @@
+- name: Add sudo rule so that poweroff commands can be executed without password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/poweroff
+    line: "{{ drs_user_name }} ALL=(ALL) NOPASSWD: /usr/sbin/poweroff"
+    create: true
+    mode: 0440
+  become: true
+
+- name: Add sudo rule so that service restart commands can be executed without password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/systemctl_restart_drs_launch
+    line: "{{ drs_user_name }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart drs_launch.service"
+    create: true
+    mode: 0440
+  become: true
