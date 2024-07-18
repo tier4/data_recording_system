@@ -66,7 +66,7 @@
       when: drs_ecu_id == '1'
     - role: ssh_key_gen
       when: drs_ecu_id == '0'
-    - role: no_password_for_poweroff
+    - role: visudo_for_no_password
     - role: netplan  # This role should be come at the very last of roles
 
   environment:
