@@ -38,7 +38,7 @@ repositories:
   dependencies/nebula:
     type: git
     url: https://github.com/tier4/nebula_drs.git
-    version: experiment/anvil
+    version: aeva_seyond
   dependencies/transport_drivers:
     type: git
     url: https://github.com/mojomex/transport_drivers
