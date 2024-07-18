@@ -71,6 +71,6 @@
 
   <!-- topic monitor -->
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
-    <param name="topic_list" value="/opt/drs/record_topics_ecu0.conf"/>
+    <param name="topic_list" value="/opt/drs/record_topics_ecu0.yaml"/>
   </node>
 </launch>
