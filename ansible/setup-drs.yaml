@@ -20,6 +20,9 @@
         mid_range_lidar:
           interface_address_base: 192.168.3
           interface_name: eqos0
+        ins:
+          interface_address_base: 192.168.4
+          interface_name: eth1
 
     - ptp4l_client_interface: eqos0
     - ptp4l_host_interface: eth0
