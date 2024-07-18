@@ -1,5 +1,7 @@
 /**:
   ros__parameters:
+    frame_id: ecu0
+    namespace: ecu0
     frame_rate: 20.0
     gpio_name: anvil_trigger
     phase: 0.0
