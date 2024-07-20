@@ -1,0 +1,18 @@
+<launch>
+  <arg name="live_sensor"/>
+  <arg name="lidar_position" default="front"/>
+  <arg name="lidar_model"  default="Aeries2"/>
+  <arg name="config_file" default="$(find-pkg-share individual_params)/config/default/aeva_lidar.param.yaml"/>
+
+  <group>
+    <let name="lidar_name" value="lidar_$(var lidar_position)"/>
+    <push-ros-namespace namespace="sensing/lidar/$(var lidar_position)"/>
+
+    <node pkg="nebula_ros" exec="aeva_ros_wrapper_node"
+      name="$(var lidar_name)" output="screen">
+      <param from="$(var config_file)" allow_substs="true"/>
+      <param name="sensor_model" value="$(var lidar_model)"/>
+      <param name="frame_id" value="$(var lidar_name)"/>
+    </node>
+  </group>
+</launch>

@@ -40,15 +40,22 @@
   </include>
 
   <!-- rear LiDAR -->
-  <include file="$(find-pkg-share nebula_ros)/launch/seyond_launch.xml">
-    <arg name="sensor_model" value="Falcon"/>
-    <arg name="launch_hw" value="$(var live_sensor)"/>
+  <include file="$(find-pkg-share drs_launch)/launch/component/seyond.launch.xml">
+    <arg name="lidar_position" value="rear"/>
+    <arg name="lidar_model" value="Falcon"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.2.202"/>
+    <arg name="host_ip" value="192.168.2.2"/>
+    <arg name="data_port" default="2369"/>
   </include>
 
   <!-- left LiDAR -->
-  <include file="$(find-pkg-share nebula_ros)/launch/seyond_launch.xml">
-    <arg name="sensor_model" value="RobinW"/>
-    <arg name="launch_hw" value="$(var live_sensor)"/>
+  <include file="$(find-pkg-share drs_launch)/launch/component/seyond.launch.xml">
+    <arg name="lidar_position" value="left"/>
+    <arg name="lidar_model" value="RobinW"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.3.204"/>
+    <arg name="host_ip" value="192.168.3.2"/>
   </include>
 
   <!-- topic monitor -->
