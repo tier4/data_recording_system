@@ -8,3 +8,5 @@
     alpha: 0.0
     # Jpeg quality
     jpeg_quality: 80
+    # Do not perform rectifiaction
+    do_rectify: false
