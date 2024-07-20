@@ -4,8 +4,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-# -s: --salveonly, -C: --foreground, -V: --verbose, -L: --ignore-lock, --servo:max_offset 315360000:=10years
-ExecStart=/usr/sbin/ptpd -i %i --slaveonly --foreground --verbose --ignore-lock --servo:max_offset 315360000
+# -s: --salveonly, -C: --foreground, -V: --verbose, -L: --ignore-lock
+ExecStart=/usr/sbin/ptpd -i %i --slaveonly --foreground --verbose --ignore-lock --ptpengine:require_utc_offset_valid=y
 ExecStop=/usr/bin/pkill -f ptpd
 Restart=always
 # RestartSec=5
