@@ -4,8 +4,8 @@
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="socketcan_device" default="canVehicle"/>
 
-  <!-- <arg name="pacmod_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod.param.yaml"/> -->
-  <!-- <arg name="pacmod_extra_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod_extra.param.yaml"/> -->
+  <!-- <arg name="pacmod_param_path" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/pacmod/pacmod.param.yaml"/>
+  <arg name="vehicle_info_param_file" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/vehicle_info.param.yaml"/> -->
 
   <!-- pacmod3 -->
   <group>
@@ -16,9 +16,9 @@
   </group>
 
   <!-- pacmod_interface -->
-  <!-- <include file="$(find-pkg-share pacmod_interface)/launch/pacmod_interface.launch.xml">
-    <arg name="pacmod_param_path" value="$(var pacmod_param_path)"/>
-    <arg name="pacmod_extra_param_path" value="$(var pacmod_extra_param_path)"/>
-  </include> -->
+  <include file="$(find-pkg-share pacmod_interface)/launch/pacmod_interface.launch.xml">
+    <!-- <arg name="pacmod_param_path" value="$(var pacmod_param_path)"/>
+    <arg name="pacmod_extra_param_path" value="$(var pacmod_extra_param_path)"/> -->
+  </include>
 
 </launch>

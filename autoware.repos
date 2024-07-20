@@ -51,3 +51,7 @@ repositories:
     type: git
     url: https://github.com/tier4/tamagawa_imu_driver.git
     version: ros2
+  dependencies/pacmod_interface:
+    type: git
+    url: https://github.com/tier4/pacmod_interface.git
+    version: feat/comlops_drs
