@@ -47,7 +47,7 @@
   </include>
 
   <!-- right LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/seyond.launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
     <arg name="lidar_position" value="right"/>
     <arg name="lidar_model" value="RobinW"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -70,6 +70,7 @@
 
   <!-- topic monitor -->
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
+    <remap from="statistics" to="/ecu1/statistics"/>
     <param name="topic_list" value="/opt/drs/record_topics_ecu0.yaml"/>
   </node>
 </launch>

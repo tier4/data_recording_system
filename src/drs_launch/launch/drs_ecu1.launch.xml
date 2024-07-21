@@ -40,7 +40,7 @@
   </include>
 
   <!-- rear LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/seyond.launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
     <arg name="lidar_position" value="rear"/>
     <arg name="lidar_model" value="Falcon"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -50,7 +50,7 @@
   </include>
 
   <!-- left LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/seyond.launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
     <arg name="lidar_position" value="left"/>
     <arg name="lidar_model" value="RobinW"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -65,6 +65,7 @@
 
   <!-- topic monitor -->
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
+    <remap from="statistics" to="/ecu2/statistics"/>
     <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
   </node>
 </launch>
