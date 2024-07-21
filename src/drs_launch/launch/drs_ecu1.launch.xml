@@ -84,8 +84,13 @@
   </include>
 
   <!-- topic monitor -->
-  <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
-    <remap from="statistics" to="/ecu2/statistics"/>
-    <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
-  </node>
+  <group scoped="True">
+    <!-- To prevent topic monitor communicate over network, set LOCALHOST_ONLY=1 -->
+    <set_env name="ROS_LOCALHOST_ONLY" value="1"/>
+    <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
+      <remap from="statistics" to="/ecu2/statistics"/>
+      <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
+      <param name="update_interval" value="10000"/>
+    </node>
+  </group>
 </launch>

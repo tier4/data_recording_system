@@ -123,7 +123,7 @@ class SimpleFrontend(Node):
         self.disk_usage_monitor_path_str = self.get_parameter('usage_monitored_disk').value
         self.declare_parameter(name='disk_check_interval_sec', value=60)
         self.disk_usage_check_interval_sec = self.get_parameter('disk_check_interval_sec').value
-        self.declare_parameter(name='wait_statistics_up_to_ms', value=2000)
+        self.declare_parameter(name='wait_statistics_up_to_ms', value=20000)
         self.wait_statistics_up_to_ms = self.get_parameter('wait_statistics_up_to_ms').value
         # Because usage check query may take a while, which affects to the UI response,
         # execute usage monitoring in another thread
