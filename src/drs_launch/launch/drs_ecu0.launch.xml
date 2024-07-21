@@ -43,7 +43,7 @@
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
     <arg name="lidar_position" value="front"/>
     <arg name="lidar_model" value="Aeries2"/>
-
+    <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
 
   <!-- right LiDAR -->
