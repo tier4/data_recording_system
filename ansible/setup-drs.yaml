@@ -53,17 +53,17 @@
       vars:
         ptpd_host_interfaces:
           - eth0
-      when: drs_ecu_id == '0'
+      when: drs_ecu_id == '1'
     - role: ptpd_client
       vars:
         ptpd_client_interfaces:
           - eth1
-      when: drs_ecu_id == '0'
+      when: drs_ecu_id == '1'
     - role: ptpd_client
       vars:
         ptpd_client_interfaces:
           - eth0
-      when: drs_ecu_id == '1'
+      when: drs_ecu_id == '0'
     - role: ssh_key_gen
       when: drs_ecu_id == '0'
     - role: visudo_for_no_password

@@ -58,6 +58,11 @@
     <arg name="host_ip" value="192.168.3.2"/>
   </include>
 
+  <!-- INS -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/ins.launch.xml">
+    <arg name="launch_driver" value="$(var live_sensor)"/>
+  </include>
+
   <!-- topic monitor -->
   <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
     <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
