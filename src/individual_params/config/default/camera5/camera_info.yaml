@@ -1,7 +1,6 @@
-# Dummy
 image_width: 2880
 image_height: 1860
-camera_name: Dummy
+camera_name: camera5
 camera_matrix:
   rows: 3
   cols: 3
