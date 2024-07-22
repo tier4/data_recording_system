@@ -41,6 +41,7 @@
     - role: drs_launch_service
     - role: rosbag_restart_cron
     - role: auto_storage_mount
+    - role: set_local_multicast
     - role: can_network_setting
       when: drs_ecu_id == '0'
     - role: enable_auto_login

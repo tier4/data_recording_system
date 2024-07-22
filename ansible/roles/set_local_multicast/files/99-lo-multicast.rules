@@ -1,0 +1,1 @@
+SUBSYSTEM=="net",ACTION=="add",KERNEL=="lo",RUN+="/usr/sbin/ip link set dev %k multicast on"
