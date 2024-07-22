@@ -6,7 +6,7 @@
 
   <!-- trigger -->
   <group if="$(var live_sensor)">
-    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger">
+    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger" namespace="ecu1">
       <param from="$(var param_root_dir)/ecu0_trigger.param.yaml"/>
     </node>
   </group>
@@ -66,7 +66,7 @@
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="sensor_ip" value="192.168.2.202"/>
     <arg name="host_ip" value="192.168.2.2"/>
-    <arg name="data_port" default="2369"/>
+    <arg name="data_port" value="2369"/>
   </include>
 
   <!-- left LiDAR -->
@@ -87,10 +87,16 @@
   <group scoped="True">
     <!-- To prevent topic monitor communicate over network, set LOCALHOST_ONLY=1 -->
     <set_env name="ROS_LOCALHOST_ONLY" value="1"/>
-    <node pkg="ros_topic_monitor" exec="ros_topic_monitor">
-      <remap from="statistics" to="/ecu2/statistics"/>
+    <node pkg="ros_topic_monitor" exec="ros_topic_monitor" namespace="ecu1">
+      <remap from="/statistics" to="/ecu2/statistics/local"/>
       <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
       <param name="update_interval" value="10000"/>
     </node>
+  </group>
+  <group scoped="True">
+    <!-- Send monitor topic to ecu0 -->
+    <set_env name="ROS_LOCALHOST_ONLY" value="0"/>
+    <node pkg="topic_tools" exec="relay" namespace="ecu1"
+          args="/ecu2/statistics/local /ecu2/statistics"/>
   </group>
 </launch>
