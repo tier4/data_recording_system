@@ -17,5 +17,17 @@
     <Internal>
       <SocketReceiveBufferSize min="{{ cyclonedds.minimum_socket_receive_buffer_size }}" />
     </Internal>
+    <Discovery>
+      <ParticipantIndex>auto</ParticipantIndex>
+      <Peers>
+          <Peer Address="localhost"/>
+{% for key in network_config %}
+{% if 'ros' in key %}
+          <Peer Address="{{ network_config[key].interface_address_base }}.{{ (drs_ecu_id | int) + 1 }}"/>
+{% endif %}
+{% endfor %}
+      </Peers>
+      <MaxAutoParticipantIndex>100</MaxAutoParticipantIndex>
+    </Discovery>
   </Domain>
 </CycloneDDS>
