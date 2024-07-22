@@ -1,6 +1,7 @@
 [Unit]
 Description=Precision Time Protocol (PTP) service
 After=network-online.target
+Requires=network-online.target
 
 [Service]
 Type=simple
