@@ -1,21 +1,19 @@
-# Dummy
 image_width: 2880
 image_height: 1860
-camera_name: Dummy
+camera_name: camera0
 camera_matrix:
   rows: 3
   cols: 3
-  data: [1593.88646, 0.0, 1455.51234, 0.0, 1592.117, 955.83491, 0.0, 0.0, 1.0]
+  data: [5368.25873, 0.0, 1412.70938, 0.0, 5364.46693, 958.59729, 0.0, 0.0, 1.0]
 distortion_model: plumb_bob
 distortion_coefficients:
   rows: 1
-  cols: 14
-  data: [-0.17251, 0.11716, -0.00225, -0.00129, -0.02957, 0.24231, -0.01842, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  cols: 5
+  data: [-0.08849, -0.90255, 0.00075, 0.00111, 0.0]
 projection_matrix:
   rows: 3
   cols: 4
-  data: [1593.33301, 0.0, 1455.00695, 0.0, 0.0, 1591.26111, 955.32104, 0.0, 0.0, 0.0,
+  data: [5305.15088, 0.0, 1412.64275, 0.0, 0.0, 5342.61084, 958.70113, 0.0, 0.0, 0.0,
     1.0, 0.0]
 rectification_matrix:
   rows: 3
