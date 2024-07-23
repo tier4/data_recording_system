@@ -13,6 +13,7 @@
       <param from="$(var config_file)" allow_substs="true"/>
       <param name="sensor_model" value="$(var lidar_model)"/>
       <param name="frame_id" value="$(var lidar_name)"/>
+      <param name="launch_hw" value="$(var live_sensor)"/>
     </node>
   </group>
 </launch>
