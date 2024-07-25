@@ -5,7 +5,7 @@ camera_matrix:
   rows: 3
   cols: 3
   data: [1500.35853, 0.0, 1419.21658, 0.0, 1501.15968, 936.4509, 0.0, 0.0, 1.0]
-distortion_model: plumb_bob
+distortion_model: rational_polynomial
 distortion_coefficients:
   rows: 1
   cols: 14
