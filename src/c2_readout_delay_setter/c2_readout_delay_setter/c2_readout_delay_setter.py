@@ -64,12 +64,23 @@ class ReadoutDelaySetter(Node):
         video_device = self.__get_video_device_from_node_name(target_node_name)
         self.i2c_bus_id = self.__get_i2c_bus_from_video_device(video_device)
 
-        # Start subscriptions using proper QoS
         self.topic_statistics = MovingAverageStatistics()
-        self.prev_now = self.get_clock().now().nanoseconds
+
+        # Query QoS using timer so that constructor does not get stuck by the query
+        self._timer = self.create_timer(0.1, self.__qos_query_callback)
+
+    def __qos_query_callback(self):
+        # Start subscriptions using proper QoS
         camera_info_topic = self.resolve_topic_name('camera_info')
         camera_info_qos = self.__get_qos_by_name(camera_info_topic)
-        self.create_subscription(sensor_msgs.msg.Image, camera_info_topic, self.__callback, camera_info_qos)
+        if camera_info_qos is None:
+            return
+        self.prev_now = self.get_clock().now().nanoseconds
+        self.create_subscription(sensor_msgs.msg.CameraInfo,
+                                 camera_info_topic, self.__callback, camera_info_qos)
+
+        # Once proper Qos is acquired, stop the timer
+        self._timer.cancel()
 
     def __get_video_device_from_node_name(self, target_node_name):
         # Ask the node which video device was specified to use
@@ -93,19 +104,18 @@ class ReadoutDelaySetter(Node):
         return i2c_bus_str
 
     def __get_qos_by_name(self, topic_name):
-        while True:
-            qos_list = self.get_publishers_info_by_topic(topic_name)
-            if len(qos_list) < 1:
-                self.get_logger().info('Waiting for ' + topic_name,
-                                       throttle_duration_sec = 2.0)
-                continue
-            elif len(qos_list) > 1:
-                self.get_logger().error('Multiple publisher for ' + topic_name + ' are detected. '
-                                        'Cannot determine proper QoS')
-                sys.exit(1)     # exit with error status
-            else:
-                self.get_logger().info('QoS for ' + topic_name + ' is acquired.')
-                return qos_list[0].qos_profile
+        qos_list = self.get_publishers_info_by_topic(topic_name)
+        if len(qos_list) < 1:
+            self.get_logger().info('Waiting for ' + topic_name,
+                                   throttle_duration_sec = 2.0)
+            return None
+        elif len(qos_list) > 1:
+            self.get_logger().error('Multiple publisher for ' + topic_name + ' are detected. '
+                                    'Cannot determine proper QoS')
+            sys.exit(1)     # exit with error status
+        else:
+            self.get_logger().info('QoS for ' + topic_name + ' is acquired.')
+            return qos_list[0].qos_profile
 
     def __callback(self, msg: sensor_msgs.msg.CameraInfo):
         now = self.get_clock().now().nanoseconds
