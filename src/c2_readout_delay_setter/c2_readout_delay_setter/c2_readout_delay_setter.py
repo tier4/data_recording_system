@@ -54,9 +54,9 @@ class ReadoutDelaySetter(Node):
 
         self.declare_parameter('expected_hz', 20)
         expected_hz = self.get_parameter('expected_hz').value
-        # Set lower/upper bound of topic hz as +- 5%
-        self.topic_rate_lower = expected_hz * 0.95
-        self.topic_rate_upper = expected_hz * 1.05
+        # Set lower/upper bound of topic hz as +- 20%
+        self.topic_rate_lower = expected_hz * 0.80
+        self.topic_rate_upper = expected_hz * 1.20
 
         # Get target camera's i2c bus ID from node name
         self.declare_parameter('target_v4l2_node', rclpy.Parameter.Type.STRING)
@@ -67,9 +67,9 @@ class ReadoutDelaySetter(Node):
         # Start subscriptions using proper QoS
         self.topic_statistics = MovingAverageStatistics()
         self.prev_now = self.get_clock().now().nanoseconds
-        image_topic = self.resolve_topic_name('image_raw')
-        image_qos = self.__get_qos_by_name(image_topic)
-        self.create_subscription(sensor_msgs.msg.Image, image_topic, self.__callback, image_qos)
+        camera_info_topic = self.resolve_topic_name('camera_info')
+        camera_info_qos = self.__get_qos_by_name(camera_info_topic)
+        self.create_subscription(sensor_msgs.msg.Image, camera_info_topic, self.__callback, camera_info_qos)
 
     def __get_video_device_from_node_name(self, target_node_name):
         # Ask the node which video device was specified to use
@@ -107,7 +107,7 @@ class ReadoutDelaySetter(Node):
                 self.get_logger().info('QoS for ' + topic_name + ' is acquired.')
                 return qos_list[0].qos_profile
 
-    def __callback(self, msg: sensor_msgs.msg.Image):
+    def __callback(self, msg: sensor_msgs.msg.CameraInfo):
         now = self.get_clock().now().nanoseconds
         interval_sec = (now - self.prev_now) / 10**9
         self.prev_now = now
