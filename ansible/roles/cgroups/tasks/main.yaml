@@ -11,3 +11,38 @@
     dest: /etc/systemd/system/user@.service.d/user-resources.conf
     mode: 0755
   become: true
+
+- name: Install dependent package to set SYS_CAP
+  ansible.builtin.apt:
+    name: libcap2-bin
+    update_cache: true
+  become: true
+
+- name: Find the actual executable path for sensor_trigger_exe
+  ansible.builtin.find:
+    paths: "{{ drs_source_dir }}/install"
+    patterns: "sensor_trigger_exe"
+    file_type: any
+    recurse: true
+  register: sensor_trigger_exe_find_output_raw
+
+- name: Determine the actual path of the executable to adapt to the case of symlink-install
+  ansible.builtin.command:
+    cmd: "readlink -f {{ item.path }}"
+  with_items: "{{ sensor_trigger_exe_find_output_raw.files }}"
+  register: sensor_trigger_exe_find_output
+
+- name: Set cap_sys_nice+ep on sensor_trigger_exe
+  community.general.capabilities:
+    path: "{{ item.stdout }}"
+    capability: cap_sys_nice+ep
+    state: present
+  with_items: "{{ sensor_trigger_exe_find_output.results }}" # assume this conteins only one element
+  become: true
+
+- name: Copy config to /etc/ld.so.conf.d so that ld can find libraries
+  ansible.builtin.template:
+    src: sensor_trigger.conf.jinja2
+    dest: /etc/ld.so.conf.d/sensor_trigger.conf
+    mode: 0644
+  become: true
