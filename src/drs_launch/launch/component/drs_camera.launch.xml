@@ -11,7 +11,7 @@
     <group if="$(var live_sensor)"> <!-- Boot sensor drivers for online mode -->
       <!-- Create composable container -->
       <let name="root_container_name" value="$(var camera_name)_container"/>
-      <node_container pkg="rclcpp_components" exec="component_container" name="$(var root_container_name)"
+      <node_container pkg="rclcpp_components" exec="component_container_isolated" name="$(var root_container_name)"
                       namespace="/"/>
       <!-- Load v4l2 into the container -->
       <include file="$(find-pkg-share drs_launch)/launch/component/v4l2_camera.launch.xml">
