@@ -7,7 +7,7 @@
   <!-- trigger -->
   <group if="$(var live_sensor)">
     <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger" namespace="ecu1">
-      <param from="$(var param_root_dir)/ecu0_trigger.param.yaml"/>
+      <param from="$(var param_root_dir)/ecu1_trigger.param.yaml"/>
     </node>
   </group>
 
