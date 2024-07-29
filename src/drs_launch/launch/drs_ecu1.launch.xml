@@ -17,11 +17,6 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
-  <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_4"
-        namespace="sensing/camera/camera4">
-    <param from="$(var param_root_dir)/camera4/readout_delay.param.yaml"/>
-    <param name="target_v4l2_node" value="v4l2_camera"/>
-  </node>
 
   <!-- camera5 -->
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
@@ -29,11 +24,6 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
-  <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_5"
-        namespace="sensing/camera/camera5">
-    <param from="$(var param_root_dir)/camera5/readout_delay.param.yaml"/>
-    <param name="target_v4l2_node" value="v4l2_camera"/>
-  </node>
 
   <!-- camera6 -->
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
@@ -41,11 +31,6 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
-  <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_6"
-        namespace="sensing/camera/camera6">
-    <param from="$(var param_root_dir)/camera6/readout_delay.param.yaml"/>
-    <param name="target_v4l2_node" value="v4l2_camera"/>
-  </node>
 
   <!-- camera7 -->
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
@@ -53,11 +38,6 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
-  <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_7"
-        namespace="sensing/camera/camera7">
-    <param from="$(var param_root_dir)/camera7/readout_delay.param.yaml"/>
-    <param name="target_v4l2_node" value="v4l2_camera"/>
-  </node>
 
   <!-- rear LiDAR -->
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
