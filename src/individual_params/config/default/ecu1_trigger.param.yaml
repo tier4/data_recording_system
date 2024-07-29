@@ -5,4 +5,4 @@
     frame_rate: 20.0
     gpio_name: anvil_trigger
     phase: 0.0
-    cpu_core_id: 7
+    cpu_core_id: 11
