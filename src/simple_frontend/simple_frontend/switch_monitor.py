@@ -99,6 +99,7 @@ class SwitchMonitor(Node):
                         # Short push: restart service
                         print(f'short press: {elapsed_in_sec}')
                         self.__restart_drs_launch_services()
+                        self.__restart_drs_rosbag_record_services()
                     else:
                         # Long push: system shutdown
                         print(f'long press: {elapsed_in_sec}')
@@ -123,6 +124,23 @@ class SwitchMonitor(Node):
         # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
         # without password
         restart_cmd = 'sudo systemctl restart drs_launch.service'
+
+        targets = [
+            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
+            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0
+        ]
+
+        for t in targets:
+            cmd = self.__generate_ssh_command(t.ip, t.user, restart_cmd)
+            subprocess.Popen(cmd, shell=True)  # execute in background
+
+    def __restart_drs_rosbag_record_services(self):
+        """
+        Very rough implementation to restart drs_rosbag_record.service on each ECU
+        """
+        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
+        # without password
+        restart_cmd = 'sudo systemctl restart drs_rosbag_record.service'
 
         targets = [
             RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
