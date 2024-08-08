@@ -212,6 +212,8 @@ class SimpleFrontend(Node):
 
     def switch_release_callback(self, _: std_msgs.msg.Bool):
         self.push_detect_time = None
+        # After switch released, set indicators to init-state
+        self.__set_init_state()
 
     def check_disk_usage(self):
         while True:
