@@ -26,8 +26,13 @@ parse_topics() {
 }
 TOPICS=$(parse_topics ${SCRIPT_DIR}/record_topics_ecu${DRS_ECU_ID}.yaml)
 
-RECORD_DIR={{ record_root_directory }}/ecu${DRS_ECU_ID}
-
+HOUR=$(date +"%H" | sed 's/^0//')
+if [ $(( ${HOUR} % 2 )) -eq 0 ]; then
+    SUFFIX=1
+else
+    SUFFIX=2
+fi
+RECORD_DIR={{ record_root_directory }}${SUFFIX}/ecu${DRS_ECU_ID}
 # Record
 mkdir -p ${RECORD_DIR} && cd ${RECORD_DIR}
 ros2 bag record -s ${STORAGE} --storage-config-file ${MCAP_OPTIONS_FILE} \
