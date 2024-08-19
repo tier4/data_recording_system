@@ -29,7 +29,7 @@
   vars_prompt:
     - name: drs_ecu_id
       prompt: |-
-        Enter ECU ID to be setup
+        Enter ECU ID to be setup [0/1]
       private: false
       confirm: yes
 
