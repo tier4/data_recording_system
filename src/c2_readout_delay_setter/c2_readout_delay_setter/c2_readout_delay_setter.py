@@ -60,37 +60,56 @@ class ReadoutDelaySetter(Node):
 
         # Get target camera's i2c bus ID from node name
         self.declare_parameter('target_v4l2_node', rclpy.Parameter.Type.STRING)
-        target_node_name = self.get_parameter('target_v4l2_node').value
-        video_device = self.__get_video_device_from_node_name(target_node_name)
-        self.i2c_bus_id = self.__get_i2c_bus_from_video_device(video_device)
+        # Query i2c_bus_id using timer so that constructor does not get stuck by the query
+        # ref: https://github.com/ros2/examples/blob/humble/rclpy/services/minimal_client/examples_rclpy_minimal_client/client_async_callback.py
+        self.cb_group = rclpy.callback_groups.ReentrantCallbackGroup()
+        self._bus_id_timer = self.create_timer(0.1, self.__bus_id_query_callback,
+                                               callback_group=self.cb_group)
 
         self.topic_statistics = MovingAverageStatistics()
 
         # Query QoS using timer so that constructor does not get stuck by the query
-        self._timer = self.create_timer(0.1, self.__qos_query_callback)
+        self._qos_timer = self.create_timer(0.1, self.__qos_query_callback)
+
+    async def __bus_id_query_callback(self):
+        target_node_name = self.get_parameter('target_v4l2_node').value
+        video_device = self.__get_video_device_from_node_name(target_node_name)
+        self.get_logger().debug(f'target_node_name: {target_node_name}')
+        self.get_logger().debug(f'video_device: {video_device}')
+        if video_device is None:
+            return
+        self.i2c_bus_id = self.__get_i2c_bus_from_video_device(video_device)
+
+        # Once i2c_bus_id is acquired, stop the timer
+        self._bus_id_timer.cancel()
 
     def __qos_query_callback(self):
         # Start subscriptions using proper QoS
         camera_info_topic = self.resolve_topic_name('camera_info')
+        self.get_logger().debug(f'camera_info_topic: {camera_info_topic}')
         camera_info_qos = self.__get_qos_by_name(camera_info_topic)
         if camera_info_qos is None:
             return
         self.prev_now = self.get_clock().now().nanoseconds
-        self.create_subscription(sensor_msgs.msg.CameraInfo,
-                                 camera_info_topic, self.__callback, camera_info_qos)
+        self._sub = self.create_subscription(sensor_msgs.msg.CameraInfo,
+                                             camera_info_topic, self.__callback, camera_info_qos)
 
         # Once proper Qos is acquired, stop the timer
-        self._timer.cancel()
+        self._qos_timer.cancel()
 
     def __get_video_device_from_node_name(self, target_node_name):
         # Ask the node which video device was specified to use
-        param_client = self.create_client(GetParameters, target_node_name + '/get_parameters')
+        param_client = self.create_client(GetParameters, target_node_name + '/get_parameters',
+                                          callback_group=self.cb_group)
         request = GetParameters.Request()
         request.names = ['video_device']
         future = param_client.call_async(request)
-        rclpy.spin_until_future_complete(self, future)
+        # rclpy.spin_until_future_complete(self, future, timeout_sec=0.05)
+        self.executor.spin_until_future_complete(future, timeout_sec=1)
+        if not (future.done() and future.result()):
+            return None
         video_device = future.result().values[0].string_value
-        self.get_logger().info(f'request got response: video_device={video_device}')
+        self.get_logger().debug(f'request got response: video_device={video_device}')
         return video_device
 
     def __get_i2c_bus_from_video_device(self, video_device):
@@ -132,7 +151,8 @@ class ReadoutDelaySetter(Node):
                 / 'scripts' / 'set_readout_delay.sh'
             script_path = script_path.resolve().absolute()
             proc = subprocess.run(f'{script_path} {self.delay_ms} {self.i2c_bus_id}',
-                                  shell=True, capture_output=False)
+                                  shell=True, capture_output=True, text=True)
+            self.get_logger().info(f'i2ctransfer to {self.i2c_bus_id} returns {proc.stdout}')
 
             # Once set the read out delay, terminate the node
             raise SystemExit
