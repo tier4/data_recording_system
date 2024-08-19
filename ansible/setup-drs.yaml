@@ -32,6 +32,10 @@
         Enter ECU ID to be setup [0/1]
       private: false
       confirm: yes
+    - name: drs_system_uuid
+      prompt: |-
+        Enter SYSTEM UUID for this ECU
+      private: false
 
   roles:
     - role: cyclonedds

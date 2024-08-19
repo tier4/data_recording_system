@@ -1,2 +1,3 @@
 autoware_env_dir: /opt/autoware/env
 drs_ecu_id: 0
+drs_system_uuid: 00000000-0000-0000-0000-000000000000
