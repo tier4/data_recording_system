@@ -20,6 +20,18 @@
     boot: true
   become: true
 
+- name: Configure auto mount SSD
+  ansible.posix.mount:
+    src: "UUID={{ dummy_uuid }}" # TODO: parse mounted SSID, if possible
+    path: "{{ local_storages.prefix + '{}'.format(item)}}"
+    fstype: ext4
+    opts: defaults
+    state: present
+    boot: true
+  become: true
+  with_items:
+    - "{{ range(1, local_storages.number_of_storages + 1) | list }}"
+
 - name: Force systemd to reload config
   ansible.builtin.systemd:
     daemon_reload: true
