@@ -110,7 +110,7 @@ class SwitchMonitor(Node):
 
     def __generate_ssh_command(self, ip: str, user: str, cmd: str):
         # suppress prompt to trust hosts for the first connection
-        ssh_option = 'StrictHostKeyChecking=no'
+        ssh_option = 'StrictHostKeyChecking=no UserKnownHostsFile=/dev/null'
 
         # The key should be registered during setup
         ssh_key = Path(expanduser('~'))/'.ssh'/'drs_rsa'
@@ -161,8 +161,8 @@ class SwitchMonitor(Node):
 
         targets = [
             RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
-            RemoteHost(ip='192.168.10.100', user='comlops'),  # NAS
-            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0, this entry have to come at the very last!
+            RemoteHost(ip='192.168.10.100', user='root'),  # NAS
+            RemoteHost(ip='192.168.10.1', user='nvidia'),  # ECU#0, this entry have to come at the very last!
         ]
 
         for t in targets:
