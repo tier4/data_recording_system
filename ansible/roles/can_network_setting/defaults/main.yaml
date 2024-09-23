@@ -1,7 +1,7 @@
 can_interfaces:
-  imu:
-    name: canImu
-    devpath: 2.3
+  # imu:
+  #   name: canImu
+  #   devpath: 2.3
   vehicle:
     name: canVehicle
     devpath: 2.4
