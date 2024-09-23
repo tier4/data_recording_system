@@ -64,9 +64,9 @@
   </group>
 
   <!-- IMU -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/imu.launch.xml">
-    <arg name="launch_driver" value="$(var live_sensor)"/>
-  </include>
+  <!-- <include file="$(find-pkg-share drs_launch)/launch/component/imu.launch.xml"> -->
+  <!--   <arg name="launch_driver" value="$(var live_sensor)"/> -->
+  <!-- </include> -->
 
   <!-- topic monitor -->
   <group scoped="True">
