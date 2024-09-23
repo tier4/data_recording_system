@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPT_DIR=$(readlink -f "$(dirname $0)")
+sudo mount -a
 
 # Load ROS related settings
 source {{ autoware_env_dir }}/autoware.env
