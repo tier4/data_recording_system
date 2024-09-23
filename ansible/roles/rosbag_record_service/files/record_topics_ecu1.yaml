@@ -1,7 +1,15 @@
 topics:
-  - name: /sensing/camera/camera(4|5|6|7)/image_raw/compressed # camera
-    hz_range: [0.9, 10.1]
-  - name: /sensing/lidar/(rear|left)/nebula_packets # LiDAR
-    hz_range: [0.9, 10.1]
+  - name: /sensing/camera/camera4/image_raw/compressed # camera
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera5/image_raw/compressed # camera
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera6/image_raw/compressed # camera
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera7/image_raw/compressed # camera
+    hz_range: [18.0, 21.0]
+  - name: /sensing/lidar/rear/nebula_packets # LiDAR
+    hz_range: [9.0, 11.0]
+  - name: /sensing/lidar/left/nebula_packets # LiDAR
+    hz_range: [9.0, 11.0]
   - name: /ins/oxts/.* # INS
     hz_range: [1.0, 105.0]
