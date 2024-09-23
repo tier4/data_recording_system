@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# wait until IP for ROS communication will be assigned
+while ! ifconfig | grep "{{ network_config.ros.interface_address_base + '.{}'.format((drs_ecu_id | int) + 1) }}" > /dev/null;
+do
+    sleep 1;
+done
+
 # Load ROS related settings
 source {{ autoware_env_dir }}/autoware.env
 source /opt/ros/humble/install/setup.bash
