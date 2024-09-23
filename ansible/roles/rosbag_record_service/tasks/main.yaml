@@ -5,6 +5,13 @@
     mode: 0755
   become: true
 
+- name: Copy ssd-nas-sync script
+  ansible.builtin.template:
+    src: ssd_nas_sync.sh.jinja2
+    dest: /opt/drs/ssd_nas_sync.sh
+    mode: 0755
+  become: true
+
 - name: Copy rosbag configuration
   block:
     - name: Copy mcap option

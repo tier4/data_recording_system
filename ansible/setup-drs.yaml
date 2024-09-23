@@ -3,6 +3,9 @@
   vars:
     - drs_user_name: "{{ lookup('env', 'USER') }}"
     - record_root_directory: "{{ lookup('env', 'HOME') }}/nas"
+    - local_storages:
+        number_of_storages: 2
+        prefix: "{{ lookup('env', 'HOME') }}/ssd"
     - drs_source_dir: "{{ playbook_dir | dirname }}" # `dirname` get the parent directory
     - autoware_env_dir: /opt/autoware/env
     - ros_distro: humble
