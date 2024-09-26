@@ -110,12 +110,12 @@ class SwitchMonitor(Node):
 
     def __generate_ssh_command(self, ip: str, user: str, cmd: str):
         # suppress prompt to trust hosts for the first connection
-        ssh_option = 'StrictHostKeyChecking=no UserKnownHostsFile=/dev/null'
+        ssh_option = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 
         # The key should be registered during setup
         ssh_key = Path(expanduser('~'))/'.ssh'/'drs_rsa'
 
-        return f'ssh -o {ssh_option} -i {ssh_key} {user}@{ip} {cmd}'
+        return f'ssh {ssh_option} -i {ssh_key} {user}@{ip} {cmd}'
 
     def __restart_drs_launch_services(self):
         """
