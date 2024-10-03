@@ -1,0 +1,7 @@
+- name: Disable systemd-timesyncd service if exists
+  ansible.builtin.systemd:
+    name: systemd-timesyncd.service
+    enabled: false
+    state: stopped
+  register: systemd_timesyncd_service_result
+  failed_when: "systemd_timesyncd_service_result is failed and 'Could not find the requested service' not in systemd_timesyncd_service_result.msg"

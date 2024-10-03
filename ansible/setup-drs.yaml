@@ -41,6 +41,7 @@
       private: false
 
   roles:
+    - role: disable_systemd_timesyncd
     - role: cyclonedds
     - role: enlarge_txqueue
     - role: drs_env_setting
