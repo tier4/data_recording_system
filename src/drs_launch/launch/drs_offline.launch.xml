@@ -1,0 +1,78 @@
+<launch>
+  <!-- Entry point of DRS launcher -->
+  <arg name="vehicle_id" default="default"/>
+  <arg name="live_sensor" default="False"
+       description="If true, sensor drivers will be executed (for actual recording operation)"/>
+
+  <!-- front LiDAR -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
+    <arg name="lidar_position" value="front"/>
+    <arg name="lidar_model" value="Aeries2"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- right LiDAR -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+    <arg name="lidar_position" value="right"/>
+    <arg name="lidar_model" value="RobinW"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.3.203"/>
+    <arg name="host_ip" value="192.168.3.1"/>
+  </include>
+
+  <!-- rear LiDAR -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+    <arg name="lidar_position" value="rear"/>
+    <arg name="lidar_model" value="Falcon"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.2.202"/>
+    <arg name="host_ip" value="192.168.2.2"/>
+    <arg name="data_port" value="2369"/>
+  </include>
+
+  <!-- left LiDAR -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+    <arg name="lidar_position" value="left"/>
+    <arg name="lidar_model" value="RobinW"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.3.204"/>
+    <arg name="host_ip" value="192.168.3.2"/>
+  </include>
+    
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
+          args="--frame-id base_link --child-frame-id drs_base_link --x 0.6895 --y 0.0 --z 1.971 --yaw 0.000 --pitch -0.020, --roll 0.000"/>
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
+        args="--frame-id drs_base_link --child-frame-id lidar_front --x 0.4734 --y 0.05 --z -0.0702 --yaw -1.5708 --pitch 0.000, --roll 0.000"/>
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
+        args="--frame-id drs_base_link --child-frame-id lidar_left --x 0.100 --y 0.560 --z -0.0532 --yaw 1.5708 --pitch 0.000, --roll 0.000"/>
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
+        args="--frame-id drs_base_link --child-frame-id lidar_right --x 0.200 --y -0.555 --z -0.0532 --yaw -1.583 --pitch 0.000, --roll 0.000"/>
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
+        args="--frame-id drs_base_link --child-frame-id lidar_rear --x -0.2494 --y 0.0 --z 0.0873 --yaw 3.142 --pitch 0.000, --roll 0.000"/>
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera0_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera1_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera2_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera3_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera4_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera5_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera6_calibration_results.yaml"/>
+  </include>  
+  <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
+    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera7_calibration_results.yaml"/>
+  </include>  
+
+
+</launch>
