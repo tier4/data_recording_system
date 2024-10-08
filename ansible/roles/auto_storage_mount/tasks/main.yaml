@@ -20,17 +20,37 @@
     boot: true
   become: true
 
-- name: Configure auto mount SSD
-  ansible.posix.mount:
-    src: "UUID={{ dummy_uuid }}" # TODO: parse mounted SSID, if possible
-    path: "{{ local_storages.prefix + '{}'.format(item)}}"
+- name: Get the list of NVMe devices
+  ansible.builtin.find:
+    paths: /dev
+    patterns: "^nvme(\\d+)n(\\d+)"
+    use_regex: true
+    file_type: any
+  register: nvme_devices
+
+- name: Format SSD
+  community.general.filesystem:
     fstype: ext4
-    opts: defaults
-    state: present
-    boot: true
+    dev: "{{ item.path }}"
+  with_items: "{{ nvme_devices.files }}"
   become: true
-  with_items:
-    - "{{ range(1, local_storages.number_of_storages + 1) | list }}"
+
+- name: Configure auto mount SSD
+  block:
+    - name: get SSD UUID from blkid
+      ansible.builtin.command: blkid -s UUID -o value "{{ item.path }}"
+      register: blkid_outputs
+      with_items: "{{ nvme_devices.files | sort(attribute='path') }}"
+    - name: Add SSD UUID to fstab
+      ansible.posix.mount:
+        src: "UUID={{ blkid_outputs.results[item | int].stdout }}"
+        path: "{{ local_storages.prefix + '{}'.format(item + 1) }}"
+        fstype: ext4
+        opts: defaults
+        state: present
+        boot: true
+      with_items: "{{ range(0, local_storages.number_of_storages)|list }}"
+  become: true
 
 - name: Force systemd to reload config
   ansible.builtin.systemd:
