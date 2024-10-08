@@ -1,0 +1,9 @@
+- name: Set maxsize limitation to the logs
+  ansible.builtin.replace:
+    dest: /etc/logrotate.d/rsyslog
+    regexp: "^{"
+    # `2` stands for the amount of indent for yaml expression
+    # `-` removes line-break at the end of replacement
+    replace: |2-
+      {
+              maxsize {{ rsyslog_maxsize }}

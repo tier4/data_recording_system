@@ -42,6 +42,7 @@
 
   roles:
     - role: disable_systemd_timesyncd
+    - role: limit_syslog_size
     - role: cyclonedds
     - role: enlarge_txqueue
     - role: drs_env_setting
