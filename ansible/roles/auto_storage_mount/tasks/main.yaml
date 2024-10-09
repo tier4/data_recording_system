@@ -41,14 +41,21 @@
       ansible.builtin.command: blkid -s UUID -o value "{{ item.path }}"
       register: blkid_outputs
       with_items: "{{ nvme_devices.files | sort(attribute='path') }}"
-    - name: Add SSD UUID to fstab
+    - name: Add SSD UUID to fstab and mount it
       ansible.posix.mount:
         src: "UUID={{ blkid_outputs.results[item | int].stdout }}"
         path: "{{ local_storages.prefix + '{}'.format(item + 1) }}"
         fstype: ext4
         opts: defaults
-        state: present
+        state: mounted
         boot: true
+      with_items: "{{ range(0, local_storages.number_of_storages)|list }}"
+    - name: Allow read, write, and execute permission recursively for all users
+      ansible.builtin.file:
+        path: "{{ local_storages.prefix + '{}'.format(item + 1) }}"
+        mode: '0777'
+        state: directory
+        recurse: yes
       with_items: "{{ range(0, local_storages.number_of_storages)|list }}"
   become: true
 
