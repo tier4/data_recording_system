@@ -4,6 +4,8 @@
   <arg name="live_sensor" default="False"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
 
+  <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+
   <!-- front LiDAR -->
   <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
     <arg name="lidar_position" value="front"/>
@@ -57,28 +59,28 @@
   <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
         args="--frame-id drs_base_link --child-frame-id lidar_rear --x -0.2494 --y 0.0 --z 0.0873 --yaw 3.142 --pitch 0.000, --roll 0.000"/>
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera0_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera0/camera0_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera1_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera1/camera1_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera2_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera2/camera2_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera3_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera3/camera3_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera4_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera4/camera4_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera5_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera5/camera5_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera6_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera6/camera6_calibration_results.yaml"/>
   </include>  
   <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py">
-    <arg name="tf_file_path" value="$(find-pkg-share individual_params)/config/camera7_calibration_results.yaml"/>
+    <arg name="tf_file_path" value="$(var param_root_dir)/camera7/camera7_calibration_results.yaml"/>
   </include>  
 
 

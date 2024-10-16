@@ -1,0 +1,8 @@
+lidar_rear:
+  camera4/camera_link:
+    x: 0.266386
+    y: 0.050833
+    z: -0.106112
+    roll: -0.000007
+    pitch: 0.016548
+    yaw: -0.021176
