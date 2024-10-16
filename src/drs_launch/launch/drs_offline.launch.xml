@@ -39,15 +39,12 @@
     <arg name="host_ip" value="192.168.3.2"/>
   </include>
 
-  <!-- LiDAR concatenate -->
-  <node pkg="pointcloud_concatenate" exec="offset_concatenate_pointclouds_node" name="point_cloud_offset_concatenator" output="screen">
-    <param name="output_frame" value="base_link"/>
-    <param name="input_topics" value="['/sensing/lidar/front/nebula_points', '/sensing/lidar/left/nebula_points', '/sensing/lidar/right/nebula_points', '/sensing/lidar/rear/nebula_points']"/>
-    <param name="input_offset_msec" value="[0.0, 0.0, 0.0, 0.0]"/>
-    <param name="angle_range_deg" value="[-33.5, 35.0]"/>
-    <param name="angle_limit_lidar_index" value="0"/>
-    <remap from="output" to="/sensing/lidar/concatenated/pointcloud"/>
-  </node>
+  <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">
+    <arg name="base_frame" value="base_link"/>
+    <arg name="use_intra_process" value="true"/>
+    <arg name="use_multithread" value="true"/>
+    <arg name="use_pointcloud_container" value="false"/>
+  </include>
 
   <node pkg="tf2_ros" exec="static_transform_publisher" name="extrinsic_publisher"
           args="--frame-id base_link --child-frame-id drs_base_link --x 0.6895 --y 0.0 --z 1.971 --yaw 0.000 --pitch -0.020, --roll 0.000"/>
