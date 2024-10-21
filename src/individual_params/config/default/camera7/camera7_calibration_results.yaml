@@ -1,8 +1,8 @@
 lidar_left:
   camera7/camera_link:
-    x: 0.091
-    y: -0.119
+    x: 0.081
+    y: -0.159
     z: -0.064
-    roll: 0.017
-    pitch: 0.449
+    roll: 0.011
+    pitch: 0.444
     yaw: -0.522
