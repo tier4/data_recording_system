@@ -56,6 +56,7 @@
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="sensor_ip" value="192.168.3.204"/>
     <arg name="host_ip" value="192.168.3.2"/>
+    <arg name="data_port" value="2371"/>
   </include>
 
   <!-- INS -->

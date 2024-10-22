@@ -40,10 +40,13 @@
   </include>
 
   <!-- front LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
-    <arg name="lidar_position" value="front"/>
-    <arg name="lidar_model" value="Aeries2"/>
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+    <arg name="lidar_position" value="rear"/>
+    <arg name="lidar_model" value="Falcon"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="sensor_ip" value="192.168.2.201"/>
+    <arg name="host_ip" value="192.168.2.1"/>
+    <arg name="data_port" value="2368"/>
   </include>
 
   <!-- right LiDAR -->
@@ -53,6 +56,7 @@
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="sensor_ip" value="192.168.3.203"/>
     <arg name="host_ip" value="192.168.3.1"/>
+    <arg name="data_port" value="2370"/>
   </include>
 
   <!-- CAN -->
