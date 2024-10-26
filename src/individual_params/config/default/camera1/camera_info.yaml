@@ -4,7 +4,7 @@ camera_name: camera1
 camera_matrix:
   rows: 3
   cols: 3
-  data: [1496.73395, 0.0, 1424.70018, 0.0, 1497.10726, 945.6712, 0.0, 0.0, 1.0]
+  data: [1519.73395, 0.0, 1413.20018, 0.0, 1527.10726, 945.6712, 0.0, 0.0, 1.0]
 distortion_model: rational_polynomial
 distortion_coefficients:
   rows: 1
