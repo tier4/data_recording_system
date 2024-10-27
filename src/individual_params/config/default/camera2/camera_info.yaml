@@ -9,7 +9,7 @@ distortion_model: rational_polynomial
 distortion_coefficients:
   rows: 1
   cols: 14
-  data: [0.32864, -0.03183, 2e-05, 0.0002, 0.00267, 0.73261, 0.0, 0.0, 0.0, 0.0, 0.0,
+  data: [0.32864, -0.03183, 0.00005, 0.0002, 0.00267, 0.73261, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0]
 projection_matrix:
   rows: 3
