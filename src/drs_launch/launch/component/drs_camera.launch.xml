@@ -44,6 +44,11 @@
         <remap from="in/compressed" to="image_raw/compressed"/>
         <remap from="out" to="image_raw"/>
       </node>
+      <node pkg="image_proc" exec="image_proc">
+        <remap from="image" to="image_raw"/>
+        <remap from="image_rect" to="image_rect_color"/>
+        <remap from="image_rect/compressed" to="image_rect_color/compressed"/>
+      </node>
     </group>
   </group>
 
