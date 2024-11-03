@@ -41,6 +41,63 @@
     <arg name="host_ip" value="192.168.3.2"/>
   </include>
 
+
+  <!-- camera0 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="0"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera1 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="1"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera2 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="2"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera3 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="3"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera4 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="4"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera5 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="5"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera6 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="6"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
+  <!-- camera7 -->
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+    <arg name="camera_id" value="7"/>
+    <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="live_sensor" value="$(var live_sensor)"/>
+  </include>
+
   <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">
     <arg name="base_frame" value="base_link"/>
     <arg name="use_intra_process" value="true"/>
