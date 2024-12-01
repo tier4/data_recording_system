@@ -5,3 +5,4 @@
     state: stopped
   register: systemd_timesyncd_service_result
   failed_when: "systemd_timesyncd_service_result is failed and 'Could not find the requested service' not in systemd_timesyncd_service_result.msg"
+  become: true

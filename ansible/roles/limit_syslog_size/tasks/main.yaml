@@ -7,3 +7,4 @@
     replace: |2-
       {
               maxsize {{ rsyslog_maxsize }}
+  become: true
