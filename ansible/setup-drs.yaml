@@ -35,9 +35,13 @@
         Enter ECU ID to be setup [0/1]
       private: false
       confirm: yes
-    - name: drs_system_uuid
+    - name: sensing_system_id
       prompt: |-
-        Enter SYSTEM UUID for this ECU
+        Enter SENSING SYSTEM ID for this DRS
+      private: false
+    - name: module_id
+      prompt: |-
+        Enter MODULE ID for this ECU
       private: false
 
   roles:

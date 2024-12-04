@@ -6,6 +6,7 @@ echo "============= start ssd_nas_sync.sh ${TIME} ==============="
 #backup SSD to NAS
 RECORD_ROOT_DIR="{{ local_storages.prefix }}"
 DEST_DIR="{{ record_root_directory }}"
+mount -a
 
 # determine source directory based on the current hour
 HOUR=$(date +"%H" | sed 's/^0//')
@@ -42,8 +43,7 @@ done
 # check if NAS is mounted
 if mount | grep -q $DEST_DIR; then
     echo "NAS is mounted. Start copying."
-    # nice -n 19 rsync -au --partial --remove-source-files $SOURCE_DIR $DEST_DIR --exclude lost+found/
-    nice -n 19 rsync -au --partial --bwlimit=100000 $SOURCE_DIR $DEST_DIR --exclude lost+found/
+    nice -n 19 rsync -au --partial --bwlimit=250000 --remove-source-files $SOURCE_DIR $DEST_DIR --exclude lost+found/
 else
     echo "Error: NAS is not mounted."
     exit 1

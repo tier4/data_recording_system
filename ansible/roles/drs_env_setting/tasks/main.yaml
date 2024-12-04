@@ -8,7 +8,8 @@
     block: |
       export DRS_ECU_ID={{ drs_ecu_id }}
       export DRS_RECORD_ROOT_DIR={{ record_root_directory }}
-      export DRS_SYSTEM_UUID={{ drs_system_uuid }}
+      export SENSING_SYSTEM_ID={{ sensing_system_id }}
+      export MODULE_ID={{ module_id }}
   become: true
 
 - name: Create DRS related directory
