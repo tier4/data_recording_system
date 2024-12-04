@@ -6,7 +6,7 @@ echo "============= start ssd_nas_sync.sh ${TIME} ==============="
 #backup SSD to NAS
 RECORD_ROOT_DIR="{{ local_storages.prefix }}"
 DEST_DIR="{{ record_root_directory }}"
-mount -a
+sudo mount -a
 
 # determine source directory based on the current hour
 HOUR=$(date +"%H" | sed 's/^0//')

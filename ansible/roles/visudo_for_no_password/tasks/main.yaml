@@ -21,3 +21,11 @@
     create: true
     mode: 0440
   become: true
+
+- name: Add sudo rule so that mount commands can be executed without password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/mount
+    line: "{{ drs_user_name }} ALL=(ALL) NOPASSWD: /usr/bin/mount"
+    create: true
+    mode: 0440
+  become: true
