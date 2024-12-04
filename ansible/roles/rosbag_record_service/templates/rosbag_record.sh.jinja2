@@ -40,5 +40,5 @@ RECORD_DIR={{ local_storages.prefix }}${SUFFIX}/ecu${DRS_ECU_ID}
 mkdir -p ${RECORD_DIR} && cd ${RECORD_DIR}
 ros2 bag record -s ${STORAGE} --storage-config-file ${MCAP_OPTIONS_FILE} \
      --max-bag-duration ${BAG_FILE_DURATION} \
-     --output ${DRS_SYSTEM_UUID}_${DRS_ECU_ID}_`date +"%Y-%m-%dT%H-%M-%S%z"` \
+     --output ${SENSING_SYSTEM_ID}_${MODULE_ID}_`date +"%Y-%m-%dT%H-%M-%S%z"` \
      --regex "${TOPICS}"

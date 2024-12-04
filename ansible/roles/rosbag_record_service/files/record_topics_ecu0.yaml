@@ -7,15 +7,17 @@ topics:
     hz_range: [18.0, 21.0]
   - name: /sensing/camera/camera3/image_raw/compressed # camera
     hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera0/camera_info # camera
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera1/camera_info # camera
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera2/camera_info # camera
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera3/camera_info # camera
+    hz_range: [1.0, 50.0]
   - name: /sensing/lidar/front/nebula_packets # LiDAR
-    hz_range: [9.0, 11.0]
+    hz_range: [9.0, 15.0]
+#  - name: /sensing/lidar/front4d/nebula_packets # LiDAR
+#    hz_range: [9.0, 15.0]
   - name: /sensing/lidar/right/nebula_packets # LiDAR
-    hz_range: [9.0, 12.0]
-  # - name: /imu/tamagawa/imu_raw # IMU data
-  #   hz_range: [190.0, 210.0]
-  # - name: /imu/tamagawa/from_can_bus # IMU raw can data
-  #   hz_range: [0.1, 2000.0]
-  # - name: /pacmod/.* # pacmod all data
-  #   hz_range: [0.1, 2000.0]
-  # - name: /vehicle/.* # vehicle data
-  #   hz_range: [10.0, 30.0]
+    hz_range: [9.0, 15.0]
