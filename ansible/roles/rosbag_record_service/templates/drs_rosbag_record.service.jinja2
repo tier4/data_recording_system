@@ -1,7 +1,7 @@
 #jinja2: trim_blocks: False
 [Unit]
 Description=Rosbag record service
-After=network-online.target {{ record_root_directory | regex_replace('^/?(\\w.+\\w)/?$', '\\1') | regex_replace('/', '-') }}.mount {%- for i in range(0, local_storages.number_of_storages) %} {{ (local_storages.prefix + '{}'.format(loop.index)) | regex_replace('^/?(\\w.+\\w)/?$', '\\1') | regex_replace('/', '-') }}.mount {%- endfor %}
+After=network-online.target {%- for i in range(0, local_storages.number_of_storages) %} {{ (local_storages.prefix + '{}'.format(loop.index)) | regex_replace('^/?(\\w.+\\w)/?$', '\\1') | regex_replace('/', '-') }}.mount {%- endfor %}
 
 [Service]
 Type=simple
