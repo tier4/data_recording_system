@@ -26,10 +26,11 @@
         <arg name="accelerated_image_processor_param_path" value="$(var camera_param_dir)/accelerated_image_processor.param.yaml"/>
       </include>
 
-      <!-- <!-\- Launch TF static publisher for camera and LiDAR -\-> -->
-      <!-- <include file="$(find-pkg-share drs_launch)/launch/component/lidar_camera_tf_publisher.launch.py"> -->
-      <!--   <arg name="tf_file_path" value="$(var camera_param_dir)/lidar_to_camera.json"/> -->
-      <!-- </include> -->
+      <!-- Launch TF periodic publisher for camera and LiDAR -->
+      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
+        <arg name="tf_file_path" value="$(var camera_param_dir)/camera$(var camera_id)_calibration_results.yaml"/>
+      </include>
+
       <!-- Execute readout setter -->
       <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_$(var camera_id)">
         <param from="$(var camera_param_dir)/readout_delay.param.yaml"/>
