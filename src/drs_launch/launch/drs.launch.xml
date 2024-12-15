@@ -4,10 +4,13 @@
   <arg name="drs_ecu_id" default="$(env DRS_ECU_ID)"/>
   <arg name="live_sensor" default="True"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
+  <arg name="publish_pointcloud" default="False"
+       description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
   </include>
 
 </launch>

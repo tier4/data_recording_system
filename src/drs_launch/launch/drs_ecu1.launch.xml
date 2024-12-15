@@ -1,6 +1,7 @@
 <launch>
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="True"/>
+  <arg name="publish_pointcloud" default="False"/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
@@ -44,6 +45,7 @@
     <arg name="lidar_position" value="rear"/>
     <arg name="lidar_model" value="Falcon"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
     <arg name="sensor_ip" value="192.168.2.202"/>
     <arg name="host_ip" value="192.168.2.2"/>
     <arg name="data_port" value="2369"/>
@@ -54,6 +56,7 @@
     <arg name="lidar_position" value="left"/>
     <arg name="lidar_model" value="RobinW"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
     <arg name="sensor_ip" value="192.168.3.204"/>
     <arg name="host_ip" value="192.168.3.2"/>
   </include>
