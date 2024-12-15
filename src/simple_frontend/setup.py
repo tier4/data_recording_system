@@ -14,6 +14,8 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'),
          glob(os.path.join('launch', '*.launch.xml'))),
+        (os.path.join('share', package_name, 'resource'),
+         glob(os.path.join('resource', '*.svg'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +28,7 @@ setup(
         'console_scripts': [
             'simple_frontend = ' + package_name + '.simple_frontend:main',
             'switch_monitor = ' + package_name + '.switch_monitor:main',
+            'software_switch_monitor = ' + package_name + '.software_switch_monitor:main',
         ],
     },
 )
