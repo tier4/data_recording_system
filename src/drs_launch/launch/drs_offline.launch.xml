@@ -5,14 +5,29 @@
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="True"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
+  <arg name="has_front4d" default="False"
+       description="Should be True when a front-mounted 4D LiDAR is present"/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
+  <!-- front 4D LiDAR -->
+  <group if="$(var has_front4d)">
+    <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
+      <arg name="lidar_position" value="front4d"/>
+      <arg name="lidar_model" value="Aeries2"/>
+      <arg name="live_sensor" value="$(var live_sensor)"/>
+    </include>
+  </group>
+
   <!-- front LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
     <arg name="lidar_position" value="front"/>
-    <arg name="lidar_model" value="Aeries2"/>
+    <arg name="lidar_model" value="Falcon"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
+    <arg name="sensor_ip" value="192.168.2.201"/>
+    <arg name="host_ip" value="192.168.2.1"/>
+    <arg name="data_port" value="2368"/>
   </include>
 
   <!-- right LiDAR -->

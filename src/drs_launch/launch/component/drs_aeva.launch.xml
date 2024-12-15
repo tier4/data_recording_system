@@ -1,6 +1,6 @@
 <launch>
   <arg name="live_sensor"/>
-  <arg name="lidar_position" default="front"/>
+  <arg name="lidar_position" default="front4d"/>
   <arg name="lidar_model"  default="Aeries2"/>
   <arg name="config_file" default="$(find-pkg-share individual_params)/config/default/aeva_lidar.param.yaml"/>
 

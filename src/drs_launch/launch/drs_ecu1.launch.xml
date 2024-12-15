@@ -2,6 +2,7 @@
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="True"/>
   <arg name="publish_pointcloud" default="False"/>
+  <arg name="has_front4d" default="False"/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 

@@ -6,11 +6,14 @@
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="False"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
+  <arg name="has_front4d" default="False"
+       description="Should be True when a front-mounted 4D LiDAR is present"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
+    <arg name="has_front4d" value="$(var has_front4d)"/>
   </include>
 
 </launch>

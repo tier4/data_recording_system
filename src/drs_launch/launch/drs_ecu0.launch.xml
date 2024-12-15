@@ -2,6 +2,7 @@
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="True"/>
   <arg name="publish_pointcloud" default="False"/>
+  <arg name="has_front4d" default="False"/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
@@ -40,11 +41,24 @@
     <arg name="live_sensor" value="$(var live_sensor)"/>
   </include>
 
+  <!-- front 4D LiDAR -->
+  <group if="$(var has_front4d)">
+    <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
+      <arg name="lidar_position" value="front4d"/>
+      <arg name="lidar_model" value="Aeries2"/>
+      <arg name="live_sensor" value="$(var live_sensor)"/>
+    </include>
+  </group>
+
   <!-- front LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_aeva.launch.xml">
+  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
     <arg name="lidar_position" value="front"/>
-    <arg name="lidar_model" value="Aeries2"/>
+    <arg name="lidar_model" value="Falcon"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
+    <arg name="sensor_ip" value="192.168.2.201"/>
+    <arg name="host_ip" value="192.168.2.1"/>
+    <arg name="data_port" value="2368"/>
   </include>
 
   <!-- right LiDAR -->
