@@ -1,6 +1,14 @@
 <launch>
-  <node pkg="simple_frontend" exec="switch_monitor" name="switch_monitor">
-  </node>
+  <arg name="has_mechanical_switch" default="False"/>
+
+  <group if="$(var has_mechanical_switch)">
+    <node pkg="simple_frontend" exec="switch_monitor" name="switch_monitor">
+    </node>
+  </group>
+  <group unless="$(var has_mechanical_switch)">
+    <node pkg="simple_frontend" exec="software_switch_monitor" name="switch_monitor">
+    </node>
+  </group>
 
   <node pkg="simple_frontend" exec="simple_frontend" name="simple_frontend">
     <param name="usage_monitored_disk" value="$(env DRS_RECORD_ROOT_DIR)"/>
