@@ -10,9 +10,9 @@ from dataclasses import dataclass
 import gpiod
 import threading
 from datetime import timedelta
-from os.path import expanduser
-from pathlib import Path
-import subprocess
+
+from .switch_monitor_base import SwitchMonitorBase
+
 
 @dataclass
 class GpioSpecifier:
@@ -32,14 +32,9 @@ class Gpio:
     power_supply: GpioSpecifier =  GpioSpecifier(chip_number=0,
                                                  line=143)
 
-@dataclass
-class RemoteHost:
-    ip: str
-    user: str
-
-class SwitchMonitor(Node):
+class SwitchMonitor(Node, SwitchMonitorBase):
     def __init__(self):
-        super().__init__('switch_monitor')
+        Node.__init__(self, 'switch_monitor')
 
         self.long_push_sec_threshold = self.declare_parameter(name='long_push_sec_threshold',
                                                               value=5).value
@@ -98,76 +93,15 @@ class SwitchMonitor(Node):
                     if elapsed_in_sec < self.long_push_sec_threshold:
                         # Short push: restart service
                         print(f'short press: {elapsed_in_sec}')
-                        self.__restart_drs_launch_services()
-                        self.__restart_drs_rosbag_record_services()
+                        self.restart_drs_launch_services()
+                        self.restart_drs_rosbag_record_services()
                     else:
                         # Long push: system shutdown
                         print(f'long press: {elapsed_in_sec}')
-                        self.__shutdown_drs_components()
+                        self.shutdown_drs_components()
                     msg = std_msgs.msg.Bool()
                     msg.data = True
                     self.fall_edge_pub.publish(msg)
-
-    def __generate_ssh_command(self, ip: str, user: str, cmd: str):
-        # suppress prompt to trust hosts for the first connection
-        ssh_option = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-
-        # The key should be registered during setup
-        ssh_key = Path(expanduser('~'))/'.ssh'/'drs_rsa'
-
-        return f'ssh {ssh_option} -i {ssh_key} {user}@{ip} {cmd}'
-
-    def __restart_drs_launch_services(self):
-        """
-        Very rough implementation to restart drs_launch.service on each ECU
-        """
-        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
-        # without password
-        restart_cmd = 'sudo systemctl restart drs_launch.service'
-
-        targets = [
-            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
-            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0
-        ]
-
-        for t in targets:
-            cmd = self.__generate_ssh_command(t.ip, t.user, restart_cmd)
-            subprocess.Popen(cmd, shell=True)  # execute in background
-
-    def __restart_drs_rosbag_record_services(self):
-        """
-        Very rough implementation to restart drs_rosbag_record.service on each ECU
-        """
-        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
-        # without password
-        restart_cmd = 'sudo systemctl restart drs_rosbag_record.service'
-
-        targets = [
-            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
-            RemoteHost(ip='192.168.20.1', user='nvidia'),  # ECU#0
-        ]
-
-        for t in targets:
-            cmd = self.__generate_ssh_command(t.ip, t.user, restart_cmd)
-            subprocess.Popen(cmd, shell=True)  # execute in background
-
-    def __shutdown_drs_components(self):
-        """
-        Very rough implementation to shutdown each ECU components gently
-        """
-        # The command should be registerd in /etc/sudoers.d/ so that the user can execute it
-        # without password
-        poweroff_cmd = 'sudo poweroff'
-
-        targets = [
-            RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
-            RemoteHost(ip='192.168.10.100', user='root'),  # NAS
-            RemoteHost(ip='192.168.10.1', user='nvidia'),  # ECU#0, this entry have to come at the very last!
-        ]
-
-        for t in targets:
-            cmd = self.__generate_ssh_command(t.ip, t.user, poweroff_cmd)
-            subprocess.run(cmd, shell=True, capture_output=False)
 
 def main(args=None):
     rclpy.init(args=args)
