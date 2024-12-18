@@ -63,6 +63,24 @@
     <arg name="launch_driver" value="$(var live_sensor)"/>
   </include>
 
+  <!-- TF for each LiDARs -->
+  <group if="$(var live_sensor)">
+    <group> <!-- guard by group not to polute argument dict by multiple calling-->
+      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
+        <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
+        <arg name="target_frame" value="lidar_rear"/>
+        <arg name="publish_camera_optical_link" value="False"/>
+      </include>
+    </group>
+    <group>
+      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
+        <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
+        <arg name="target_frame" value="lidar_left"/>
+        <arg name="publish_camera_optical_link" value="False"/>
+      </include>
+    </group>
+  </group>
+
   <!-- topic monitor -->
   <group scoped="True">
     <!-- To prevent topic monitor communicate over network, set LOCALHOST_ONLY=1 -->
