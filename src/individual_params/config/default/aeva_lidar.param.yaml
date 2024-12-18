@@ -1,8 +1,8 @@
 /**:
   ros__parameters:
-    sensor_ip: 192.168.2.201
+    sensor_ip: 192.168.2.200
     launch_hw: true
-    frame_id: lidar_front
+    frame_id: lidar_front4d
     sensor_model: Aeries2
     setup_sensor: true
     diag_span: 1000

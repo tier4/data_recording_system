@@ -2,6 +2,7 @@
   <arg name="lidar_position"/>
   <arg name="lidar_model"/>
   <arg name="live_sensor"/>
+  <arg name="publish_pointcloud" default="True"/>
   <arg name="return_mode" default="Dual"/>
   <arg name="scan_phase" default="0.0"/>
   <arg name="min_range" default="0.0"/>
@@ -32,6 +33,7 @@
       <param name="max_range" value="$(var max_range)"/>
       <param name="sensor_ip" value="$(var sensor_ip)"/>
       <param name="launch_hw" value="$(var live_sensor)"/>
+      <param name="publish_pointcloud" value="$(var publish_pointcloud)"/>
       <param name="host_ip" value="$(var host_ip)"/>
       <param name="data_port" value="$(var data_port)"/>
       <param name="setup_sensor" value="$(var setup_sensor)"/>
