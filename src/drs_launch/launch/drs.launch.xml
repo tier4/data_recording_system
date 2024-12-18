@@ -8,12 +8,15 @@
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
   <arg name="has_front4d" default="False"
        description="Should be True when a front-mounted 4D LiDAR is present"/>
+  <arg name="publish_tf" default="True"
+       description="Should be False when LiDAR-camera extrinsic calibration"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
     <arg name="has_front4d" value="$(var has_front4d)"/>
+    <arg name="publish_tf" value="$(var publish_tf)"/>
   </include>
 
 </launch>

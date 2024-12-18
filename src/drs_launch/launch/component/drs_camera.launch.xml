@@ -2,6 +2,7 @@
   <arg name="camera_id"/>
   <arg name="param_root_dir"/>
   <arg name="live_sensor"/>
+  <arg name="publish_tf" default="True"/>
 
   <group>
     <let name="camera_name" value="camera$(var camera_id)"/>
@@ -27,9 +28,11 @@
       </include>
 
       <!-- Launch TF periodic publisher for camera and LiDAR -->
-      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
-        <arg name="tf_file_path" value="$(var camera_param_dir)/camera$(var camera_id)_calibration_results.yaml"/>
-      </include>
+      <group if="$(var publish_tf)">
+        <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
+          <arg name="tf_file_path" value="$(var camera_param_dir)/camera$(var camera_id)_calibration_results.yaml"/>
+        </include>
+      </group>
 
       <!-- Execute readout setter -->
       <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_$(var camera_id)">

@@ -3,6 +3,7 @@
   <arg name="live_sensor" default="True"/>
   <arg name="publish_pointcloud" default="False"/>
   <arg name="has_front4d" default="False"/>
+  <arg name="publish_tf" default="True"/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
@@ -18,6 +19,7 @@
     <arg name="camera_id" value="4"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_tf" value="$(var publish_tf)"/>
   </include>
 
   <!-- camera5 -->
@@ -25,6 +27,7 @@
     <arg name="camera_id" value="5"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_tf" value="$(var publish_tf)"/>
   </include>
 
   <!-- camera6 -->
@@ -32,6 +35,7 @@
     <arg name="camera_id" value="6"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_tf" value="$(var publish_tf)"/>
   </include>
 
   <!-- camera7 -->
@@ -39,6 +43,7 @@
     <arg name="camera_id" value="7"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
+    <arg name="publish_tf" value="$(var publish_tf)"/>
   </include>
 
   <!-- rear LiDAR -->
@@ -68,7 +73,7 @@
   </include>
 
   <!-- TF for each LiDARs -->
-  <group if="$(var live_sensor)">
+  <group if="$(var publish_tf)">
     <group> <!-- guard by group not to polute argument dict by multiple calling-->
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
