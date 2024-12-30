@@ -41,6 +41,7 @@
       <param name="ptp_profile" value="$(var ptp_profile)"/>
       <param name="ptp_transport_type" value="$(var ptp_transport_type)"/>
       <param name="ptp_switch_type" value="$(var ptp_switch_type)"/>
+      <param name="calibration_file_path" value=""/>
     </node>
   </group>
 </launch>
