@@ -1,4 +1,4 @@
-lidar_front_tmp:
+lidar_front:
   camera1/camera_link:
     x: 0.107219
     y: -0.015238

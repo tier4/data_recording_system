@@ -26,5 +26,5 @@ drs_base_link:
     z: -0.0702
     roll: 0.005
     pitch: 0.000
-    yaw: -1.5708
+    yaw: 0.0 #-1.5708
 
