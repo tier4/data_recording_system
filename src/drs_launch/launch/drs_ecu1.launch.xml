@@ -67,6 +67,7 @@
     <arg name="calibration_file_path" value=""/>
     <arg name="sensor_ip" value="192.168.3.204"/>
     <arg name="host_ip" value="192.168.3.2"/>
+    <arg name="data_port" value="8010"/>
   </include>
 
   <!-- INS -->
