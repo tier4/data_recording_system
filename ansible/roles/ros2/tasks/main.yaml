@@ -309,7 +309,7 @@
       block:
         - name: "Boost: Donwload and extract source"
           ansible.builtin.unarchive:
-            src: https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz
+            src: https://archives.boost.io/release/1.74.0/source/boost_1_74_0.tar.gz
             dest: /tmp
             remote_src: true
         - name: "Boost: build boost"
