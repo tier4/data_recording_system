@@ -2,15 +2,15 @@ repositories:
   dependencies/sensor_trigger:
     type: git
     url: https://github.com/tier4/sensor_trigger.git
-    version: refactor/simplify-libgpiod-implementation
+    version: c916f3c0233ccb29f3ef584c1180d37ec311c365
   dependencies/ros2_v4l2_camera:
     type: git
     url: https://github.com/tier4/ros2_v4l2_camera.git
-    version: galactic
+    version: 37b5fd0b7f7df173e77ed0dd48242223fad9c0cb
   dependencies/ros-topic-monitor:
     type: git
     url: git@github.com:tier4/ros-topic-monitor.git
-    version: drs
+    version: ec773045ac7198b29967e75a2194b6baa5bb2ae7
   dependencies/ros2_socketcan:
     type: git
     url: git@github.com:autowarefoundation/ros2_socketcan.git
@@ -30,7 +30,7 @@ repositories:
   dependencies/accelerated_image_processor:
     type: git
     url: git@github.com:tier4/accelerated_image_processor.git
-    version: perf/modify_cuda_utilization
+    version: 50913f395f22f850162dccee4094c4aa5a99844d
   dependencies/velodyne:
     type: git
     url: git@github.com:ros-drivers/velodyne.git
@@ -38,20 +38,20 @@ repositories:
   dependencies/nebula:
     type: git
     url: https://github.com/tier4/nebula_drs.git
-    version: aeva_seyond
+    version: 73b6f2f75bb602bf7dfabc988a2da6b3c16b0f3b
   dependencies/transport_drivers:
     type: git
     url: https://github.com/mojomex/transport_drivers
-    version: mutable-buffer-in-udp-callback
+    version: abf8aa8e171f33e0acd6d845c3d795192c964e9c
   dependencies/oxts_ros2_driver:
     type: git
     url: https://github.com/tier4/oxts_ros2_driver.git
-    version: feat/data_recording_system
+    version: 50931b3f8637bc2c379bf66e2a4a082b3fa2ecd5
   dependencies/tamagawa_imu_driver:
     type: git
     url: https://github.com/tier4/tamagawa_imu_driver.git
-    version: ros2
+    version: de4bf6be79aa2968cf2f62e0ebe1ff8a5797e6ad
   dependencies/pacmod_interface:
     type: git
     url: https://github.com/tier4/pacmod_interface.git
-    version: feat/comlops_drs
+    version: 4c9cf557810f11a7b5527f6f37fdd5022ce18185
