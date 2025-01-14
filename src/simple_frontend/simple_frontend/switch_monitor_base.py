@@ -69,7 +69,7 @@ class SwitchMonitorBase(metaclass=ABCMeta):
 
         targets = [
             RemoteHost(ip='192.168.20.2', user='nvidia'),  # ECU#1
-            RemoteHost(ip='192.168.10.100', user='root'),  # NAS
+            RemoteHost(ip='192.168.10.100', user='comlops'),  # NAS
             RemoteHost(ip='192.168.10.1', user='nvidia'),  # ECU#0, this entry have to come at the very last!
         ]
 
