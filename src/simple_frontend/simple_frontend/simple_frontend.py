@@ -92,6 +92,9 @@ class SimpleFrontend(Node):
 
         # Get switch_monitor information
         parameter_client = self.create_client(GetParameters, '/switch_monitor/get_parameters')
+        while not parameter_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info("Service has not been available. Wait again...",
+                                   throttle_duration_sec=1)
         request = GetParameters.Request()
         request.names = ['long_push_sec_threshold']
         future = parameter_client.call_async(request)
