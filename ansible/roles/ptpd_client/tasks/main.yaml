@@ -6,9 +6,9 @@
   become: true
 
 - name: Copy service template file
-  ansible.builtin.copy:
-    src: ptpd_slave@.service
-    dest: /etc/systemd/system/
+  ansible.builtin.template:
+    src: ptpd_slave@.service.jinja2
+    dest: /etc/systemd/system/ptpd_slave@.service
   become: true
 
 - name: Install ptpd client service file
