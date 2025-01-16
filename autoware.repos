@@ -55,3 +55,7 @@ repositories:
     type: git
     url: https://github.com/tier4/pacmod_interface.git
     version: feat/comlops_drs
+  c2_readout_delay_setter:
+    type: git
+    url: git@github.com:tier4/c2_readout_delay_setter.git
+    version: main
