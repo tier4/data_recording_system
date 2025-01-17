@@ -1,0 +1,11 @@
+- name: Install utility packages via apt
+  ansible.builtin.apt:
+    name:
+      - nmon
+      - vnstat
+      - tmux
+      - tcpdump
+      - ethtool
+      - v4l-utils
+    update_cache: true
+  become: true
