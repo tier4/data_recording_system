@@ -58,4 +58,4 @@ repositories:
   c2_readout_delay_setter:
     type: git
     url: git@github.com:tier4/c2_readout_delay_setter.git
-    version: main
+    version: feat/drs
