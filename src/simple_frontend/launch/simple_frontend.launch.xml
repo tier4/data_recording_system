@@ -6,11 +6,11 @@
     </node>
   </group>
   <group unless="$(var has_mechanical_switch)">
-    <node pkg="simple_frontend" exec="software_switch_monitor" name="switch_monitor">
+    <node pkg="simple_frontend" exec="software_switch_monitor" name="switch_monitor" respawn="true">
     </node>
   </group>
 
-  <node pkg="simple_frontend" exec="simple_frontend" name="simple_frontend">
+  <node pkg="simple_frontend" exec="simple_frontend" name="simple_frontend" respawn="true">
     <param name="usage_monitored_disk" value="$(env DRS_RECORD_ROOT_DIR)"/>
   </node>
 </launch>
