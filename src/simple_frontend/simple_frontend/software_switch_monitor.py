@@ -10,9 +10,23 @@ from PySide2.QtWidgets import (QPushButton, QApplication, QGridLayout, QWidget)
 from PySide2.QtGui import QIcon, QPixmap, QPainter
 from PySide2.QtSvg import QSvgRenderer
 from PySide2.QtCore import QSize
+from PySide2 import QtCore
 
 from .switch_monitor_base import SwitchMonitorBase
 
+class UiEventFilter(QtCore.QObject):
+    def __init__(self, close_fn):
+        super().__init__()
+        self.close_fn = close_fn
+
+    def eventFilter(self, widget, event):
+        if event.type() == QtCore.QEvent.Close:
+            # Catch close event
+            # https://stackoverflow.com/questions/72133476/pyqt5-how-to-reimplement-close-event-in-event-filter
+            self.close_fn()
+            return True
+        else:
+            return False        # make it unhandled (= pass through)
 
 class SoftwareSwitchMonitor(Node, SwitchMonitorBase):
     def __init__(self):
@@ -27,6 +41,10 @@ class SoftwareSwitchMonitor(Node, SwitchMonitorBase):
         self.app = QApplication(sys.argv)
 
         self.top_widget = QWidget()
+        self.close_filter = UiEventFilter(close_fn=self.terminate)
+        # When windows is closed, ROS process will also be shutdown
+        self.top_widget.installEventFilter(self.close_filter)
+
         layout = QGridLayout()
 
         self.software_switch = SoftwareSwitch(
@@ -69,6 +87,10 @@ class SoftwareSwitchMonitor(Node, SwitchMonitorBase):
         msg.data = True
         self.fall_edge_pub.publish(msg)
 
+    def terminate(self):
+        # Terminate ROS process from inside node
+        # https://answers.ros.org/question/406469/ros-2-how-to-quit-a-node-from-within-a-callback/
+        raise SystemExit
 
 class SoftwareSwitch(QPushButton):
     def __init__ (self, text='', parent=None, svg_path=''):
