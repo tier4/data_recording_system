@@ -10,9 +10,15 @@
     path: "{{ record_root_directory }}"
     state: directory
 
+- name: Set NAS IP address according to the drs_ecu_id
+  ansible.builtin.set_fact:
+    NAS_ip_address: "{{ '192.168.10.' ~ (final_octet | int) }}"
+  vars:
+    final_octet: "{{ 100 if drs_ecu_id == '0' else 101 }}"
+
 - name: Configure auto mount NAS
   ansible.posix.mount:
-    src: 192.168.10.100:/data
+    src: "{{ NAS_ip_address }}:/data"
     path: "{{ record_root_directory }}"
     fstype: nfs
     opts: v4.1,user,rw,x-systemd.automount,x-systemd.requires=network-online.target
