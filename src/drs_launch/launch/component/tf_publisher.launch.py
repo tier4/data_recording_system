@@ -61,6 +61,7 @@ def launch_setup(context, *args, **kwargs):
     target_frame = LaunchConfiguration('target_frame').perform(context)
     publish_camera_optical_link = LaunchConfiguration('publish_camera_optical_link')
     interval_sec = LaunchConfiguration('broadcast_interval_sec').perform(context)
+    publish_static_tf = LaunchConfiguration('publish_static_tf')
 
     launch_config_to_bool = lambda conf: bool(strtobool(conf.perform(context)))
 
@@ -87,12 +88,19 @@ def launch_setup(context, *args, **kwargs):
     else:
         camera_id = ''
 
+    if launch_config_to_bool(publish_static_tf):
+        package_name = 'tf2_ros'
+        node_name = 'static_transform_publisher'
+    else:
+        package_name = 'periodic_transform_publisher'
+        node_name = 'periodic_transform_publisher'
+
     return [
         Node(
             # name=f'lidar_camera_tf_publisher{camera_id}',
             # periodic_transform_publisher assigns unique node name with random postfix
-            package='periodic_transform_publisher',
-            executable='periodic_transform_publisher',
+            package=package_name,
+            executable=node_name,
             arguments=[
                 '--x', str(tf_data['transform']['translation']['x']),
                 '--y', str(tf_data['transform']['translation']['y']),
@@ -109,8 +117,8 @@ def launch_setup(context, *args, **kwargs):
             }]),
         Node(
             name=f'periodic_camera_optical_link_publisher{camera_id}',
-            package='periodic_transform_publisher',
-            executable='periodic_transform_publisher',
+            package=package_name,
+            executable=node_name,
             arguments=[
                 '--x', '0.0',
                 '--y', '0.0',
@@ -136,6 +144,7 @@ def generate_launch_description():
             DeclareLaunchArgument("target_frame", default_value=''),
             DeclareLaunchArgument("publish_camera_optical_link", default_value='True'),
             DeclareLaunchArgument("broadcast_interval_sec", default_value='1.0'),
+            DeclareLaunchArgument("publish_static_tf", default_value='False'),
             OpaqueFunction(function=launch_setup)
         ]
     )

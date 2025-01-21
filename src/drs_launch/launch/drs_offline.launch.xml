@@ -12,6 +12,7 @@
   <arg name="has_front4d" default="False"
        description="Should be True when a front-mounted 4D LiDAR is present"/>
   <arg name="publish_tf" default="True"/>
+  <arg name="publish_static_tf" default="False" description="If true, /tf_static will be published. If false, /tf will be published periodically."/>
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
@@ -139,6 +140,7 @@
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/base_link_to_drs_base_link.yaml"/>
         <arg name="publish_camera_optical_link" value="False"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
@@ -146,6 +148,7 @@
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
         <arg name="target_frame" value="lidar_front"/>
         <arg name="publish_camera_optical_link" value="False"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
@@ -153,6 +156,7 @@
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
         <arg name="target_frame" value="lidar_left"/>
         <arg name="publish_camera_optical_link" value="False"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
@@ -160,6 +164,7 @@
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
         <arg name="target_frame" value="lidar_right"/>
         <arg name="publish_camera_optical_link" value="False"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
@@ -167,46 +172,55 @@
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
         <arg name="target_frame" value="lidar_rear"/>
         <arg name="publish_camera_optical_link" value="False"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera0/camera0_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera1/camera1_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera2/camera2_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera3/camera3_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera4/camera4_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera5/camera5_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera6/camera6_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
     <group>
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/camera7/camera7_calibration_results.yaml"/>
+        <arg name="publish_static_tf" value="$(var publish_static_tf)"/>
       </include>
     </group>
   </group>
