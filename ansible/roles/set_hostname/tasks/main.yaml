@@ -1,0 +1,4 @@
+- name: name hostname according to the drs_ecu_id value
+  ansible.builtin.hostname:
+    name: "anvil{{ ( drs_ecu_id | int) + 1 }}"
+  become: true
