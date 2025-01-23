@@ -102,7 +102,7 @@ class SoftwareSwitch(QPushButton):
     def update_icon(self):
         size = QSize(128, 128)
         pixmap = QPixmap(size)
-        pixmap.fill(0)
+        pixmap.fill(QtCore.Qt.transparent)
         painter = QPainter(pixmap)
         self.svg_renderer.render(painter)
         painter.end()
