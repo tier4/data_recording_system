@@ -21,3 +21,5 @@ topics:
 #    hz_range: [9.0, 15.0]
   - name: /sensing/lidar/right/nebula_packets # LiDAR
     hz_range: [9.0, 15.0]
+  - name: /tf_static # tf
+    hz_range: [1.0, 50.0]
