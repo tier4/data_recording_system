@@ -10,7 +10,7 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
-#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 
 std::string get_unique_node_name()
@@ -67,7 +67,7 @@ class Broadcaster : public rclcpp::Node
       throw std::runtime_error("child_frame_id cannot equal frame_id");
     }
 
-    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*this);
     timer_ = rclcpp::create_timer(this, get_clock(), rclcpp::Duration::from_seconds(interval_sec),
                                   std::bind(&Broadcaster::callback, this));
   }
@@ -79,7 +79,7 @@ class Broadcaster : public rclcpp::Node
 
  protected:
   geometry_msgs::msg::TransformStamped tf_msg_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::StaticTransformBroadcaster> tf_broadcaster_;
   rclcpp::TimerBase::SharedPtr timer_;
 
 };
