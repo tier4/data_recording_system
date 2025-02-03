@@ -1,0 +1,12 @@
+- name: Ensure target group exists
+  ansible.builtin.group:
+    name: "{{ target_group }}"
+    state: present
+  become: true
+
+- name: Add user to target group
+  ansible.builtin.user:
+    name: "{{ drs_user_name }}"
+    groups: "{{ target_group }}"
+    append: true
+  become: true
