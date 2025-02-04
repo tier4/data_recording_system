@@ -56,6 +56,9 @@
     - role: auto_storage_mount
     - role: set_local_multicast
     - role: cgroups
+    - role: add_user_to_group
+      vars:
+        target_group: gpio
     - role: can_network_setting
       when: drs_ecu_id == '0'
     - role: enable_auto_login
