@@ -81,16 +81,11 @@
 
   <!-- CAN -->
   <!-- vehicle interface -->
-  <group if="$(var live_sensor)">
+  <!-- <group if="$(var live_sensor)">
     <include file="$(find-pkg-share drs_launch)/launch/component/can_interface.launch.xml">
       <arg name="vehicle_id" value="$(var vehicle_id)"/>
     </include>
-  </group>
-
-  <!-- IMU -->
-  <!-- <include file="$(find-pkg-share drs_launch)/launch/component/imu.launch.xml"> -->
-  <!--   <arg name="launch_driver" value="$(var live_sensor)"/> -->
-  <!-- </include> -->
+  </group> -->
 
   <!-- TF for each LiDARs and base_link to drs_base_link -->
   <group if="$(var publish_tf)">
