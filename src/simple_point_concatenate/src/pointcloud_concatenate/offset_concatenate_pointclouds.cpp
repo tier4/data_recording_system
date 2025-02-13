@@ -324,6 +324,10 @@ void PointCloudOffsetConcatenationComponent::cloud_callback(
   }
   sensor_msgs::msg::PointCloud2::SharedPtr transformed_in_cloud_ptr(new sensor_msgs::msg::PointCloud2());
   transformPointCloud(input, transformed_in_cloud_ptr);
+  if (transformed_in_cloud_ptr->width == 0) {
+    RCLCPP_WARN(this->get_logger(), "Received an empty pointcloud message from topic: %s", topic.c_str());
+    return;
+  }
   convertToXYZIICloud(transformed_in_cloud_ptr, xyzii_input_ptr, static_cast<uint8_t>(topic_index));
 
   auto points_stamp_msec = input_ptr->header.stamp.sec * 1e3 + input_ptr->header.stamp.nanosec / 1e6;
