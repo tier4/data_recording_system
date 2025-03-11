@@ -1,9 +1,9 @@
 base_link:
   drs_base_link:
-    x: 0.6895
+    x: 0.8631
     y: 0.0
-    z: 1.971
+    z: 1.73675
     roll: 0.000
-    pitch: -0.020
+    pitch: 0.000
     yaw: 0.000
 
