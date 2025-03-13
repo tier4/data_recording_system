@@ -9,7 +9,7 @@
        description="File path for calibration file path of right Robin LiDAR - only needed for A sample device data"/>
   <arg name="calibration_file_path_left" default=""
        description="File path for calibration file path of left Robin LiDAR - only needed for A sample device data"/>
-  <arg name="has_front4d" default="False"
+  <arg name="has_front4d" default="True"
        description="Should be True when a front-mounted 4D LiDAR is present"/>
   <arg name="publish_tf" default="True"/>
 
@@ -109,6 +109,13 @@
       <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
         <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
         <arg name="target_frame" value="lidar_rear"/>
+        <arg name="publish_camera_optical_link" value="False"/>
+      </include>
+    </group>
+    <group if="$(var has_front4d)">
+      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
+        <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
+        <arg name="target_frame" value="lidar_front4d"/>
         <arg name="publish_camera_optical_link" value="False"/>
       </include>
     </group>
