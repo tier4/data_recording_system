@@ -24,20 +24,32 @@ echo "destination directory: $DEST_DIR"
 find "$SOURCE_DIR" -type d -empty -print -delete
 
 # check if rsync process is running
-process=$(pgrep rsync | wc -l)
+max_retries=5
+retry_count=0
+process=$(pgrep -x rsync | wc -l)
 echo "existing process num: $process"
-while [ "$process" -gt 1 ]; do
-    # kill existing rsync process
-    ps aux | grep rsync | grep -v grep | awk '{ print "kill ", $2 }' | sh
+while [ "$process" -gt 0 ]; do
+    echo "Stopping existing rsync processes..."
+    kill -9 $(pgrep -x rsync)
+
+    # increment retry count
+    retry_count=$((retry_count + 1))
+
+    # check if max retries reached
+    if [ "$retry_count" -ge "$max_retries" ]; then
+        echo "Max retries reached. Exiting the loop."
+        break
+    fi
+
     sleep 1
-    process=$(pgrep rsync | wc -l)
+    process=$(pgrep -x rsync | wc -l)
     echo "existing process num: $process"
 done
 
 # check if NAS is mounted
 if mount | grep -q "$DEST_DIR"; then
     echo "NAS is mounted. Start copying."
-    nice -n 19 rsync -au --bwlimit=200000 --remove-source-files "$SOURCE_DIR" "$DEST_DIR" --exclude lost+found/
+    nice -n 19 rsync -auO --bwlimit=200000 --remove-source-files "$SOURCE_DIR" "$DEST_DIR" --exclude lost+found/
 else
     echo "Error: NAS is not mounted."
     exit 1
