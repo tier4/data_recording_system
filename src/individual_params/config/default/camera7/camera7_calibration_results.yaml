@@ -1,8 +1,8 @@
-lidar_left:
+drs_base_link:
   camera7/camera_link:
-    x: -0.072611
-    y: -0.196959
-    z: -0.026232
-    roll: 0.016495
-    pitch: 0.458743
-    yaw: -0.525288
+    x: 0.274
+    y: 0.641
+    z: -0.047
+    roll: 0.011
+    pitch: 0.451
+    yaw: 1.077

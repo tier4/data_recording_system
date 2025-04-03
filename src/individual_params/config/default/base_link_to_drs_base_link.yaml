@@ -4,6 +4,6 @@ base_link:
     y: 0.0
     z: 1.73675
     roll: 0.000
-    pitch: 0.000
+    pitch: -0.005
     yaw: 0.000
 
