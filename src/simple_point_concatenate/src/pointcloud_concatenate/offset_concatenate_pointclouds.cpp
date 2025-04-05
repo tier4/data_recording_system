@@ -345,7 +345,7 @@ void PointCloudOffsetConcatenationComponent::cloud_callback(
     }
   }
 
-  // chech if we can merge point clouds
+  // check if we can merge point clouds
   try_merge_point_clouds(points_stamp_msec + offset_map_msec_[topic]);
 }
 
