@@ -298,11 +298,11 @@ bool PointCloudOffsetConcatenationComponent::all_points_received()
 
 int PointCloudOffsetConcatenationComponent::lookup_index(const std::vector<double> & stamp_buff, const double stamp)
 {
-  constexpr int tolerance_msec = 50;
-  int min_offset_msec = tolerance_msec;
+  constexpr double tolerance_msec = 50.0;
+  double min_offset_msec = tolerance_msec;
   int min_offset_index = -1;
   for (size_t index = 0; index < stamp_buff.size(); ++index) {
-    int offset_msec = std::abs(stamp_buff[index] - stamp);
+    double offset_msec = std::abs(stamp_buff[index] - stamp);
     if (offset_msec <= tolerance_msec && offset_msec < min_offset_msec) {
       min_offset_msec = offset_msec;
       min_offset_index = index;
@@ -345,7 +345,7 @@ void PointCloudOffsetConcatenationComponent::cloud_callback(
     }
   }
 
-  // chech if we can merge point clouds
+  // check if we can merge point clouds
   try_merge_point_clouds(points_stamp_msec + offset_map_msec_[topic]);
 }
 
