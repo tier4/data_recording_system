@@ -1,8 +1,8 @@
 drs_base_link:
   camera6/camera_link:
     x: 0.135
-    y: 0.484
-    z: -0.048
-    roll: -0.000
-    pitch: 0.465
-    yaw: 2.065
+    y: 0.384
+    z: -0.018
+    roll: -0.012
+    pitch: 0.462
+    yaw: 2.040

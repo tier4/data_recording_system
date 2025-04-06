@@ -1,8 +1,8 @@
 drs_base_link:
   camera1/camera_link:
-    x: 0.313
+    x: 0.423
     y: 0.130
-    z: -0.053
+    z: -0.043
     roll: -0.003
     pitch: 0.0013
     yaw: 0.0106
