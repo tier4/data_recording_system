@@ -34,6 +34,7 @@
     <arg name="sensor_ip" value="192.168.2.201"/>
     <arg name="host_ip" value="192.168.2.1"/>
     <arg name="data_port" value="2368"/>
+    <arg name="use_receive_time" value="False"/>
   </include>
 
   <!-- right LiDAR -->
@@ -45,6 +46,7 @@
     <arg name="calibration_file_path" value="$(var calibration_file_path_right)"/>
     <arg name="sensor_ip" value="192.168.3.203"/>
     <arg name="host_ip" value="192.168.3.1"/>
+    <arg name="use_receive_time" value="True"/>
   </include>
 
   <!-- rear LiDAR -->
@@ -57,6 +59,7 @@
     <arg name="sensor_ip" value="192.168.2.202"/>
     <arg name="host_ip" value="192.168.2.2"/>
     <arg name="data_port" value="2369"/>
+    <arg name="use_receive_time" value="False"/>
   </include>
 
   <!-- left LiDAR -->
@@ -68,6 +71,7 @@
     <arg name="calibration_file_path" value="$(var calibration_file_path_left)"/>
     <arg name="sensor_ip" value="192.168.3.204"/>
     <arg name="host_ip" value="192.168.3.2"/>
+    <arg name="use_receive_time" value="False"/>
   </include>
 
   <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">

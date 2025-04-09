@@ -17,7 +17,7 @@
   <arg name="retry_hw" default="True"/>
   <arg name="debug_logging" default="False"/>
   <arg name="calibration_file_path" default=""/>
-
+  <arg name="use_receive_time" default="False"/>
 
   <group>
     <let name="lidar_name" value="lidar_$(var lidar_position)"/>
@@ -37,6 +37,7 @@
       <param name="launch_hw" value="$(var live_sensor)"/>
       <param name="publish_pointcloud" value="$(var publish_pointcloud)"/>
       <param name="calibration_file_path" value="$(var calibration_file_path)"/>
+      <param name="use_receive_time" value="$(var use_receive_time)"/>
       <param name="host_ip" value="$(var host_ip)"/>
       <param name="data_port" value="$(var data_port)"/>
       <param name="setup_sensor" value="$(var setup_sensor)"/>
