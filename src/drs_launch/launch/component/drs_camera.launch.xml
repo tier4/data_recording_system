@@ -3,6 +3,7 @@
   <arg name="param_root_dir"/>
   <arg name="live_sensor"/>
   <arg name="publish_tf" default="True"/>
+  <arg name="set_readout_delay" default="True"/>
 
   <group>
     <let name="camera_name" value="camera$(var camera_id)"/>
@@ -35,10 +36,12 @@
       </group>
 
       <!-- Execute readout setter -->
-      <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_$(var camera_id)">
-        <param from="$(var camera_param_dir)/readout_delay.param.yaml"/>
-        <param name="target_v4l2_node" value="v4l2_camera"/>
-      </node>
+      <group if="$(var set_readout_delay)">
+        <node pkg="c2_readout_delay_setter" exec="c2_readout_delay_setter" name="readout_setter_$(var camera_id)">
+          <param from="$(var camera_param_dir)/readout_delay.param.yaml"/>
+          <param name="target_v4l2_node" value="v4l2_camera"/>
+        </node>
+      </group>
     </group>
 
     <group unless="$(var live_sensor)"> <!-- Boot decompressor for offline mode -->

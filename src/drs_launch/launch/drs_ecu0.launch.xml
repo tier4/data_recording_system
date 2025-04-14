@@ -20,6 +20,7 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_tf" value="$(var publish_tf)"/>
+    <arg name="set_readout_delay" value="False"/>
   </include>
 
   <!-- camera1 -->
@@ -28,6 +29,7 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_tf" value="$(var publish_tf)"/>
+    <arg name="set_readout_delay" value="False"/>
   </include>
 
   <!-- camera2 -->
