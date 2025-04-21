@@ -4,5 +4,5 @@
     namespace: ecu0
     frame_rate: 20.0
     gpio_name: anvil_trigger
-    phase: 82.44 # degrees
+    phase: 164.88 # degrees
     cpu_core_id: 11
