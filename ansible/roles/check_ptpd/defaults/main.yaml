@@ -1,0 +1,4 @@
+check_ptpd:
+  on_boot_sec: 30sec
+  on_unit_active_sec: 5min
+  enabled_ptpd_services: ""         # should be filled in the preceding `ptpd_host` and `ptpd_client` roles

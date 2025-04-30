@@ -19,3 +19,8 @@
     masked: false
   become: true
   with_items: "{{ ptpd_client_interfaces }}"
+
+- name: Save service name for later use
+  set_fact:
+    enabled_ptpd_services: "{{ (enabled_ptpd_services | default([])) + ['ptpd_slave@' + item + '.service'] }}"
+  with_items: "{{ ptpd_client_interfaces }}"

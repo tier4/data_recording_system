@@ -92,6 +92,7 @@
     - role: visudo_for_no_password
     - role: install_utilities
     - role: set_hostname
+    - role: check_ptpd
     - role: netplan  # This role should be come at the very last of roles
 
   environment:
