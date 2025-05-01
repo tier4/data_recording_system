@@ -39,6 +39,10 @@ repositories:
     type: git
     url: https://github.com/tier4/nebula_drs.git
     version: aeva_seyond
+  dependencies/seyond_ros_driver:
+    type: git
+    url: git@github.com:tier4/seyond_ros_driver.git
+    version: tier4/develop
   dependencies/transport_drivers:
     type: git
     url: https://github.com/mojomex/transport_drivers
