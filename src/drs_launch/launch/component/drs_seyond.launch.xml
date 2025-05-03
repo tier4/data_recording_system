@@ -3,7 +3,7 @@
 
   <arg name="live_sensor" default="true" />
   <arg name="publish_pointcloud" default="true" />
-  <arg name="lidar_name" value="seyond" />
+  <arg name="lidar_name" default="seyond" />
   <arg name="sensor_ip" default="172.168.1.10" />
   <arg name="data_port" default="8010" />
   <arg name="reflectance_mode" default="true" />
@@ -20,10 +20,10 @@
       <param name="replay_rosbag" value="$(eval 'not $(var live_sensor)')" />
       <param name="packet_mode" value="true" />
       <param name="publish_pointcloud" value="$(var publish_pointcloud)" />
-      <param name="frame_id" value="$(var lidar_position)" />
+      <param name="frame_id" value="$(var lidar_name)" />
       <param name="lidar_name" value="$(var lidar_name)" />
       <param name="lidar_ip" value="$(var sensor_ip)" />
-      <param name="port" value="$(var data_port)" />
+      <param name="port" value="8010" />
       <param name="udp_port" value="$(var data_port)" />
       <param name="reflectance_mode" value="$(var reflectance_mode)" />
       <param name="multiple_return" value="$(var multiple_return)" />
