@@ -1,48 +1,35 @@
 <launch>
   <arg name="lidar_position"/>
-  <arg name="lidar_model"/>
-  <arg name="live_sensor"/>
-  <arg name="publish_pointcloud" default="True"/>
-  <arg name="return_mode" default="Dual"/>
-  <arg name="scan_phase" default="0.0"/>
-  <arg name="min_range" default="0.0"/>
-  <arg name="max_range" default="300.0"/>
-  <arg name="sensor_ip"/>
-  <arg name="host_ip"/>
-  <arg name="data_port" default="8010"/>
-  <arg name="ptp_profile" default="1588v2"/>
-  <arg name="ptp_transport_type" default="UDP"/>
-  <arg name="ptp_switch_type" default="TSN"/>
-  <arg name="setup_sensor" default="True"/>
-  <arg name="retry_hw" default="True"/>
-  <arg name="debug_logging" default="False"/>
-  <arg name="calibration_file_path" default=""/>
-
+  <arg name="live_sensor" default="true" />
+  <arg name="publish_pointcloud" default="true" />
+  <arg name="lidar_name" default="seyond" />
+  <arg name="sensor_ip" default="172.168.1.10" />
+  <arg name="data_port" default="8010" />
+  <arg name="reflectance_mode" default="true" />
+  <arg name="multiple_return" default="1" />
+  <arg name="continue_live" default="false" />
+  <arg name="calibration_file_path" default="" />
+  <arg name="max_range" default="2000.0" />
+  <arg name="min_range" default="0.4" />
 
   <group>
-    <let name="lidar_name" value="lidar_$(var lidar_position)"/>
-    <let name="debug_level" value="debug" if="$(eval $(var debug_logging))"/>
-    <let name="debug_level" value="info" unless="$(eval $(var debug_logging))"/>
+    <push-ros-namespace namespace="sensing/lidar/$(var lidar_position)"/>
 
-    <node pkg="nebula_ros" exec="seyond_ros_wrapper_node"
-      name="$(var lidar_name)" output="screen">
-      <param name="sensor_model" value="$(var lidar_model)"/>
-      <param name="return_mode" value="$(var return_mode)"/>
-      <param name="frame_id" value="$(var lidar_name)"/>
-      <param name="scan_phase" value="$(var scan_phase)"/>
-      <param name="min_range" value="$(var min_range)"/>
-      <param name="max_range" value="$(var max_range)"/>
-      <param name="sensor_ip" value="$(var sensor_ip)"/>
-      <param name="launch_hw" value="$(var live_sensor)"/>
-      <param name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-      <param name="calibration_file_path" value="$(var calibration_file_path)"/>
-      <param name="host_ip" value="$(var host_ip)"/>
-      <param name="data_port" value="$(var data_port)"/>
-      <param name="setup_sensor" value="$(var setup_sensor)"/>
-      <param name="retry_hw" value="$(var retry_hw)"/>
-      <param name="ptp_profile" value="$(var ptp_profile)"/>
-      <param name="ptp_transport_type" value="$(var ptp_transport_type)"/>
-      <param name="ptp_switch_type" value="$(var ptp_switch_type)"/>
+    <node pkg="seyond" exec="seyond_component_node" name="$(var lidar_name)" output="screen" >
+      <param name="replay_rosbag" value="$(eval 'not $(var live_sensor)')" />
+      <param name="packet_mode" value="true" />
+      <param name="publish_pointcloud" value="$(var publish_pointcloud)" />
+      <param name="frame_id" value="$(var lidar_name)" />
+      <param name="lidar_name" value="$(var lidar_name)" />
+      <param name="lidar_ip" value="$(var sensor_ip)" />
+      <param name="port" value="8010" />
+      <param name="udp_port" value="$(var data_port)" />
+      <param name="reflectance_mode" value="$(var reflectance_mode)" />
+      <param name="multiple_return" value="$(var multiple_return)" />
+      <param name="continue_live" value="$(var continue_live)" />
+      <param name="hv_table_file" value="$(var calibration_file_path)" />
+      <param name="max_range" value="$(var max_range)" />
+      <param name="min_range" value="$(var min_range)" />
     </node>
   </group>
 </launch>
