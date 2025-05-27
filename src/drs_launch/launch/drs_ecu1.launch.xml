@@ -75,6 +75,21 @@
     <arg name="launch_driver" value="$(var live_sensor)"/>
   </include>
 
+  <!-- CAN -->
+  <!-- <group if="$(var live_sensor)">
+    <include file="$(find-pkg-share drs_system)/launch/obd2_data_publisher.launch.xml"/>
+  </group> -->
+
+  <!-- Stop detector -->
+  <group if="$(var live_sensor)">
+    <include file="$(find-pkg-share drs_system)/launch/gnss_based_stop_detector.launch.xml"/>
+  </group>
+
+  <!-- Rosbag controller -->
+  <group if="$(var live_sensor)">
+    <include file="$(find-pkg-share drs_system)/launch/drs_record_controller.launch.xml"/>
+  </group>
+
   <!-- TF for each LiDARs -->
   <group if="$(var publish_tf)">
     <group> <!-- guard by group not to polute argument dict by multiple calling-->

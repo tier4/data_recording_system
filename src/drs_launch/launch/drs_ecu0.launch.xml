@@ -87,6 +87,11 @@
     </include>
   </group> -->
 
+  <!-- Rosbag controller -->
+  <group if="$(var live_sensor)">
+    <include file="$(find-pkg-share drs_system)/launch/drs_record_controller.launch.xml"/>
+  </group>
+
   <!-- TF for each LiDARs and base_link to drs_base_link -->
   <group if="$(var publish_tf)">
     <group> <!-- guard by group not to polute argument dict by multiple calling-->
