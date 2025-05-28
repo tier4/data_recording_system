@@ -3,8 +3,8 @@
 Description=Run check_ptpd.service every 5min
 
 [Timer]
-OnBootSec="{{ check_ptpd.on_boot_sec }}"
-OnUnitActiveSec="{{ check_ptpd.on_unit_active_sec }}"
+OnBootSec={{ check_ptpd.on_boot_sec }}
+OnUnitActiveSec={{ check_ptpd.on_unit_active_sec }}
 Unit=check_ptpd.service
 
 [Install]
