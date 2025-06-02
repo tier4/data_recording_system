@@ -41,7 +41,7 @@ def launch_setup(context, *args, **kwargs):
                     "/sensing/lidar/rear/nebula_points",
                     "/sensing/lidar/front4d/nebula_points",
                 ],
-                "input_offset_msec": [0.0, 0.0, 0.0, 0.0, 100.0],
+                "input_offset_msec": [0.0, 0.0, 100.0, 0.0, 100.0],
                 "angle_range_deg": [-35.0, 36.0],
                 "angle_limit_lidar_index": 4,
                 "output_frame": LaunchConfiguration("base_frame"),

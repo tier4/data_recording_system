@@ -71,7 +71,7 @@
     <arg name="calibration_file_path" value="$(var calibration_file_path_left)"/>
     <arg name="sensor_ip" value="192.168.3.204"/>
     <arg name="host_ip" value="192.168.3.2"/>
-    <arg name="use_receive_time" value="False"/>
+    <arg name="use_receive_time" value="True"/>
   </include>
 
   <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">
