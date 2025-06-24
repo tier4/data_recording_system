@@ -1,0 +1,51 @@
+---
+- name: Install lvm2
+  apt:
+    name: lvm2
+    state: present
+  become: true
+
+- name: Create PVs
+  command: pvcreate {{ item }}
+  args:
+    creates: "/etc/lvm/backup/{{ item | basename }}"
+  loop:
+    - /dev/nvme0n1
+    - /dev/nvme1n1
+  become: true
+
+- name: Create VG
+  command: vgcreate ssd_vg /dev/nvme0n1 /dev/nvme1n1
+  args:
+    creates: /etc/lvm/backup/ssd_vg
+  become: true
+
+- name: Create striped LV
+  command: >
+    lvcreate -i2 -I64 -l 100%FREE -n ssd_lv ssd_vg
+  args:
+    creates: /dev/ssd_vg/ssd_lv
+  become: true
+
+- name: Make ext4 filesystem
+  filesystem:
+    fstype: ext4
+    dev: /dev/ssd_vg/ssd_lv
+    opts: "-E lazy_itable_init=0,lazy_journal_init=0"
+  become: true
+
+- name: Ensure mountpoint exists
+  file:
+    path: /mnt/ssd
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Mount and add to fstab
+  mount:
+    path: /mnt/ssd
+    src: /dev/ssd_vg/ssd_lv
+    fstype: ext4
+    opts: defaults,noatime
+    state: mounted
+  become: true
