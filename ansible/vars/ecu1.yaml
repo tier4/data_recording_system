@@ -1,5 +1,7 @@
+drs_ecu_id: 1
+
 netplan_files:
-  - drs-ecu0.yaml
+  - drs-ecu1.yaml
 
 ptp:
   master_port: enP1p1s0

@@ -1,3 +1,5 @@
+drs_ecu_id: 0
+
 netplan_files:
   - drs-ecu0.yaml
 
