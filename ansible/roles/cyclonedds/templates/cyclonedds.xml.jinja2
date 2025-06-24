@@ -3,10 +3,8 @@
   <Domain id="any">
     <General>
       <Interfaces>
-{% for key in network_config %}
-{% if 'ros' in key %}
-        <NetworkInterface address="{{ network_config[key].interface_address_base }}.{{ (drs_ecu_id | int) + 1 }}"/>
-{% endif %}
+{% for item in cyclonedds.network_interface %}
+        <NetworkInterface name="{{ item }}" priority="default" multicast="default"/>
 {% endfor %}
       </Interfaces>
       <AllowMulticast>spdp</AllowMulticast>
@@ -17,17 +15,5 @@
     <Internal>
       <SocketReceiveBufferSize min="{{ cyclonedds.minimum_socket_receive_buffer_size }}" />
     </Internal>
-    <Discovery>
-      <ParticipantIndex>auto</ParticipantIndex>
-      <Peers>
-          <Peer Address="localhost"/>
-{% for key in network_config %}
-{% if 'ros' in key %}
-          <Peer Address="{{ network_config[key].interface_address_base }}.{{ (drs_ecu_id | int) + 1 }}"/>
-{% endif %}
-{% endfor %}
-      </Peers>
-      <MaxAutoParticipantIndex>100</MaxAutoParticipantIndex>
-    </Discovery>
   </Domain>
 </CycloneDDS>
