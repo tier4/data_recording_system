@@ -1,125 +1,103 @@
-- name: Get file info from GitHub repository
-  ansible.builtin.uri:
-    url: "{{ camera_driver_repo }}"
-  register: github_api_return_info
-
-- name: Parse download URL for driver
-  loop: "{{ github_api_return_info.json.assets }}"
-  ansible.builtin.set_fact:
-    driver_deb_download_url: "{{ item.browser_download_url }}"
-    driver_deb_name: "{{ item.name }}"
-  when: item.name | regex_search('tier4-camera-gmsl_(.+)_arm64.deb')
-
-- name: Parse download URL for SDK
-  loop: "{{ github_api_return_info.json.assets }}"
-  ansible.builtin.set_fact:
-    sdk_deb_download_url: "{{ item.browser_download_url }}"
-    sdk_deb_name: "{{ item.name }}"
-  when: item.name | regex_search('t4cam_sdk-(.+)-rqx58g.deb')
-
-- name: Download driver deb file from public repo
-  ansible.builtin.uri:
-    url: "{{ driver_deb_download_url }}"
-    dest: "{{ camera_driver_download_dir }}/{{ driver_deb_name }}"
-    mode: 0644
-
-- name: Download SDK deb file from public repo
-  ansible.builtin.uri:
-    url: "{{ sdk_deb_download_url }}"
-    dest: "{{ camera_driver_download_dir }}/{{ sdk_deb_name }}"
-    mode: 0644
-  when: sdk_deb_download_url is defined
-
-- name: Install apt packages
-  become: true
-  ansible.builtin.apt:
-    name:
-      - make
-      - build-essential
-      - debhelper
-      - debmake
-      - devscripts
-      - dkms
-    update_cache: true
-
-- name: Setup camera driver and SDK
-  become: true
+- name: Install Tier4 camera driver
   block:
-    - name: Install driver from deb file
-      ansible.builtin.apt:
-        deb: "{{ camera_driver_download_dir }}/{{ driver_deb_name }}"
+    - name: Download Tier4 camera driver package
+      get_url:
+        url: https://github.com/tier4/tier4_automotive_hdr_camera/releases/download/v2.0.0/tier4-camera-gmsl_2.0.0_arm64.deb
+        dest: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
+        mode: '0644'
+
+    - name: Install Tier4 camera driver package
+      apt:
+        deb: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
         state: present
-    - name: Post process
-      ansible.builtin.shell:
-        cmd: |
-          /opt/nvidia/jetson-io/config-by-hardware.py -n 2="TIERIV ISX021 GMSL2 Camera Device Tree Overlay"
-        # noqa no-changed-when
-        # TODO: check dtb file
-    - name: Install SDK from deb file
-      ansible.builtin.apt:
-        deb: "{{ camera_driver_download_dir }}/{{ sdk_deb_name }}"
+      become: yes
+
+    - name: Clone Tier4 automotive HDR camera repository
+      git:
+        repo: https://github.com/tier4/tier4_automotive_hdr_camera.git
+        dest: /tmp/tier4_automotive_hdr_camera
+        version: v2.0.0
+        force: yes
+
+    - name: Ensure python3 is installed
+      apt:
+        name: python3
         state: present
-      when: sdk_deb_download_url is defined
+      become: yes
 
-- name: Setup C1 configuration
-  block:
-    - name: "{{ block_name }} : Change trigger mode to Fsync mode"
-      include_tasks: mod_or_add.yaml
-      vars:
-        target_item: trigger_mode
-        target_val: "1"
-    # Set the same value to min/mid/max exposure time
-    # so that exposure time can be estimated under any brightness condition
-    - name: "{{ block_name }} : Fix exposure time"
-      block:
-        - name: "{{ block_name }} : Set min exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_min
-            target_val: "{{ exposure_time }}"
-        - name: "{{ block_name }} : Set mid exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_mid
-            target_val: "{{ exposure_time }}"
-        - name: "{{ block_name }} : Set max exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_max
-            target_val: "{{ exposure_time }}"
-  vars:
-    target_file: /etc/modprobe.d/tier4-isx021.conf
-    config_prefix: options tier4_isx021
-    block_name: ISX021 configuration
+    - name: Ensure device-tree-compiler is installed
+      apt:
+        name: device-tree-compiler
+        state: present
+      become: yes
 
-- name: Setup C2 configuration
-  block:
-    - name: "{{ block_name }} : Change trigger mode to Fsync mode"
-      include_tasks: mod_or_add.yaml
-      vars:
-        target_item: trigger_mode
-        target_val: "1"
+    - name: Generate overlay DTS file
+      command: python3 make_overlay_dts_anvil.py -4 C3 -4 C2 R36
+      args:
+        chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
+        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dts
 
-    # Set the same value to min/mid/max exposure time
-    # so that exposure time can be estimated under any brightness condition
-    - name: "{{ block_name }} : Fix exposure time"
-      block:
-        - name: "{{ block_name }} : Set min exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_min
-            target_val: "{{ exposure_time }}"
-        - name: "{{ block_name }} : Set mid exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_mid
-            target_val: "{{ exposure_time }}"
-        - name: "{{ block_name }} : Set max exposure"
-          include_tasks: mod_or_add.yaml
-          vars:
-            target_item: shutter_time_max
-            target_val: "{{ exposure_time }}"
-  vars:
-    target_file: /etc/modprobe.d/tier4-imx490.conf
-    config_prefix: options tier4_imx490
-    block_name: IMX490 configuration
+    - name: Compile DTS to DTB
+      command: dtc -O dtb -o tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo -@ tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dts
+      args:
+        chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
+        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+
+    - name: Copy DTBO file to /boot
+      copy:
+        src: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+        dest: /boot/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+        remote_src: yes
+        mode: '0644'
+      become: yes
+
+    - name: Apply device tree overlay
+      command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+      args:
+        chdir: /boot/
+        creates: /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb
+      become: yes
+
+    - name: Backup extlinux.conf
+      copy:
+        src: /boot/extlinux/extlinux.conf
+        dest: /boot/extlinux/extlinux.conf.backup
+        remote_src: yes
+        backup: yes
+      become: yes
+
+    - name: Create new extlinux.conf with t4_primary entry
+      copy:
+        content: |
+          TIMEOUT 30
+          DEFAULT t4_primary
+
+          MENU TITLE L4T boot options
+
+          LABEL primary
+                MENU LABEL primary kernel
+                LINUX /boot/Image
+                INITRD /boot/initrd
+                APPEND ${cbootargs} root=/dev/mmcblk0p1 rw rootwait rootfstype=ext4 mminit_loglevel=4 console=ttyTCU0,115200 console=ttyAMA0,115200 firmware_class.path=/etc/firmware fbcon=map:0 nospectre_bhb video=efifb:off console=tty0
+
+          LABEL t4_primary
+                MENU LABEL t4_primary kernel
+                LINUX /boot/Image
+                INITRD /boot/initrd
+                FDT /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb
+                APPEND ${cbootargs} root=/dev/mmcblk0p1 rw rootwait rootfstype=ext4 mminit_loglevel=4 console=ttyTCU0,115200 console=ttyAMA0,115200 firmware_class.path=/etc/firmware fbcon=map:0 nospectre_bhb video=efifb:off console=tty0
+        dest: /boot/extlinux/extlinux.conf
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+
+    - name: Clean up temporary files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
+        - /tmp/tier4_automotive_hdr_camera
+      become: yes
+      tags: cleanup
