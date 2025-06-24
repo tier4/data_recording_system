@@ -66,11 +66,18 @@
 - name: Install ROS2 Humble Desktop
   ansible.builtin.apt:
     name: ros-humble-desktop
+    state: present
   become: true
 
 - name: Install ros-dev-tools
   ansible.builtin.apt:
     name: ros-humble-ros-dev-tools
+    state: present
+  become: true
+
+- name: Install mcap
+  ansible.builtin.apt:
+    name: ros-humble-rosbag2-storage-mcap
     state: present
   become: true
 
