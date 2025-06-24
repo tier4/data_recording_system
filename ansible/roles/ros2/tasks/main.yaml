@@ -68,6 +68,12 @@
     name: ros-humble-desktop
   become: true
 
+- name: Install ros-dev-tools
+  ansible.builtin.apt:
+    name: ros-humble-ros-dev-tools
+    state: present
+  become: true
+
 # ROS2 Environment Configuration
 - name: Set ROS_DOMAIN_ID in drs.env
   ansible.builtin.lineinfile:
