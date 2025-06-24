@@ -90,3 +90,12 @@
     state: present
     create: yes
   become: true
+
+- name: Set ROS_DISTRO in drs.env
+  ansible.builtin.lineinfile:
+    path: /opt/drs/config/drs.env
+    regexp: "^export ROS_DISTRO="
+    line: "export ROS_DISTRO=humble"
+    state: present
+    create: yes
+  become: true
