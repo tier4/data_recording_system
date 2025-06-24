@@ -1,0 +1,33 @@
+- name: Create DRS related directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - /opt/drs
+    - /opt/drs/config
+  become: true
+
+- name: Add settings to drs.env
+  ansible.builtin.blockinfile:
+    path: /opt/drs/config/drs.env
+    state: present
+    create: true
+    mode: 0644
+    marker: "# {mark} DRS"
+    block: |
+      export DRS_ECU_ID={{ drs_ecu_id }}
+      export SENSING_SYSTEM_ID={{ sensing_system_id }}
+      export MODULE_ID={{ module_id }}
+  become: true
+
+- name: Ensure drs.env is sourced in /etc/profile.d/drs.sh
+  ansible.builtin.copy:
+    dest: /etc/profile.d/drs.sh
+    content: |
+      #!/bin/bash
+      if [ -f /opt/drs/config/drs.env ]; then
+          source /opt/drs/config/drs.env
+      fi
+    mode: "0755"
+  become: true
