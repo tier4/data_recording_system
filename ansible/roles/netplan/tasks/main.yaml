@@ -4,11 +4,12 @@
     update_cache: true
   become: true
 
-- name: Copy network config file using template
-  ansible.builtin.template:
-    src: 99-edge-auto-jetson.yaml.jinja2
-    dest: /etc/netplan/99-edge-auto-jetson.yaml
-    mode: 0600  # 644 may cause "too open" warning
+- name: Copy network config file
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/netplan
+    mode: 0644
+  with_items: "{{ netplan_files }}"
   become: true
 
 - name: Netplan apply
