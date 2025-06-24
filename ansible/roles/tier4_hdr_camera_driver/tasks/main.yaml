@@ -92,6 +92,28 @@
         mode: '0644'
       become: yes
 
+    - name: Configure tier4_imx490 modprobe options
+      lineinfile:
+        path: /etc/modprobe.d/tier4-imx490.conf
+        regexp: '^options tier4_imx490'
+        line: 'options tier4_imx490 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7'
+        create: yes
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+
+    - name: Configure tier4_imx728 modprobe options
+      lineinfile:
+        path: /etc/modprobe.d/tier4-imx728.conf
+        regexp: '^options tier4_imx728'
+        line: 'options tier4_imx728 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7'
+        create: yes
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+
     - name: Clean up temporary files
       file:
         path: "{{ item }}"
