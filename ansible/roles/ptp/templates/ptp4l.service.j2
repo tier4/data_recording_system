@@ -1,0 +1,15 @@
+[Unit]
+Description=Precision Time Protocol (PTP) service
+Documentation=man:ptp4l(8)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/ptp4l -m -f {{ ptp_service_dir }}/ptp4l.conf
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

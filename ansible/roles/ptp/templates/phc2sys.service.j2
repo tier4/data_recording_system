@@ -1,0 +1,16 @@
+[Unit]
+Description=PHC synchronization service
+Documentation=man:phc2sys(8)
+After=network.target ptp4l.service
+Wants=network.target
+Requires=ptp4l.service
+
+[Service]
+Type=simple
+ExecStart={{ ptp_service_dir }}/phc2sys.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

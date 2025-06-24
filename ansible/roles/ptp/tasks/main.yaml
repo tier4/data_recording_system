@@ -1,0 +1,79 @@
+---
+- name: Ensure required packages are installed
+  package:
+    name:
+      - linuxptp
+    state: present
+  become: yes
+
+- name: Create service directory
+  file:
+    path: "{{ ptp_service_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+- name: Deploy ptp4l configuration file
+  template:
+    src: ptp4l.conf.j2
+    dest: "{{ ptp_service_dir }}/ptp4l.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Deploy phc2sys startup script
+  template:
+    src: phc2sys.sh.j2
+    dest: "{{ ptp_service_dir }}/phc2sys.sh"
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+- name: Deploy ptp4l systemd service file
+  template:
+    src: ptp4l.service.j2
+    dest: /etc/systemd/system/ptp4l.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Deploy phc2sys systemd service file
+  template:
+    src: phc2sys.service.j2
+    dest: /etc/systemd/system/phc2sys.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start ptp4l service
+  systemd:
+    name: ptp4l
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Enable and start phc2sys service
+  systemd:
+    name: phc2sys
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Disable and stop systemd-timesyncd
+  systemd:
+    name: systemd-timesyncd
+    state: stopped
+    enabled: no
+  become: yes
+  ignore_errors: yes

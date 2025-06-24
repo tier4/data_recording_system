@@ -1,0 +1,21 @@
+#!/bin/bash
+# PHC synchronization script
+
+# Exit on error
+set -e
+
+# Initialize PHCs
+{% for port in ([ptp.master_port] + ptp.slave_ports) %}
+/usr/sbin/phc_ctl {{ port }} set
+{% endfor %}
+
+# Synchronize system clock with master port
+/usr/sbin/phc2sys -s {{ ptp.master_port }} -c CLOCK_REALTIME -w -m --step_threshold=1 &
+
+# Synchronize slave ports with master port
+{% for port in ptp.slave_ports %}
+/usr/sbin/phc2sys -s {{ ptp.master_port }} -c {{ port }} -w -m --step_threshold=1 &
+{% endfor %}
+
+# Wait for all background processes
+wait

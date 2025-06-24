@@ -1,0 +1,22 @@
+[global]
+domainNumber            0
+logging_level           6
+announceReceiptTimeout  2
+logAnnounceInterval     0
+step_threshold          1.0
+first_step_threshold    1.0
+tx_timestamp_timeout    1000
+boundary_clock_jbod     1
+clockClass              {{ ptp.clock_class }}
+priority1               {{ ptp.priority1 }}
+priority2               {{ ptp.priority2 }}
+
+# Master port
+[{{ ptp.master_port }}]
+
+# Slave ports
+{% for port in ptp.slave_ports %}
+[{{ port }}]
+masterOnly              1
+
+{% endfor %}
