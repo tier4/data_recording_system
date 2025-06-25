@@ -22,7 +22,7 @@
 
 - name: Create striped LV
   command: >
-    lvcreate -i2 -I64 -l 100%FREE -n ssd_lv ssd_vg
+    lvcreate -i2 -I256 -l 100%FREE -n ssd_lv ssd_vg
   args:
     creates: /dev/ssd_vg/ssd_lv
   become: true
@@ -31,7 +31,7 @@
   filesystem:
     fstype: ext4
     dev: /dev/ssd_vg/ssd_lv
-    opts: "-E lazy_itable_init=0,lazy_journal_init=0"
+    opts: "-E lazy_itable_init=0,lazy_journal_init=0,stride=64,stripe-width=128"
   become: true
 
 - name: Ensure mountpoint exists
