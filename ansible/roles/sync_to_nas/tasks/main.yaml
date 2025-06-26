@@ -1,0 +1,62 @@
+---
+- name: Create sync script from template
+  template:
+    src: sync_to_nas.sh.j2
+    dest: "{{ sync_to_nas_script_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+  register: sync_script
+
+- name: Create log file
+  file:
+    path: "{{ sync_to_nas_log_file }}"
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+    modification_time: preserve
+    access_time: preserve
+
+- name: Create systemd service file
+  template:
+    src: sync-to-nas.service.j2
+    dest: /etc/systemd/system/sync-to-nas.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: systemd_service
+
+- name: Create systemd timer file
+  template:
+    src: sync-to-nas.timer.j2
+    dest: /etc/systemd/system/sync-to-nas.timer
+    owner: root
+    group: root
+    mode: '0644'
+  register: systemd_timer
+
+- name: Configure logrotate
+  copy:
+    src: logrotate-sync-to-nas
+    dest: /etc/logrotate.d/sync-to-nas
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd if service files changed
+  systemd:
+    daemon_reload: yes
+  when: systemd_service.changed or systemd_timer.changed
+
+- name: Enable and start sync-to-nas timer
+  systemd:
+    name: sync-to-nas.timer
+    state: started
+    enabled: yes
+
+- name: Restart sync-to-nas timer if configuration changed
+  systemd:
+    name: sync-to-nas.timer
+    state: restarted
+  when: sync_script.changed or systemd_service.changed or systemd_timer.changed

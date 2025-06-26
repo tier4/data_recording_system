@@ -1,0 +1,19 @@
+---
+# Source and destination directories
+sync_to_nas_source_dir: "/mnt/ssd/data"
+sync_to_nas_base_dir: "/mnt/nas/data"
+sync_to_nas_hostname: "{{ ansible_hostname }}"
+
+# Timing and performance settings
+sync_to_nas_safe_time_seconds: 60
+sync_to_nas_rsync_bw_limit: "50m"
+sync_to_nas_timer_interval: "5min"
+
+# System paths
+sync_to_nas_script_path: "/usr/local/bin/sync_to_nas.sh"
+sync_to_nas_log_file: "/var/log/sync_to_nas.log"
+sync_to_nas_lock_file: "/var/run/sync_to_nas.lock"
+
+# Service resource limits
+sync_to_nas_cpu_quota: "50%"
+sync_to_nas_io_weight: 10

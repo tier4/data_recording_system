@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# sync_to_nas.sh - Synchronize sensor data to NFS server
+
+# Configuration
+SOURCE_DIR="{{ sync_to_nas_source_dir }}"
+NAS_BASE_DIR="{{ sync_to_nas_base_dir }}"
+HOSTNAME="{{ sync_to_nas_hostname }}"
+DEST_DIR="${NAS_BASE_DIR}/${HOSTNAME}"
+LOG_FILE="{{ sync_to_nas_log_file }}"
+LOCK_FILE="{{ sync_to_nas_lock_file }}"
+SAFE_TIME_SECONDS={{ sync_to_nas_safe_time_seconds }}  # Wait time before mcap files are safe to transfer (seconds)
+RSYNC_BW_LIMIT="{{ sync_to_nas_rsync_bw_limit }}"  # rsync bandwidth limit
+
+# Logging function
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+# Error handling
+error_exit() {
+    log "ERROR: $1"
+    rm -f "$LOCK_FILE"
+    exit 1
+}
+
+# Check lock file (prevent multiple instances)
+if [ -f "$LOCK_FILE" ]; then
+    log "Already running. Exiting."
+    exit 0
+fi
+touch "$LOCK_FILE"
+
+# Cleanup on exit
+trap 'rm -f "$LOCK_FILE"' EXIT
+
+# Verify NFS mount
+if ! mountpoint -q "${NAS_BASE_DIR}"; then
+    error_exit "NFS not mounted: ${NAS_BASE_DIR}"
+fi
+
+# Create destination directory
+mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
+
+# Process files for transfer
+log "Starting backup process"
+
+# Find mcap files (excluding metadata.yaml)
+find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
+    # Get file last modified time
+    last_modified=$(stat -c %Y "$mcap_file")
+    current_time=$(date +%s)
+    time_diff=$((current_time - last_modified))
+    
+    # Skip if not enough time has passed for safe transfer
+    if [ $time_diff -lt $SAFE_TIME_SECONDS ]; then
+        continue
+    fi
+    
+    # Get relative path (to preserve directory structure)
+    relative_path="${mcap_file#$SOURCE_DIR/}"
+    dest_file="$DEST_DIR/$relative_path"
+    dest_dir=$(dirname "$dest_file")
+    
+    # Create destination directory
+    mkdir -p "$dest_dir"
+    
+    # Get file size (for logging)
+    file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
+    file_size_mb=$((file_size / 1048576))
+    
+    log "Starting transfer: $relative_path (${file_size_mb}MB)"
+    
+    # Transfer with rsync (low priority)
+    # ionice: Set I/O priority to lowest
+    # nice: Set CPU priority to low
+    # rsync: Bandwidth limit, checksum verification, no progress
+    if ionice -c 3 nice -n 19 rsync \
+        --bwlimit="$RSYNC_BW_LIMIT" \
+        --checksum \
+        --no-progress \
+        "$mcap_file" \
+        "$dest_file"; then
+        
+        # Transfer successful, delete source file
+        rm -f "$mcap_file"
+        log "Transfer completed and deleted: $relative_path"
+        
+        # Remove empty directories
+        src_dir=$(dirname "$mcap_file")
+        if [ -d "$src_dir" ] && [ -z "$(ls -A "$src_dir")" ]; then
+            rmdir "$src_dir" 2>/dev/null
+        fi
+    else
+        log "ERROR: Transfer failed: $relative_path"
+    fi
+    
+    # Short sleep to reduce CPU load
+    sleep 0.1
+done
+
+# Cleanup directories with only metadata.yaml
+log "Starting empty directory cleanup"
+find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
+    # Count files in directory (excluding metadata.yaml)
+    mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
+    
+    if [ $mcap_count -eq 0 ]; then
+        # No mcap files present
+        if [ -f "$dir/metadata.yaml" ]; then
+            log "Removing directory with only metadata.yaml: $(basename "$dir")"
+            rm -rf "$dir"
+        elif [ -z "$(ls -A "$dir")" ]; then
+            # Completely empty directory
+            log "Removing empty directory: $(basename "$dir")"
+            rmdir "$dir"
+        fi
+    fi
+done
+
+log "Backup process completed"

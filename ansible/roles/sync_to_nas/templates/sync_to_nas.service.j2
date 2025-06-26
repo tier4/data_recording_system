@@ -1,0 +1,25 @@
+# /etc/systemd/system/sync-to-nas.service
+[Unit]
+Description=Sync ROS bag data to NAS
+After=network-online.target mnt-nas-data.mount
+Wants=network-online.target
+RequiresMountsFor={{ sync_to_nas_base_dir }}
+
+[Service]
+Type=oneshot
+ExecStart={{ sync_to_nas_script_path }}
+User=root
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+CPUQuota={{ sync_to_nas_cpu_quota }}
+IOWeight={{ sync_to_nas_io_weight }}
+Nice=19
+
+# Retry on failure
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target
