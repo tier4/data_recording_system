@@ -1,0 +1,34 @@
+- name: Install NFS client packages
+  ansible.builtin.package:
+    name: nfs-common
+    state: present
+  become: true
+
+- name: Create mount point directory
+  ansible.builtin.file:
+    path: "{{ nas_mount_point }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Backup fstab file
+  ansible.builtin.copy:
+    src: /etc/fstab
+    dest: "/etc/fstab.{{ ansible_date_time.epoch }}.bak"
+    remote_src: true
+  become: true
+  when: create_fstab_backup | bool
+
+- name: Add NFS mount to fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: "{{ nas_address }}:{{ nas_export_path }} {{ nas_mount_point }} nfs4 {{ nfs_options }} 1 0"
+    regexp: "^{{ nas_address | regex_escape() }}:{{ nas_export_path | regex_escape() }}\\s+{{ nas_mount_point | regex_escape() }}\\s+"
+    state: present
+    backup: false
+  become: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
