@@ -10,3 +10,5 @@ ptp:
   clock_class: 248
   priority1: 128
   priority2: 128
+
+nas_address: 192.168.10.101
