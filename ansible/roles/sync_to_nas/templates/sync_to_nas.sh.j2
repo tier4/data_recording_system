@@ -7,26 +7,20 @@ SOURCE_DIR="{{ sync_to_nas_source_dir }}"
 NAS_BASE_DIR="{{ sync_to_nas_base_dir }}"
 HOSTNAME="{{ sync_to_nas_hostname }}"
 DEST_DIR="${NAS_BASE_DIR}/${HOSTNAME}"
-LOG_FILE="{{ sync_to_nas_log_file }}"
 LOCK_FILE="{{ sync_to_nas_lock_file }}"
 SAFE_TIME_SECONDS={{ sync_to_nas_safe_time_seconds }}  # Wait time before mcap files are safe to transfer (seconds)
 RSYNC_BW_LIMIT="{{ sync_to_nas_rsync_bw_limit }}"  # rsync bandwidth limit
 
-# Logging function
-log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
-}
-
 # Error handling
 error_exit() {
-    log "ERROR: $1"
+    echo "ERROR: $1"
     rm -f "$LOCK_FILE"
     exit 1
 }
 
 # Check lock file (prevent multiple instances)
 if [ -f "$LOCK_FILE" ]; then
-    log "Already running. Exiting."
+    echo "Already running. Exiting."
     exit 0
 fi
 touch "$LOCK_FILE"
@@ -43,7 +37,7 @@ fi
 mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
 
 # Process files for transfer
-log "Starting backup process"
+echo "Starting backup process"
 
 # Find mcap files (excluding metadata.yaml)
 find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
@@ -69,7 +63,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
     file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
     file_size_mb=$((file_size / 1048576))
     
-    log "Starting transfer: $relative_path (${file_size_mb}MB)"
+    echo "Starting transfer: $relative_path (${file_size_mb}MB)"
     
     # Transfer with rsync (low priority)
     # ionice: Set I/O priority to lowest
@@ -84,7 +78,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
         
         # Transfer successful, delete source file
         rm -f "$mcap_file"
-        log "Transfer completed and deleted: $relative_path"
+        echo "Transfer completed and deleted: $relative_path"
         
         # Remove empty directories
         src_dir=$(dirname "$mcap_file")
@@ -92,7 +86,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
             rmdir "$src_dir" 2>/dev/null
         fi
     else
-        log "ERROR: Transfer failed: $relative_path"
+        echo "ERROR: Transfer failed: $relative_path"
     fi
     
     # Short sleep to reduce CPU load
@@ -100,7 +94,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
 done
 
 # Cleanup directories with only metadata.yaml
-log "Starting empty directory cleanup"
+echo "Starting empty directory cleanup"
 find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
     # Count files in directory (excluding metadata.yaml)
     mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
@@ -108,14 +102,14 @@ find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
     if [ $mcap_count -eq 0 ]; then
         # No mcap files present
         if [ -f "$dir/metadata.yaml" ]; then
-            log "Removing directory with only metadata.yaml: $(basename "$dir")"
+            echo "Removing directory with only metadata.yaml: $(basename "$dir")"
             rm -rf "$dir"
         elif [ -z "$(ls -A "$dir")" ]; then
             # Completely empty directory
-            log "Removing empty directory: $(basename "$dir")"
+            echo "Removing empty directory: $(basename "$dir")"
             rmdir "$dir"
         fi
     fi
 done
 
-log "Backup process completed"
+echo "Backup process completed"

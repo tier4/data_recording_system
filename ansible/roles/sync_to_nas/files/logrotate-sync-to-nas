@@ -1,8 +1,0 @@
-/var/log/sync_to_nas.log {
-    daily
-    rotate 7
-    compress
-    missingok
-    notifempty
-    create 644 root root
-}

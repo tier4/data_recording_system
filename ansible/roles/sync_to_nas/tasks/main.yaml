@@ -8,16 +8,6 @@
     mode: '0755'
   register: sync_script
 
-- name: Create log file
-  file:
-    path: "{{ sync_to_nas_log_file }}"
-    state: touch
-    owner: root
-    group: root
-    mode: '0644'
-    modification_time: preserve
-    access_time: preserve
-
 - name: Create systemd service file
   template:
     src: sync-to-nas.service.j2
@@ -35,14 +25,6 @@
     group: root
     mode: '0644'
   register: systemd_timer
-
-- name: Configure logrotate
-  copy:
-    src: logrotate-sync-to-nas
-    dest: /etc/logrotate.d/sync-to-nas
-    owner: root
-    group: root
-    mode: '0644'
 
 - name: Reload systemd if service files changed
   systemd:

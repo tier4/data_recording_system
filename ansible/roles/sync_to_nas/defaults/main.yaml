@@ -11,7 +11,6 @@ sync_to_nas_timer_interval: "5min"
 
 # System paths
 sync_to_nas_script_path: "/usr/local/bin/sync_to_nas.sh"
-sync_to_nas_log_file: "/var/log/sync_to_nas.log"
 sync_to_nas_lock_file: "/var/run/sync_to_nas.lock"
 
 # Service resource limits
