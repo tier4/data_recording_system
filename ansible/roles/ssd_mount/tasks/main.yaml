@@ -46,6 +46,6 @@
     path: /mnt/ssd
     src: /dev/ssd_vg/ssd_lv
     fstype: ext4
-    opts: defaults,noatime
+    opts: defaults,noatime,nodiratime
     state: mounted
   become: true
