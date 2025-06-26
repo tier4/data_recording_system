@@ -1,0 +1,19 @@
+---
+- name: Create journald.conf.d directory
+  file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    mode: '0755'
+
+- name: Configure journald
+  template:
+    src: journald.conf.j2
+    dest: /etc/systemd/journald.conf.d/drs.conf
+    mode: '0644'
+  notify: restart systemd-journald
+
+- name: restart systemd-journald
+  systemd:
+    name: systemd-journald
+    state: restarted
+  listen: restart systemd-journald
