@@ -105,28 +105,12 @@
     </include>
   </group> -->
 
-  <!-- TF for each LiDARs and base_link to drs_base_link -->
+  <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
-    <group> <!-- guard by group not to polute argument dict by multiple calling-->
-      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
-        <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
-        <arg name="target_frame" value="lidar_front"/>
-        <arg name="publish_camera_optical_link" value="False"/>
-      </include>
-    </group>
-    <group>
-      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
-        <arg name="tf_file_path" value="$(var param_root_dir)/drs_base_link_to_lidars.yaml"/>
-        <arg name="target_frame" value="lidar_right"/>
-        <arg name="publish_camera_optical_link" value="False"/>
-      </include>
-    </group>
-    <group>
-      <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
-        <arg name="tf_file_path" value="$(var param_root_dir)/base_link_to_drs_base_link.yaml"/>
-        <arg name="publish_camera_optical_link" value="False"/>
-      </include>
-    </group>
+    <include file="$(find-pkg-share drs_launch)/launch/component/multi_tf_static_publisher.launch.py">
+      <arg name="config_file" value="$(var param_root_dir)/multi_tf_static.yaml"/>
+      <arg name="publish_camera_optical_link" value="True"/>
+    </include>
   </group>
 
 </launch>

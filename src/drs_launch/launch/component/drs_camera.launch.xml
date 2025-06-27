@@ -27,12 +27,7 @@
         <arg name="accelerated_image_processor_param_path" value="$(var camera_param_dir)/accelerated_image_processor.param.yaml"/>
       </include>
 
-      <!-- Launch TF periodic publisher for camera and LiDAR -->
-      <group if="$(var publish_tf)">
-        <include file="$(find-pkg-share drs_launch)/launch/component/tf_publisher.launch.py">
-          <arg name="tf_file_path" value="$(var camera_param_dir)/camera$(var camera_id)_calibration_results.yaml"/>
-        </include>
-      </group>
+      <!-- TF is now published by multi_tf_static_publisher on ECU0 -->
 
       <!-- Execute readout setter -->
       <group if="$(var set_readout_delay)">
