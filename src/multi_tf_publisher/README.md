@@ -1,4 +1,4 @@
-# Multi TF Static Publisher
+# Multi TF Publisher
 
 A ROS2 node that publishes multiple static transforms from a single YAML configuration file.
 
@@ -68,7 +68,7 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 ### Launch File Example
 
 ```xml
-<include file="$(find-pkg-share drs_launch)/launch/component/multi_tf_static_publisher.launch.py">
+<include file="$(find-pkg-share drs_launch)/launch/component/multi_tf_publisher.launch.py">
   <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
   <arg name="publish_camera_optical_link" value="true"/>
 </include>
@@ -77,7 +77,7 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 ### Command Line
 
 ```bash
-ros2 run multi_tf_static_publisher multi_tf_static_publisher --ros-args \
+ros2 run multi_tf_publisher multi_tf_publisher --ros-args \
   -p config_file:=/path/to/transforms.yaml \
   -p publish_camera_optical_link:=true
 ```

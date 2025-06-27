@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>multi_tf_static_publisher</name>
+  <name>multi_tf_publisher</name>
   <version>0.0.1</version>
   <description>A ROS2 node that publishes multiple static transforms from YAML configuration</description>
   <maintainer email="todo@todo.todo">TODO</maintainer>

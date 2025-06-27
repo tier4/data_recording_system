@@ -6,10 +6,10 @@
 #include <fstream>
 #include <vector>
 
-class MultiTfStaticPublisher : public rclcpp::Node
+class MultiTfPublisher : public rclcpp::Node
 {
 public:
-  MultiTfStaticPublisher() : Node("multi_tf_static_publisher")
+  MultiTfPublisher() : Node("multi_tf_publisher")
   {
     // Declare parameters
     this->declare_parameter<std::string>("config_file", "");
@@ -150,7 +150,7 @@ private:
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MultiTfStaticPublisher>());
+  rclcpp::spin(std::make_shared<MultiTfPublisher>());
   rclcpp::shutdown();
   return 0;
 }

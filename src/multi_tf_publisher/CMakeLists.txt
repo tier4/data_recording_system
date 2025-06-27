@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(multi_tf_static_publisher)
+project(multi_tf_publisher)
 
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
@@ -19,30 +19,30 @@ find_package(geometry_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 # Add executable
-add_executable(multi_tf_static_publisher src/multi_tf_static_publisher.cpp)
+add_executable(multi_tf_publisher src/multi_tf_publisher.cpp)
 
 # Include directories
-target_include_directories(multi_tf_static_publisher PUBLIC
+target_include_directories(multi_tf_publisher PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${YAML_CPP_INCLUDE_DIRS}
 )
 
 # Link libraries
-ament_target_dependencies(multi_tf_static_publisher
+ament_target_dependencies(multi_tf_publisher
   rclcpp
   tf2
   tf2_ros
   geometry_msgs
 )
 
-target_link_libraries(multi_tf_static_publisher
+target_link_libraries(multi_tf_publisher
   yaml-cpp
 )
 
 # Install
 install(TARGETS
-  multi_tf_static_publisher
+  multi_tf_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 

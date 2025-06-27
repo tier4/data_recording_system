@@ -23,11 +23,11 @@ def generate_launch_description():
         description='Whether to publish camera optical link transforms'
     )
     
-    # Launch the multi_tf_static_publisher node
-    multi_tf_static_publisher_node = Node(
-        package='multi_tf_static_publisher',
-        executable='multi_tf_static_publisher',
-        name='multi_tf_static_publisher',
+    # Launch the multi_tf_publisher node
+    multi_tf_publisher_node = Node(
+        package='multi_tf_publisher',
+        executable='multi_tf_publisher',
+        name='multi_tf_publisher',
         parameters=[{
             'config_file': LaunchConfiguration('config_file'),
             'publish_camera_optical_link': LaunchConfiguration('publish_camera_optical_link')
@@ -38,5 +38,5 @@ def generate_launch_description():
     return LaunchDescription([
         config_file_arg,
         publish_camera_optical_link_arg,
-        multi_tf_static_publisher_node
+        multi_tf_publisher_node
     ])
