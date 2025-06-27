@@ -107,7 +107,7 @@
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
-    <include file="$(find-pkg-share drs_launch)/launch/component/multi_tf_publisher.launch.py">
+    <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.py">
       <arg name="config_file" value="$(var param_root_dir)/multi_tf_static.yaml"/>
       <arg name="publish_camera_optical_link" value="True"/>
     </include>

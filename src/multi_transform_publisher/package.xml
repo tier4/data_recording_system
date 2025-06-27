@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>multi_tf_publisher</name>
+  <name>multi_transform_publisher</name>
   <version>0.0.1</version>
   <description>A ROS2 node that publishes multiple static transforms from YAML configuration</description>
   <maintainer email="todo@todo.todo">TODO</maintainer>
@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>geometry_msgs</depend>

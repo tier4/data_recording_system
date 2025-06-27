@@ -1,4 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <yaml-cpp/yaml.h>
@@ -9,7 +10,8 @@
 class MultiTfPublisher : public rclcpp::Node
 {
 public:
-  MultiTfPublisher() : Node("multi_tf_publisher")
+  explicit MultiTfPublisher(const rclcpp::NodeOptions & options)
+    : Node("multi_transform_publisher", options)
   {
     // Declare parameters
     this->declare_parameter<std::string>("config_file", "");
@@ -147,10 +149,5 @@ private:
   bool publish_camera_optical_link_;
 };
 
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MultiTfPublisher>());
-  rclcpp::shutdown();
-  return 0;
-}
+// Register as component
+RCLCPP_COMPONENTS_REGISTER_NODE(MultiTfPublisher)

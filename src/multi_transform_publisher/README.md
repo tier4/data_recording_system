@@ -1,6 +1,6 @@
-# Multi TF Publisher
+# Multi Transform Publisher
 
-A ROS2 node that publishes multiple static transforms from a single YAML configuration file.
+A ROS2 node (`multi_transform_publisher`) that publishes multiple static transforms from a single YAML configuration file.
 
 ## Overview
 
@@ -65,10 +65,24 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 
 ## Usage
 
-### Launch File Example
+### Standalone Node Launch
 
 ```xml
-<include file="$(find-pkg-share drs_launch)/launch/component/multi_tf_publisher.launch.py">
+<include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.py">
+  <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
+  <arg name="publish_camera_optical_link" value="true"/>
+</include>
+```
+
+### Component Launch
+
+```xml
+<!-- First create a component container -->
+<node_container pkg="rclcpp_components" exec="component_container" name="my_container" namespace="/" />
+
+<!-- Then load the multi_transform_publisher component -->
+<include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher_component.launch.py">
+  <arg name="container_name" value="/my_container"/>
   <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
   <arg name="publish_camera_optical_link" value="true"/>
 </include>
@@ -77,7 +91,13 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 ### Command Line
 
 ```bash
-ros2 run multi_tf_publisher multi_tf_publisher --ros-args \
+# Run as standalone node
+ros2 run multi_transform_publisher multi_transform_publisher --ros-args \
+  -p config_file:=/path/to/transforms.yaml \
+  -p publish_camera_optical_link:=true
+
+# Run as component
+ros2 component load /ComponentManager multi_transform_publisher MultiTfPublisher \
   -p config_file:=/path/to/transforms.yaml \
   -p publish_camera_optical_link:=true
 ```
