@@ -11,43 +11,34 @@
     <push-ros-namespace namespace="sensing"/>
     <group>
       <push-ros-namespace namespace="camera"/>
-      <group>
-        <push-ros-namespace namespace="camera4"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-          <arg name="param_root_dir" value="$(var param_root_dir)"/>
-          <arg name="live_sensor" value="$(var live_sensor)"/>
-          <arg name="publish_tf" value="$(var publish_tf)"/>
-          <arg name="set_readout_delay" value="False"/>
-        </include>
-      </group>
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+        <arg name="camera_id" value="4"/>
+        <arg name="param_root_dir" value="$(var param_root_dir)"/>
+        <arg name="live_sensor" value="$(var live_sensor)"/>
+        <arg name="publish_tf" value="$(var publish_tf)"/>
+        <arg name="set_readout_delay" value="False"/>
+      </include>
 
-      <group>
-        <push-ros-namespace namespace="camera5"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-          <arg name="param_root_dir" value="$(var param_root_dir)"/>
-          <arg name="live_sensor" value="$(var live_sensor)"/>
-          <arg name="publish_tf" value="$(var publish_tf)"/>
-          <arg name="set_readout_delay" value="False"/>
-        </include>
-      </group>
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+        <arg name="camera_id" value="5"/>
+        <arg name="param_root_dir" value="$(var param_root_dir)"/>
+        <arg name="live_sensor" value="$(var live_sensor)"/>
+        <arg name="publish_tf" value="$(var publish_tf)"/>
+        <arg name="set_readout_delay" value="False"/>
+      </include>
 
-      <group>
-        <push-ros-namespace namespace="camera6"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-          <arg name="param_root_dir" value="$(var param_root_dir)"/>
-          <arg name="live_sensor" value="$(var live_sensor)"/>
-          <arg name="publish_tf" value="$(var publish_tf)"/>
-        </include>
-      </group>
-
-      <group>
-        <push-ros-namespace namespace="camera7"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-          <arg name="param_root_dir" value="$(var param_root_dir)"/>
-          <arg name="live_sensor" value="$(var live_sensor)"/>
-          <arg name="publish_tf" value="$(var publish_tf)"/>
-        </include>
-      </group>
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+        <arg name="camera_id" value="6"/>
+        <arg name="param_root_dir" value="$(var param_root_dir)"/>
+        <arg name="live_sensor" value="$(var live_sensor)"/>
+        <arg name="publish_tf" value="$(var publish_tf)"/>
+      </include>
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+        <arg name="camera_id" value="7"/>
+        <arg name="param_root_dir" value="$(var param_root_dir)"/>
+        <arg name="live_sensor" value="$(var live_sensor)"/>
+        <arg name="publish_tf" value="$(var publish_tf)"/>
+      </include>
     </group>
 
     <group>
