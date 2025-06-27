@@ -23,7 +23,6 @@
     <let name="lidar_name" value="lidar_$(var lidar_position)"/>
     <let name="debug_level" value="debug" if="$(eval $(var debug_logging))"/>
     <let name="debug_level" value="info" unless="$(eval $(var debug_logging))"/>
-    <push-ros-namespace namespace="sensing/lidar/$(var lidar_position)"/>
 
     <node pkg="nebula_ros" exec="seyond_ros_wrapper_node"
       name="$(var lidar_name)" output="screen">

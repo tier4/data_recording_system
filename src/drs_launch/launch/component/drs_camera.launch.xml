@@ -8,7 +8,6 @@
   <group>
     <let name="camera_name" value="camera$(var camera_id)"/>
     <let name="camera_param_dir" value="$(var param_root_dir)/$(var camera_name)"/>
-    <push-ros-namespace namespace="sensing/camera/$(var camera_name)"/>
 
     <group if="$(var live_sensor)"> <!-- Boot sensor drivers for online mode -->
       <!-- Create composable container -->

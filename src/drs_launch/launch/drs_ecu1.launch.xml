@@ -7,75 +7,87 @@
 
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
+  <group>
+    <push-ros-namespace namespace="sensing"/>
+    <group>
+      <push-ros-namespace namespace="camera"/>
+      <group>
+        <push-ros-namespace namespace="camera4"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+          <arg name="param_root_dir" value="$(var param_root_dir)"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_tf" value="$(var publish_tf)"/>
+          <arg name="set_readout_delay" value="False"/>
+        </include>
+      </group>
+
+      <group>
+        <push-ros-namespace namespace="camera5"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+          <arg name="param_root_dir" value="$(var param_root_dir)"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_tf" value="$(var publish_tf)"/>
+          <arg name="set_readout_delay" value="False"/>
+        </include>
+      </group>
+
+      <group>
+        <push-ros-namespace namespace="camera6"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+          <arg name="param_root_dir" value="$(var param_root_dir)"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_tf" value="$(var publish_tf)"/>
+        </include>
+      </group>
+
+      <group>
+        <push-ros-namespace namespace="camera7"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+          <arg name="param_root_dir" value="$(var param_root_dir)"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_tf" value="$(var publish_tf)"/>
+        </include>
+      </group>
+    </group>
+
+    <group>
+      <push-ros-namespace namespace="lidar"/>
+      <group>
+        <push-ros-namespace namespace="rear"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+          <arg name="lidar_position" value="rear"/>
+          <arg name="lidar_model" value="Falcon"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
+          <arg name="calibration_file_path" value=""/>
+          <arg name="sensor_ip" value="192.168.2.202"/>
+          <arg name="host_ip" value="192.168.2.2"/>
+          <arg name="data_port" value="2369"/>
+        </include>
+      </group>
+
+      <group>
+        <push-ros-namespace namespace="left"/>
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+          <arg name="lidar_position" value="left"/>
+          <arg name="lidar_model" value="RobinW"/>
+          <arg name="live_sensor" value="$(var live_sensor)"/>
+          <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
+          <arg name="calibration_file_path" value=""/>
+          <arg name="sensor_ip" value="192.168.3.204"/>
+          <arg name="host_ip" value="192.168.3.2"/>
+          <arg name="data_port" value="8010"/>
+        </include>
+      </group>
+    </group>
+  </group>
+
   <!-- trigger -->
   <group if="$(var live_sensor)">
-    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger" namespace="ecu1">
+    <node pkg="sensor_trigger" exec="sensor_trigger_exe" name="sensor_trigger">
       <param from="$(var param_root_dir)/ecu1_trigger.param.yaml"/>
     </node>
   </group>
-
-  <!-- camera4 -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-    <arg name="camera_id" value="4"/>
-    <arg name="param_root_dir" value="$(var param_root_dir)"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_tf" value="$(var publish_tf)"/>
-    <arg name="set_readout_delay" value="False"/>
-  </include>
-
-  <!-- camera5 -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-    <arg name="camera_id" value="5"/>
-    <arg name="param_root_dir" value="$(var param_root_dir)"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_tf" value="$(var publish_tf)"/>
-    <arg name="set_readout_delay" value="False"/>
-  </include>
-
-  <!-- camera6 -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-    <arg name="camera_id" value="6"/>
-    <arg name="param_root_dir" value="$(var param_root_dir)"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_tf" value="$(var publish_tf)"/>
-  </include>
-
-  <!-- camera7 -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
-    <arg name="camera_id" value="7"/>
-    <arg name="param_root_dir" value="$(var param_root_dir)"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_tf" value="$(var publish_tf)"/>
-  </include>
-
-  <!-- rear LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
-    <arg name="lidar_position" value="rear"/>
-    <arg name="lidar_model" value="Falcon"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-    <arg name="calibration_file_path" value=""/>
-    <arg name="sensor_ip" value="192.168.2.202"/>
-    <arg name="host_ip" value="192.168.2.2"/>
-    <arg name="data_port" value="2369"/>
-  </include>
-
-  <!-- left LiDAR -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
-    <arg name="lidar_position" value="left"/>
-    <arg name="lidar_model" value="RobinW"/>
-    <arg name="live_sensor" value="$(var live_sensor)"/>
-    <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-    <arg name="calibration_file_path" value=""/>
-    <arg name="sensor_ip" value="192.168.3.204"/>
-    <arg name="host_ip" value="192.168.3.2"/>
-    <arg name="data_port" value="8010"/>
-  </include>
-
-  <!-- INS -->
-  <include file="$(find-pkg-share drs_launch)/launch/component/ins.launch.xml">
-    <arg name="launch_driver" value="$(var live_sensor)"/>
-  </include>
 
   <!-- TF for each LiDARs -->
   <group if="$(var publish_tf)">
@@ -95,20 +107,4 @@
     </group>
   </group>
 
-  <!-- topic monitor -->
-  <group scoped="True">
-    <!-- To prevent topic monitor communicate over network, set LOCALHOST_ONLY=1 -->
-    <set_env name="ROS_LOCALHOST_ONLY" value="1"/>
-    <node pkg="ros_topic_monitor" exec="ros_topic_monitor" namespace="ecu1">
-      <remap from="/statistics" to="/ecu2/statistics/local"/>
-      <param name="topic_list" value="/opt/drs/record_topics_ecu1.yaml"/>
-      <param name="update_interval" value="10000"/>
-    </node>
-  </group>
-  <group scoped="True">
-    <!-- Send monitor topic to ecu0 -->
-    <set_env name="ROS_LOCALHOST_ONLY" value="0"/>
-    <node pkg="topic_tools" exec="relay" namespace="ecu1"
-          args="/ecu2/statistics/local /ecu2/statistics"/>
-  </group>
 </launch>
