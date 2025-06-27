@@ -16,10 +16,14 @@ public:
     // Declare parameters
     this->declare_parameter<std::string>("config_file", "");
     this->declare_parameter<bool>("publish_camera_optical_link", true);
+    this->declare_parameter<bool>("periodic_publish", false);
+    this->declare_parameter<double>("publish_period", 0.1);
     
     // Get parameters
     std::string config_file = this->get_parameter("config_file").as_string();
     publish_camera_optical_link_ = this->get_parameter("publish_camera_optical_link").as_bool();
+    periodic_publish_ = this->get_parameter("periodic_publish").as_bool();
+    double publish_period = this->get_parameter("publish_period").as_double();
     
     if (config_file.empty()) {
       RCLCPP_ERROR(this->get_logger(), "config_file parameter is required");
@@ -30,29 +34,61 @@ public:
     // Create static transform broadcaster
     tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
     
-    // Load and publish transforms
-    loadAndPublishTransforms(config_file);
+    // Create timer for periodic publishing if enabled
+    if (periodic_publish_) {
+      timer_ = this->create_wall_timer(
+        std::chrono::duration<double>(publish_period),
+        std::bind(&MultiTfPublisher::publishTransforms, this)
+      );
+      RCLCPP_INFO(this->get_logger(), "Periodic static publishing enabled with period: %.3f seconds", publish_period);
+    } else {
+      RCLCPP_INFO(this->get_logger(), "One-time static publishing enabled");
+    }
+    
+    // Load transforms
+    loadTransforms(config_file);
+    
+    // If static publishing, publish immediately
+    if (!periodic_publish_) {
+      publishTransforms();
+    }
   }
 
 private:
-  void loadAndPublishTransforms(const std::string& config_file)
+  void loadTransforms(const std::string& config_file)
   {
     try {
       YAML::Node config = YAML::LoadFile(config_file);
-      std::vector<geometry_msgs::msg::TransformStamped> transforms;
+      transforms_.clear();
       
       // Process all transforms in the YAML file
-      processYamlNode(config, "", transforms);
+      processYamlNode(config, "", transforms_);
       
-      // Publish all transforms at once
-      if (!transforms.empty()) {
-        tf_static_broadcaster_->sendTransform(transforms);
-        RCLCPP_INFO(this->get_logger(), "Published %zu static transforms", transforms.size());
-      }
+      RCLCPP_INFO(this->get_logger(), "Loaded %zu transforms from config file", transforms_.size());
       
     } catch (const YAML::Exception& e) {
       RCLCPP_ERROR(this->get_logger(), "Failed to load YAML file: %s", e.what());
       rclcpp::shutdown();
+    }
+  }
+  
+  void publishTransforms()
+  {
+    if (transforms_.empty()) {
+      return;
+    }
+    
+    // Update timestamps
+    auto now = this->get_clock()->now();
+    for (auto& transform : transforms_) {
+      transform.header.stamp = now;
+    }
+    
+    // Always publish to /tf_static
+    tf_static_broadcaster_->sendTransform(transforms_);
+    
+    if (!periodic_publish_) {
+      RCLCPP_INFO(this->get_logger(), "Published %zu static transforms", transforms_.size());
     }
   }
   
@@ -146,7 +182,10 @@ private:
   }
   
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  std::vector<geometry_msgs::msg::TransformStamped> transforms_;
   bool publish_camera_optical_link_;
+  bool periodic_publish_;
 };
 
 // Register as component

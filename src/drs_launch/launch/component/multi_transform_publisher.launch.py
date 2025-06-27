@@ -23,6 +23,18 @@ def generate_launch_description():
         description='Whether to publish camera optical link transforms'
     )
     
+    periodic_publish_arg = DeclareLaunchArgument(
+        'periodic_publish',
+        default_value='false',
+        description='Whether to publish transforms periodically instead of as static transforms'
+    )
+    
+    publish_period_arg = DeclareLaunchArgument(
+        'publish_period',
+        default_value='1.0',
+        description='Period in seconds for periodic publishing (only used when periodic_publish is true)'
+    )
+    
     # Launch the multi_transform_publisher node
     multi_transform_publisher_node = Node(
         package='multi_transform_publisher',
@@ -30,7 +42,9 @@ def generate_launch_description():
         name='multi_transform_publisher',
         parameters=[{
             'config_file': LaunchConfiguration('config_file'),
-            'publish_camera_optical_link': LaunchConfiguration('publish_camera_optical_link')
+            'publish_camera_optical_link': LaunchConfiguration('publish_camera_optical_link'),
+            'periodic_publish': LaunchConfiguration('periodic_publish'),
+            'publish_period': LaunchConfiguration('publish_period')
         }],
         output='screen'
     )
@@ -38,5 +52,7 @@ def generate_launch_description():
     return LaunchDescription([
         config_file_arg,
         publish_camera_optical_link_arg,
+        periodic_publish_arg,
+        publish_period_arg,
         multi_transform_publisher_node
     ])
