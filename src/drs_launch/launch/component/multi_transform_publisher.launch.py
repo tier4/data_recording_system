@@ -25,7 +25,7 @@ def generate_launch_description():
     
     periodic_publish_arg = DeclareLaunchArgument(
         'periodic_publish',
-        default_value='false',
+        default_value='true',
         description='Whether to publish transforms periodically instead of as static transforms'
     )
     
