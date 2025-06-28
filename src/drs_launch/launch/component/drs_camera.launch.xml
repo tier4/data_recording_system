@@ -38,21 +38,5 @@
         </node>
       </group>
     </group>
-
-    <group unless="$(var live_sensor)"> <!-- Boot decompressor for offline mode -->
-      <!-- XXX: The following node only accepts RELIABLE QoS as subscribed topic -->
-      <!-- User may need to override QoS when playing rosbag -->
-      <node pkg="image_transport" exec="republish" args="compressed">
-        <remap from="in/compressed" to="image_raw/compressed"/>
-        <remap from="out" to="image_raw_decompressed"/>
-      </node>
-      <node pkg="image_proc" exec="image_proc">
-        <remap from="image" to="image_raw_decompressed"/>
-        <remap from="image_rect" to="image_rect_color"/>
-        <remap from="image_rect/compressed" to="image_rect_color/compressed"/>
-      </node>
-    </group>
   </group>
-
-
 </launch>
