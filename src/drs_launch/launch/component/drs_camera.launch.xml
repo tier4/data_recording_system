@@ -3,7 +3,6 @@
     <arg name="camera_id"/>
     <arg name="param_root_dir"/>
     <arg name="live_sensor"/>
-    <arg name="publish_tf" default="True"/>
     <arg name="set_readout_delay" default="True"/>
 
     <let name="camera_name" value="camera$(var camera_id)"/>

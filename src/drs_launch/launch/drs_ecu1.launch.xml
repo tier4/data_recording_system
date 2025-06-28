@@ -12,34 +12,30 @@
     <group>
       <push-ros-namespace namespace="camera"/>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
         <arg name="camera_id" value="4"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="publish_tf" value="$(var publish_tf)"/>
         <arg name="set_readout_delay" value="False"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
         <arg name="camera_id" value="5"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="publish_tf" value="$(var publish_tf)"/>
         <arg name="set_readout_delay" value="False"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
         <arg name="camera_id" value="6"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="publish_tf" value="$(var publish_tf)"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.xml">
+      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
         <arg name="camera_id" value="7"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="publish_tf" value="$(var publish_tf)"/>
       </include>
     </group>
 
