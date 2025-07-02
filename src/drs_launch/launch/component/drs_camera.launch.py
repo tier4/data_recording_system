@@ -4,7 +4,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, TimerAction, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import Command, LaunchConfiguration
-from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node
+from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node, PushRosNamespace
 from launch_ros.descriptions import ComposableNode
 
 
@@ -23,7 +23,7 @@ def launch_setup(context, *args, **kwargs):
     # Create component container node
     component_container = ComposableNodeContainer(
         name=root_container_name,
-        namespace='/',
+        namespace='',
         package='rclcpp_components',
         executable='component_container',
         condition=IfCondition(LaunchConfiguration('live_sensor'))
@@ -34,7 +34,7 @@ def launch_setup(context, *args, **kwargs):
         package='v4l2_camera',
         plugin='v4l2_camera::V4L2Camera',
         name='v4l2_camera',
-        namespace=f'camera{camera_id}',
+        namespace='',
         remappings=[
             ('image_raw', 'image_raw'),
             ('image_raw/compressed', 'image_raw/compressed'),
@@ -66,7 +66,7 @@ def launch_setup(context, *args, **kwargs):
         package='accelerated_image_processor',
         plugin='gpu_imgproc::GpuImgProc',
         name='accelerated_img_proc',
-        namespace=f'camera{camera_id}',
+        namespace='',
         remappings=[
             ('image_raw', 'image_raw'),
             ('camera_info', 'camera_info'),
@@ -90,7 +90,7 @@ def launch_setup(context, *args, **kwargs):
         package='c2_readout_delay_setter',
         executable='c2_readout_delay_setter',
         name=f'readout_setter_{camera_id}',
-        namespace=f'camera{camera_id}',
+        namespace='',
         parameters=[
             f'{param_root_dir}/camera{camera_id}/readout_delay.param.yaml',
             {'target_v4l2_node': 'v4l2_camera'}
@@ -102,8 +102,9 @@ def launch_setup(context, *args, **kwargs):
         ]))
     )
     
-    # Group all actions
+    # Group all actions with explicit namespace
     camera_group = GroupAction([
+        PushRosNamespace(f'/sensing/camera/camera{camera_id}'),
         component_container,
         load_v4l2_camera,
         load_accelerated_image_processor,
