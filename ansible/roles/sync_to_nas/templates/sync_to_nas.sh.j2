@@ -39,8 +39,8 @@ mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DES
 # Process files for transfer
 echo "Starting backup process"
 
-# Find mcap files (excluding metadata.yaml)
-find "$SOURCE_DIR" -name "*.mcap" -type f | while read -r mcap_file; do
+# Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
+find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do
     # Get file last modified time
     last_modified=$(stat -c %Y "$mcap_file")
     current_time=$(date +%s)
