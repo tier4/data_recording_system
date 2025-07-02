@@ -3,7 +3,6 @@
   ansible.builtin.apt:
     name:
       - nvidia-jetpack
-      - libnvjpeg-dev-12-6
     update_cache: true
 
 - name: Add settings to drs.env
