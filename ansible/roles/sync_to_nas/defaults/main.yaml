@@ -10,7 +10,7 @@ sync_to_nas_rsync_bw_limit: "50m"
 sync_to_nas_timer_interval: "5min"
 
 # System paths
-sync_to_nas_script_path: "/usr/local/bin/sync_to_nas.sh"
+sync_to_nas_script_path: "/opt/drs/service/sync_to_nas/sync_to_nas.sh"
 sync_to_nas_lock_file: "/var/run/sync_to_nas.lock"
 
 # Service resource limits
