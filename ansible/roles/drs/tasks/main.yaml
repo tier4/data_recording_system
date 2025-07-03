@@ -1,0 +1,33 @@
+---
+- name: Create DRS installation directory
+  file:
+    path: "{{ drs_install_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+  become: true
+
+- name: Import dependencies using vcs from drs.repos
+  shell: |
+    cd {{ drs_src_dir }}
+    vcs import src < drs.repos
+  args:
+    executable: /bin/bash
+
+- name: Install ROS dependencies with rosdep
+  shell: |
+    cd {{ drs_src_dir }}
+    source /opt/ros/humble/setup.bash
+    rosdep install -y -r --from-paths src --ignore-src
+  args:
+    executable: /bin/bash
+
+- name: Build DRS packages directly to installation directory
+  shell: |
+    cd {{ drs_src_dir }}
+    source /opt/ros/humble/setup.bash
+    colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-up-to {{ drs_packages | join(' ') }}
+    chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
+  args:
+    executable: /bin/bash

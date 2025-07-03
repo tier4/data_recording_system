@@ -1,0 +1,18 @@
+---
+# DRS installation directory
+drs_install_dir: /opt/drs/install
+
+# DRS source directory (relative to the repository root)
+drs_src_dir: "{{ playbook_dir }}/../"
+
+# Build type for colcon build
+drs_build_type: RelWithDebInfo
+
+# DRS packages to build
+drs_packages:
+  - drs_launch
+  - proto_recorder
+
+# User and group for DRS installation
+drs_user: "{{ ansible_user | default(ansible_env.USER) }}"
+drs_group: "{{ ansible_user | default(ansible_env.USER) }}"

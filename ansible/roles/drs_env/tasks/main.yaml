@@ -21,13 +21,16 @@
       export MODULE_ID={{ module_id }}
   become: true
 
-- name: Ensure drs.env is sourced in /etc/profile.d/drs.sh
+- name: Ensure drs.env and setup.bash are sourced in /etc/profile.d/drs.sh
   ansible.builtin.copy:
     dest: /etc/profile.d/drs.sh
     content: |
       #!/bin/bash
       if [ -f /opt/drs/config/drs.env ]; then
           source /opt/drs/config/drs.env
+      fi
+      if [ -f /opt/drs/install/setup.bash ]; then
+          source /opt/drs/install/setup.bash
       fi
     mode: "0755"
   become: true
