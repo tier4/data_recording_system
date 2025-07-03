@@ -26,7 +26,8 @@ def launch_setup(context, *args, **kwargs):
         namespace='',
         package='rclcpp_components',
         executable='component_container',
-        condition=IfCondition(LaunchConfiguration('live_sensor'))
+        condition=IfCondition(LaunchConfiguration('live_sensor')),
+        output='screen'
     )
     
     # Load v4l2_camera composable node
@@ -99,7 +100,8 @@ def launch_setup(context, *args, **kwargs):
             'bash -c "',
             f'if [ "{live_sensor}" = "True" ] && [ "{set_readout_delay}" = "True" ]; then ',
             'echo true; else echo false; fi"'
-        ]))
+        ])),
+        output='screen'
     )
     
     # Group all actions with explicit namespace

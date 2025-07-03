@@ -106,7 +106,8 @@ def launch_setup(context, *args, **kwargs):
             ],
             parameters=[{
                 'interval_sec': float(interval_sec),
-            }]),
+            }],
+            output='screen'),
         Node(
             name=f'periodic_camera_optical_link_publisher{camera_id}',
             package='periodic_transform_publisher',
@@ -126,7 +127,8 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'interval_sec': float(interval_sec),
             }],
-            condition=IfCondition(publish_camera_optical_link))
+            condition=IfCondition(publish_camera_optical_link),
+            output='screen')
     ]
 
 def generate_launch_description():

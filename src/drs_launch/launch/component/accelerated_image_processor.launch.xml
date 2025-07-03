@@ -17,7 +17,7 @@
        execute function as an individual node  -->
   <group if="$(var empty_container_is_specified)">
     <node pkg="accelerated_image_processor" exec="accelerated_image_processor_node"
-          name="accelerated_img_proc">
+          name="accelerated_img_proc" output="screen">
       <remap from="image_raw" to="$(var image_topic)" />
       <remap from="camera_info" to="$(var camera_info_topic)" />
       <remap from="image_raw/compressed" to="$(var image_topic)/compressed" />
