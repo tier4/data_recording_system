@@ -1,0 +1,10 @@
+---
+- name: reload udev
+  systemd:
+    name: udev
+    state: reloaded
+  become: yes
+
+- name: user logout required
+  debug:
+    msg: "User {{ sensor_trigger_user }} needs to logout and login again for group changes to take effect"
