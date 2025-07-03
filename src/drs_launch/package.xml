@@ -14,10 +14,7 @@
   <exec_depend>image_transport</exec_depend>
   <exec_depend>nebula_ros</exec_depend>
   <exec_depend>oxts</exec_depend>
-  <exec_depend>pacmod3</exec_depend>
-  <exec_depend>pacmod_interface</exec_depend>
   <exec_depend>sensor_trigger</exec_depend>
-  <exec_depend>tamagawa_imu_driver</exec_depend>
   <exec_depend>v4l2_camera</exec_depend>
   <exec_depend>accelerated_image_processor</exec_depend>
   <exec_depend>c2_readout_delay_setter</exec_depend>

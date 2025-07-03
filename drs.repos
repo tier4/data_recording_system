@@ -23,15 +23,11 @@ repositories:
     type: git
     url: https://github.com/tier4/oxts_ros2_driver.git
     version: feat/data_recording_system
-  dependencies/tamagawa_imu_driver:
-    type: git
-    url: https://github.com/tier4/tamagawa_imu_driver.git
-    version: ros2
-  dependencies/pacmod_interface:
-    type: git
-    url: https://github.com/tier4/pacmod_interface.git
-    version: feat/comlops_drs
   dependencies/c2_readout_delay_setter:
     type: git
     url: git@github.com:tier4/c2_readout_delay_setter.git
     version: feat/drs
+  proto_recorder:
+    type: git
+    url: git@github.com:tier4/proto_recorder.git
+    version: main
