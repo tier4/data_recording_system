@@ -2,39 +2,15 @@ repositories:
   dependencies/sensor_trigger:
     type: git
     url: https://github.com/tier4/sensor_trigger.git
-    version: refactor/simplify-libgpiod-implementation
+    version: fix/trigger_cpu_affinity
   dependencies/ros2_v4l2_camera:
     type: git
     url: https://github.com/tier4/ros2_v4l2_camera.git
-    version: galactic
-  dependencies/ros-topic-monitor:
-    type: git
-    url: git@github.com:tier4/ros-topic-monitor.git
-    version: drs
-  dependencies/ros2_socketcan:
-    type: git
-    url: git@github.com:autowarefoundation/ros2_socketcan.git
-    version: 1.1.0
-  dependencies/ros_canopen:
-    type: git
-    url: git@github.com:ros-industrial/ros_canopen.git
-    version: 2.0.0
-  dependencies/pacmod3:
-    type: git
-    url: git@github.com:astuff/pacmod3.git
-    version: 2002.1.1
-  dependencies/pacmod3_msgs:
-    type: git
-    url: git@github.com:astuff/pacmod3_msgs.git
-    version: 1.0.0
+    version: feature/for_l4t36
   dependencies/accelerated_image_processor:
     type: git
     url: git@github.com:tier4/accelerated_image_processor.git
-    version: perf/modify_cuda_utilization
-  dependencies/velodyne:
-    type: git
-    url: git@github.com:ros-drivers/velodyne.git
-    version: 2.4.0
+    version: main
   dependencies/nebula:
     type: git
     url: https://github.com/tier4/nebula_drs.git
