@@ -46,7 +46,7 @@ def launch_setup(context, *args, **kwargs):
             {
                 'camera_frame_id': f'camera{camera_id}/camera_optical_link',
                 'camera_info_url': f'file://{param_root_dir}/camera{camera_id}/camera_info.yaml',
-                'use_sensor_data_qos': True,
+                'use_sensor_data_qos': False,
                 'publish_rate': -1.0,
                 'use_image_transport': False
             }
