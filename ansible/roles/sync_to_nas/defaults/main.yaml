@@ -6,7 +6,7 @@ sync_to_nas_hostname: "{{ ansible_hostname }}"
 
 # Timing and performance settings
 sync_to_nas_safe_time_seconds: 60
-sync_to_nas_rsync_bw_limit: "50m"
+sync_to_nas_rsync_bw_limit: "200m"
 sync_to_nas_timer_interval: "5min"
 
 # System paths
