@@ -99,3 +99,12 @@
     state: present
     create: yes
   become: true
+
+- name: Set ROS_LOG_DIR in drs.env
+  ansible.builtin.lineinfile:
+    path: /opt/drs/config/drs.env
+    regexp: "^export ROS_LOG_DIR="
+    line: "export ROS_LOG_DIR=/tmp/drs/log"
+    state: present
+    create: yes
+  become: true
