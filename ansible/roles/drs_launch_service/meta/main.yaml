@@ -1,2 +1,6 @@
+---
 dependencies:
-  - drs_env_setting
+  - role: drs
+  - role: drs_env
+  - role: ros2
+  - role: cyclonedds

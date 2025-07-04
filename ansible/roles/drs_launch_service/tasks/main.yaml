@@ -1,21 +1,39 @@
-- name: Copy script file
-  ansible.builtin.template:
-    src: run.sh.jinja2
-    dest: /opt/drs/run.sh
-    mode: 0755
+---
+- name: Create DRS service directory
+  ansible.builtin.file:
+    path: /opt/drs/service/drs_launch
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
   become: true
 
-- name: Copy service file
+- name: Create DRS launch script
+  ansible.builtin.template:
+    src: launch.sh.jinja2
+    dest: /opt/drs/service/drs_launch/launch.sh
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  notify: restart drs-launch
+
+- name: Create systemd service file
   ansible.builtin.template:
     src: drs_launch.service.jinja2
-    dest: /etc/systemd/system/drs_launch.service
-    mode: 0755
+    dest: /etc/systemd/system/drs-launch.service
+    owner: root
+    group: root
+    mode: '0644'
   become: true
+  notify:
+    - reload systemd
+    - restart drs-launch
 
-- name: Install drs-launch service
+- name: Enable and start DRS launch service
   ansible.builtin.systemd:
-    name: drs_launch.service
+    name: drs-launch.service
     daemon_reload: true
     enabled: true
-    masked: false
+    state: started
   become: true

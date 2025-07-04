@@ -1,2 +1,7 @@
-drs_user_name: nvidia
-autoware_env_dir: /opt/autoware/env
+# User configuration
+drs_user: "{{ ansible_user | default('nvidia') }}"
+drs_group: "{{ ansible_user | default('nvidia') }}"
+
+# DRS paths
+drs_install_dir: /opt/drs/install
+

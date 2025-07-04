@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+# Log startup
+logger -t drs-launch "Starting DRS Launch Service"
+
+# Source environment files
+if [ -f /opt/drs/config/drs.env ]; then
+    source /opt/drs/config/drs.env
+fi
+
+if [ -f /opt/ros/humble/setup.bash ]; then
+    source /opt/ros/humble/setup.bash
+fi
+
+if [ -f {{ drs_install_dir }}/setup.bash ]; then
+    source {{ drs_install_dir }}/setup.bash
+fi
+
+# Launch ROS2 application
+exec ros2 launch drs_launch drs.launch.xml

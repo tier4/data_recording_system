@@ -1,0 +1,11 @@
+---
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: restart drs-launch
+  ansible.builtin.systemd:
+    name: drs-launch.service
+    state: restarted
+  become: true
