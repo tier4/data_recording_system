@@ -1,0 +1,14 @@
+---
+- name: Install v4l-utils
+  apt:
+    name: v4l-utils
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Add user to i2c group
+  user:
+    name: "{{ drs_user }}"
+    groups: i2c
+    append: yes
+  become: yes
