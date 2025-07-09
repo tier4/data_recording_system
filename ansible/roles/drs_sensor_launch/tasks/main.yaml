@@ -16,7 +16,7 @@
     group: root
     mode: '0755'
   become: true
-  notify: restart drs-launch
+  notify: restart drs-sensor-launch
 
 - name: Create systemd service file
   ansible.builtin.template:
