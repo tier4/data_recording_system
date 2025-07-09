@@ -5,7 +5,7 @@ After=network-online.target cyclonedds-local.service
 
 [Service]
 Type=exec
-ExecStart=/opt/drs/service/drs_record_launch/launch.sh
+ExecStart=/opt/drs/service/drs_recorder_launch/launch.sh
 Restart=on-failure
 RestartSec=5
 User={{ drs_user }}
@@ -19,7 +19,7 @@ TimeoutStopSec=30
 # Logging configuration (journald)
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=drs-record-launch
+SyslogIdentifier=drs-recorder-launch
 
 [Install]
 WantedBy=multi-user.target

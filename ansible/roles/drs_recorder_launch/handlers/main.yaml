@@ -4,8 +4,8 @@
     daemon_reload: true
   become: true
 
-- name: restart drs-record-launch
+- name: restart drs-recorder-launch
   ansible.builtin.systemd:
-    name: drs-record-launch.service
+    name: drs-recorder-launch.service
     state: restarted
   become: true
