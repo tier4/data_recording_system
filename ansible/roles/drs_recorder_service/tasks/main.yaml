@@ -1,7 +1,7 @@
 ---
 - name: Create recorder service directory
   ansible.builtin.file:
-    path: /opt/drs/service/drs_recorder_launch
+    path: /opt/drs/service/drs_recorder
     state: directory
     owner: root
     group: root
@@ -11,12 +11,12 @@
 - name: Create recorder launch script
   ansible.builtin.template:
     src: launch.sh.jinja2
-    dest: /opt/drs/service/drs_recorder_launch/launch.sh
+    dest: /opt/drs/service/drs_recorder/launch.sh
     owner: root
     group: root
     mode: '0755'
   become: true
-  notify: restart drs-recorder-launch
+  notify: restart drs-recorder
 
 - name: Copy proto recorder config for ECU0
   ansible.builtin.copy:
@@ -27,7 +27,7 @@
     mode: '0644'
   become: true
   when: "'ecu0' in inventory_hostname"
-  notify: restart drs-recorder-launch
+  notify: restart drs-recorder
 
 - name: Copy proto recorder config for ECU1
   ansible.builtin.copy:
@@ -38,23 +38,23 @@
     mode: '0644'
   become: true
   when: "'ecu1' in inventory_hostname"
-  notify: restart drs-recorder-launch
+  notify: restart drs-recorder
 
 - name: Create systemd service file
   ansible.builtin.template:
-    src: drs_recorder_launch.service.jinja2
-    dest: /etc/systemd/system/drs-recorder-launch.service
+    src: drs_recorder.service.jinja2
+    dest: /etc/systemd/system/drs-recorder.service
     owner: root
     group: root
     mode: '0644'
   become: true
   notify:
     - reload systemd
-    - restart drs-recorder-launch
+    - restart drs-recorder
 
 - name: Enable and start recorder launch service
   ansible.builtin.systemd:
-    name: drs-recorder-launch.service
+    name: drs-recorder.service
     daemon_reload: true
     enabled: true
     state: started

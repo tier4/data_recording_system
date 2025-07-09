@@ -1,5 +1,5 @@
 ---
-# Default variables for drs_recorder_launch role
+# Default variables for drs_recorder_service role
 drs_user: "{{ ansible_user | default('nvidia') }}"
 drs_group: "{{ ansible_user | default('nvidia') }}"
 drs_install_dir: /opt/drs/install

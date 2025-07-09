@@ -1,7 +1,7 @@
 ---
 - name: Create DRS service directory
   ansible.builtin.file:
-    path: /opt/drs/service/drs_sensor_launch
+    path: /opt/drs/service/drs_sensor
     state: directory
     owner: root
     group: root
@@ -11,28 +11,28 @@
 - name: Create DRS launch script
   ansible.builtin.template:
     src: launch.sh.jinja2
-    dest: /opt/drs/service/drs_sensor_launch/launch.sh
+    dest: /opt/drs/service/drs_sensor/launch.sh
     owner: root
     group: root
     mode: '0755'
   become: true
-  notify: restart drs-sensor-launch
+  notify: restart drs-sensor
 
 - name: Create systemd service file
   ansible.builtin.template:
-    src: drs_sensor_launch.service.jinja2
-    dest: /etc/systemd/system/drs-sensor-launch.service
+    src: drs_sensor.service.jinja2
+    dest: /etc/systemd/system/drs-sensor.service
     owner: root
     group: root
     mode: '0644'
   become: true
   notify:
     - reload systemd
-    - restart drs-sensor-launch
+    - restart drs-sensor
 
 - name: Enable and start DRS sensor launch service
   ansible.builtin.systemd:
-    name: drs-sensor-launch.service
+    name: drs-sensor.service
     daemon_reload: true
     enabled: true
     state: started

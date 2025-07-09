@@ -4,8 +4,8 @@
     daemon_reload: true
   become: true
 
-- name: restart drs-sensor-launch
+- name: restart drs-sensor
   ansible.builtin.systemd:
-    name: drs-sensor-launch.service
+    name: drs-sensor.service
     state: restarted
   become: true
