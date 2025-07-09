@@ -1,0 +1,33 @@
+#!/bin/bash
+set -e
+
+# Log startup
+logger -t drs-record-launch "Starting DRS Record Launch Service"
+
+# Source environment files
+if [ -f /opt/drs/config/drs.env ]; then
+    source /opt/drs/config/drs.env
+fi
+
+if [ -f /opt/ros/humble/setup.bash ]; then
+    source /opt/ros/humble/setup.bash
+fi
+
+if [ -f {{ drs_install_dir }}/setup.bash ]; then
+    source {{ drs_install_dir }}/setup.bash
+fi
+
+# Determine config file based on hostname
+if [[ "$(hostname)" == *"ecu0"* ]]; then
+    CONFIG_FILE="record_topics_ecu0.yaml"
+elif [[ "$(hostname)" == *"ecu1"* ]]; then
+    CONFIG_FILE="record_topics_ecu1.yaml"
+else
+    logger -t drs-record-launch "ERROR: Unknown hostname pattern, defaulting to ecu0 config"
+    CONFIG_FILE="record_topics_ecu0.yaml"
+fi
+
+# Launch ROS2 application
+exec ros2 launch proto_recorder proto_recorder.launch.xml \
+    uri:=/mnt/ssd/data/${SENSING_SYSTEM_ID}_${MODULE_ID} \
+    topics_file:=/opt/drs/config/${CONFIG_FILE}

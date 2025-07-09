@@ -1,0 +1,5 @@
+---
+# Default variables for drs_record_launch role
+drs_user: drs
+drs_group: drs
+drs_install_dir: /opt/drs/install

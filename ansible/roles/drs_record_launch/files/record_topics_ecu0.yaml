@@ -1,0 +1,23 @@
+topics:
+  - name: /sensing/camera/camera0/image_raw/compressed
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera1/image_raw/compressed
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera2/image_raw/compressed
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera3/image_raw/compressed
+    hz_range: [18.0, 21.0]
+  - name: /sensing/camera/camera0/camera_info
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera1/camera_info
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera2/camera_info
+    hz_range: [1.0, 50.0]
+  - name: /sensing/camera/camera3/camera_info
+    hz_range: [1.0, 50.0]
+  - name: /sensing/lidar/front/nebula_packets
+    hz_range: [9.0, 15.0]
+  - name: /sensing/lidar/right/nebula_packets
+    hz_range: [9.0, 15.0]
+  - name: /tf_static # tf
+    hz_range: [0.1, 10.0]

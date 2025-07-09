@@ -1,0 +1,25 @@
+[Unit]
+Description=DRS Record Launch Service
+Requires=network-online.target
+After=network-online.target cyclonedds-local.service
+
+[Service]
+Type=exec
+ExecStart=/opt/drs/service/drs_record_launch/launch.sh
+Restart=on-failure
+RestartSec=5
+User={{ drs_user }}
+Group={{ drs_group }}
+
+# Process management
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+# Logging configuration (journald)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=drs-record-launch
+
+[Install]
+WantedBy=multi-user.target
