@@ -1,0 +1,6 @@
+---
+- name: restart systemd-journald
+  systemd:
+    name: systemd-journald
+    state: restarted
+  listen: restart systemd-journald
