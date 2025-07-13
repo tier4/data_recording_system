@@ -1,9 +1,10 @@
 - name: Install apt packages
-  become: true
   ansible.builtin.apt:
     name:
       - nvidia-jetpack
     update_cache: true
+    cache_valid_time: 3600
+  become: true
 
 - name: Add settings to drs.env
   ansible.builtin.blockinfile:
