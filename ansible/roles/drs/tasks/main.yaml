@@ -8,12 +8,33 @@
     group: "{{ drs_group }}"
   become: true
 
-- name: Import dependencies using vcs from drs.repos
+# todo: Inspect failed tasks and fix them
+# - name: Import dependencies using vcs from drs.repos
+#   shell: |
+#     cd {{ drs_src_dir }}
+#     vcs import src < drs.repos
+#   args:
+#     executable: /bin/bash
+#   become_user: "{{ drs_user }}"
+#   environment:
+#     HOME: "/home/{{ drs_user }}"
+
+- name: Initialize rosdep system-wide
   shell: |
-    cd {{ drs_src_dir }}
-    vcs import src < drs.repos
+    rosdep init
   args:
     executable: /bin/bash
+  become: true
+  ignore_errors: true
+
+- name: Update rosdep for user
+  shell: |
+    rosdep update
+  args:
+    executable: /bin/bash
+  become_user: "{{ drs_user }}"
+  environment:
+    HOME: "/home/{{ drs_user }}"
 
 - name: Install ROS dependencies with rosdep
   shell: |
@@ -22,6 +43,9 @@
     rosdep install -y -r --from-paths src --ignore-src
   args:
     executable: /bin/bash
+  become_user: "{{ drs_user }}"
+  environment:
+    HOME: "/home/{{ drs_user }}"
 
 - name: Build DRS packages directly to installation directory
   shell: |
