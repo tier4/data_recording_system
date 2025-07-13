@@ -1,5 +1,0 @@
-- name: add user to targe groups one by one
-  include_tasks: add_user_to_group.yaml
-  with_items: "{{ target_groups }}"
-  loop_control:
-    loop_var: target_group
