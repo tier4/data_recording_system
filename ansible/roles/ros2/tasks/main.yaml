@@ -71,7 +71,7 @@
 
 - name: Install ros-dev-tools
   ansible.builtin.apt:
-    name: ros-humble-ros-dev-tools
+    name: ros-dev-tools
     state: present
   become: true
 
