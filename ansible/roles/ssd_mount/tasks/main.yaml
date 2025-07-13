@@ -5,26 +5,45 @@
     state: present
   become: true
 
-- name: Create PVs
-  command: pvcreate {{ item }}
-  args:
-    creates: "/etc/lvm/backup/{{ item | basename }}"
+- name: Check if PVs exist
+  command: pvdisplay {{ item }}
+  register: pv_check
+  failed_when: false
+  changed_when: false
   loop:
     - /dev/nvme0n1
     - /dev/nvme1n1
   become: true
 
+- name: Create PVs
+  command: pvcreate {{ item.item }}
+  when: item.rc != 0
+  loop: "{{ pv_check.results }}"
+  become: true
+
+- name: Check if VG exists
+  command: vgdisplay ssd_vg
+  register: vg_check
+  failed_when: false
+  changed_when: false
+  become: true
+
 - name: Create VG
   command: vgcreate ssd_vg /dev/nvme0n1 /dev/nvme1n1
-  args:
-    creates: /etc/lvm/backup/ssd_vg
+  when: vg_check.rc != 0
+  become: true
+
+- name: Check if LV exists
+  command: lvdisplay ssd_vg/ssd_lv
+  register: lv_check
+  failed_when: false
+  changed_when: false
   become: true
 
 - name: Create striped LV
   command: >
     lvcreate -i2 -I256 -l 100%FREE -n ssd_lv ssd_vg
-  args:
-    creates: /dev/ssd_vg/ssd_lv
+  when: lv_check.rc != 0
   become: true
 
 - name: Make ext4 filesystem
