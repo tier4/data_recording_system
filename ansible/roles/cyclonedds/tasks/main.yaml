@@ -25,7 +25,7 @@
     dest: /etc/systemd/system/
     mode: 0755
   become: true
-  when: '"lo" in {{ cyclonedds.network_interface }}'
+  when: '"lo" in cyclonedds.network_interface'
 
 - name: Enable and start cyclonedds-local service
   ansible.builtin.systemd:
@@ -33,6 +33,7 @@
     enabled: true
     state: started
   become: true
+  when: '"lo" in cyclonedds.network_interface'
 
 - name: Add kernel parameter config
   ansible.posix.sysctl:
