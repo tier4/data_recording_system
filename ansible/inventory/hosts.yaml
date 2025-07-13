@@ -1,0 +1,23 @@
+---
+# Inventory file for Data Recording System
+
+all:
+  children:
+    drs_ecus:
+      hosts:
+        ecu0:
+          ansible_host: 192.168.1.10
+          drs_ecu_id: 0
+          netplan_files:
+            - src: 99-drs-ecu0.yaml
+              dest: /etc/netplan/99-drs.yaml
+        ecu1:
+          ansible_host: 192.168.1.11
+          drs_ecu_id: 1
+          netplan_files:
+            - src: 99-drs-ecu1.yaml
+              dest: /etc/netplan/99-drs.yaml
+              
+  vars:
+    ansible_user: nvidia
+    ansible_python_interpreter: /usr/bin/python3

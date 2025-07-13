@@ -1,0 +1,58 @@
+---
+# Global variables for Data Recording System
+# These can be overridden in host_vars or at runtime
+
+# DRS Configuration
+drs_ecu_id: 0
+sensing_system_id: "aabbccdd"
+module_id: "eeffgghh"
+drs_user: "{{ ansible_user }}"
+drs_group: "{{ ansible_user }}"
+drs_install_dir: /opt/drs/install
+drs_build_type: RelWithDebInfo
+
+# ROS2 Configuration
+ros_domain_id: 0
+
+# CycloneDDS Configuration
+cyclonedds:
+  network_interface: ['lo', 'enP1p1s0']
+  minimum_socket_receive_buffer_size: 20971520  # 20MB
+  ipfrag_time: 3
+  ipfrag_high_thresh: 134217728
+  rmem_max: 2147483647
+  rmem_default: 8388608
+
+# PTP Configuration (optional - uncomment to enable)
+# ptp:
+#   master_port: mgbe0
+#   slave_ports: ['eqos0', 'eth0']
+#   clock_class: 248
+#   priority1: 128
+#   priority2: 128
+
+# NAS Configuration (optional - uncomment to enable)
+# nas_address: 192.168.10.100
+# nas_export_path: /data
+# nas_mount_point: /mnt/nas/data
+
+# Sync to NAS Configuration
+sync_to_nas_source_dir: /mnt/ssd/data
+sync_to_nas_base_dir: /mnt/nas/data
+sync_to_nas_rsync_bw_limit: 200m
+sync_to_nas_timer_interval: 5min
+
+# Netplan Configuration (optional - define to enable)
+# netplan_files:
+#   - src: 99-drs-ecu0.yaml
+#     dest: /etc/netplan/99-drs.yaml
+
+# Feature flags
+tier4_hdr_camera_driver_enabled: false
+
+# Journald Configuration
+journald_system_max_use: 500M
+
+# Sensor Trigger Configuration
+sensor_trigger_rtprio: 85
+sensor_trigger_memlock: unlimited

@@ -1,0 +1,9 @@
+---
+# Local inventory file for running ansible on the same host
+
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_user: "{{ lookup('env', 'USER') }}"

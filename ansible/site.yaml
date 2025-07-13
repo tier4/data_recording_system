@@ -1,0 +1,116 @@
+---
+# Data Recording System - Local Installation Playbook
+# This playbook installs and configures all components for the DRS on the local host
+
+- name: Setup Data Recording System (Local)
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    # Determine ECU ID from hostname or environment variable
+    drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
+    sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
+    module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
+    
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      
+  roles:
+    # Phase 1: Storage setup (no dependencies)
+    - role: ssd_mount
+      tags: ['storage', 'ssd']
+      
+    # Phase 2: System configuration (no dependencies)
+    - role: jetpack
+      tags: ['system', 'nvidia']
+      when: ansible_architecture == "aarch64"
+      
+    - role: journald
+      tags: ['system', 'logging']
+      
+    - role: netplan
+      tags: ['network']
+      when: netplan_files is defined and netplan_files | length > 0
+      
+    # - role: ntp
+    #   tags: ['time', 'ntp']
+      
+    - role: ptp
+      tags: ['time', 'ptp']
+      when: ptp is defined
+      
+    # Phase 3: Core software installation
+    - role: ros2
+      tags: ['ros2', 'core']
+      
+    - role: docker
+      tags: ['docker', 'containers']
+      
+    # Phase 4: DRS environment setup
+    - role: drs_env
+      tags: ['drs', 'environment']
+      
+    # Phase 5: Middleware configuration
+    - role: cyclonedds
+      tags: ['drs', 'middleware']
+      
+    # Phase 6: DRS installation
+    - role: drs
+      tags: ['drs', 'build']
+      
+    # Phase 7: Services setup
+    - role: drs_recorder_service
+      tags: ['drs', 'services', 'recorder']
+      
+    - role: drs_sensor_service
+      tags: ['drs', 'services', 'sensor']
+      
+    # Phase 8: Additional components
+    - role: tier4_hdr_camera_driver
+      tags: ['drivers', 'camera']
+      when: tier4_hdr_camera_driver_enabled | default(false)
+      
+    - role: c2_readout_delay_setter
+      tags: ['drivers', 'camera', 'c2']
+      
+    - role: sensor_trigger
+      tags: ['sensor', 'trigger']
+      
+    # Phase 9: Data management
+    - role: nas_mount
+      tags: ['storage', 'nas']
+      when: nas_address is defined
+      
+    - role: sync_to_nas
+      tags: ['storage', 'sync']
+      when: nas_address is defined
+      
+  post_tasks:
+    - name: Display installation summary
+      debug:
+        msg: |
+          Data Recording System installation completed!
+          
+          ECU ID: {{ drs_ecu_id }}
+          Sensing System ID: {{ sensing_system_id }}
+          Module ID: {{ module_id }}
+          
+          Services status can be checked with:
+          - systemctl status drs_recorder.service
+          - systemctl status drs_sensor.service
+          
+    - name: Reboot notification
+      debug:
+        msg: "A system reboot may be required to apply all configurations."
+      changed_when: true
+      notify: reboot_required
+      
+  handlers:
+    - name: reboot_required
+      debug:
+        msg: "Please reboot the system to ensure all changes take effect."
