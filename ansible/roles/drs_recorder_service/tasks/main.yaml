@@ -18,26 +18,17 @@
   become: true
   notify: restart drs-recorder
 
-- name: Copy proto recorder config for ECU0
+- name: Copy proto recorder config files
   ansible.builtin.copy:
-    src: record_topics_ecu0.yaml
-    dest: /opt/drs/config/record_topics_ecu0.yaml
+    src: "{{ item }}"
+    dest: "/opt/drs/config/{{ item }}"
     owner: root
     group: root
     mode: '0644'
   become: true
-  when: "'ecu0' in inventory_hostname"
-  notify: restart drs-recorder
-
-- name: Copy proto recorder config for ECU1
-  ansible.builtin.copy:
-    src: record_topics_ecu1.yaml
-    dest: /opt/drs/config/record_topics_ecu1.yaml
-    owner: root
-    group: root
-    mode: '0644'
-  become: true
-  when: "'ecu1' in inventory_hostname"
+  loop:
+    - record_topics_ecu0.yaml
+    - record_topics_ecu1.yaml
   notify: restart drs-recorder
 
 - name: Create systemd service file
