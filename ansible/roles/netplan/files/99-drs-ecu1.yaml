@@ -27,6 +27,6 @@ network:
       dhcp6: false
       optional: false
       # gateway configuration to connect the Internet
-      # routes:
-      #   - to: default
-      #     via: 192.168.20.10
+      routes:
+        - to: default
+          via: 192.168.20.10

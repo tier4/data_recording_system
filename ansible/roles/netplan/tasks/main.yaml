@@ -2,12 +2,13 @@
   ansible.builtin.apt:
     name: netplan.io
     update_cache: true
+    cache_valid_time: 3600
   become: true
 
 - name: Copy network config file
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: /etc/netplan
+    dest: "/etc/netplan/{{ item }}"
     mode: 0644
   with_items: "{{ netplan_files }}"
   become: true
