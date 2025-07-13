@@ -14,5 +14,5 @@ drs_packages:
   - proto_recorder
 
 # User and group for DRS installation
-drs_user: "{{ ansible_user | default(ansible_env.USER) }}"
-drs_group: "{{ ansible_user | default(ansible_env.USER) }}"
+drs_user: "{{ ansible_user | default('nvidia') }}"
+drs_group: "{{ ansible_user | default('nvidia') }}"
