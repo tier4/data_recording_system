@@ -29,6 +29,7 @@
   loop:
     - record_topics_ecu0.yaml
     - record_topics_ecu1.yaml
+    - mcap_options.yaml
   notify: restart drs-recorder
 
 - name: Create systemd service file
