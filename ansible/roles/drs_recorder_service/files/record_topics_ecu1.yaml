@@ -12,13 +12,13 @@ topics:
     min_rate: 18.0
     max_rate: 21.0
   - name: /sensing/camera/camera4/camera_info
-    min_rate: 1.0
-    max_rate: 50.0
+    min_rate: 18.0
+    max_rate: 21.0
   - name: /sensing/camera/camera5/camera_info
-    min_rate: 1.0
-    max_rate: 50.0
+    min_rate: 18.0
+    max_rate: 21.0
   - name: /sensing/camera/camera6/camera_info
-    min_rate: 1.0
+    min_rate: 18.0
     max_rate: 50.0
   - name: /sensing/camera/camera7/camera_info
     min_rate: 1.0
