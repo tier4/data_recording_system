@@ -6,7 +6,7 @@ base_link:
   drs_base_link:
     x: 0.759
     y: 0.0
-    z: 1.651
+    z: 1.961
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
