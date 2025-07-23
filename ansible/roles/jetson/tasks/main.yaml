@@ -1,0 +1,27 @@
+---
+- name: Copy jetson-clocks systemd service file
+  copy:
+    src: jetson-clocks.service
+    dest: /etc/systemd/system/jetson-clocks.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Enable and start jetson-clocks service
+  systemd:
+    name: jetson-clocks
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  become: yes
+
+- name: Set Jetson to maximum performance mode (nvpmodel -m 0)
+  command: nvpmodel -m 0
+  become: yes
+
+- name: Install jtop
+  pip:
+    name: jetson-stats
+    executable: pip3
+  become: yes
