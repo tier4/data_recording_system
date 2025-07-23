@@ -7,6 +7,7 @@ Wants=network.target
 [Service]
 Type=simple
 ExecStart=/usr/sbin/ptp4l -m -f {{ ptp_service_dir }}/ptp4l.conf
+#ExecStart=/usr/local/sbin/ptp4l -m -f {{ ptp_service_dir }}/ptp4l.conf
 Restart=always
 RestartSec=5
 User=root
