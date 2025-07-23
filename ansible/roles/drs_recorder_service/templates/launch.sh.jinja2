@@ -33,4 +33,4 @@ exec ros2 launch proto_recorder proto_recorder.launch.xml \
     topics_file:=/opt/drs/config/${CONFIG_FILE} \
     storage_config_uri:=/opt/drs/config/mcap_options.yaml \
     max_bagfile_duration:=30 \
-    hardware_id:=${MODULE_ID}
+    hardware_id:=$(hostname)
