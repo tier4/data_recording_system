@@ -1,0 +1,17 @@
+[Unit]
+Description=DRS API Service (Module Manager)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/opt/drs/service/drs_api/launch.sh
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=drs-api
+
+[Install]
+WantedBy=multi-user.target

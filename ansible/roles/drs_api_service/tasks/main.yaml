@@ -1,0 +1,29 @@
+---
+- name: Deploy module-manager configuration
+  become: true
+  copy:
+    src: module-manager.yaml
+    dest: /opt/drs/config/module-manager.yaml
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: '0644'
+
+- name: Deploy systemd service file
+  become: true
+  template:
+    src: drs_api.service.jinja2
+    dest: /etc/systemd/system/drs-api.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - reload systemd
+
+- name: Enable and start DRS API service
+  become: true
+  systemd:
+    name: drs-api
+    enabled: true
+    state: started
+  notify:
+    - reload systemd

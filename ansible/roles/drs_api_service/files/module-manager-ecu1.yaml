@@ -1,0 +1,31 @@
+server:
+  port: 50051
+
+disk:
+  enabled: true 
+  monitor_path: "/mnt/ssd/data"
+
+services:
+  enabled: true
+  services:
+    drs_sensor:
+      systemd_name: "drs-sensor.service"
+      description: "Sensor service"
+    drs_recorder:
+      systemd_name: "drs-recorder.service"
+      description: "Data recording service"
+
+system:
+  enable_reboot: true
+  enable_shutdown: true
+  max_delay_seconds: 60
+  allow_reboot: true
+  allow_shutdown: true
+
+ptp:
+  enabled: true
+  remote_devices:
+    - name: "rear_lidar"
+      ip_address: "192.168.2.202"
+    - name: "left_lidar"
+      ip_address: "192.168.2.204"

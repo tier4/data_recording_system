@@ -1,0 +1,11 @@
+---
+- name: reload systemd
+  become: true
+  systemd:
+    daemon_reload: true
+
+- name: restart drs-api
+  become: true
+  systemd:
+    name: drs-api
+    state: restarted
