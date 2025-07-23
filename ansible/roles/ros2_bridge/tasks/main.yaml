@@ -1,0 +1,39 @@
+---
+- name: Create ros2_bridge service directory
+  file:
+    path: /opt/drs/service/ros2_bridge
+    state: directory
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: '0755'
+  become: yes
+
+- name: Copy ros2_bridge launch script
+  copy:
+    src: launch.sh
+    dest: /opt/drs/service/ros2_bridge/launch.sh
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: '0755'
+  become: yes
+
+- name: Deploy ros2-bridge systemd service file
+  template:
+    src: ros2-bridge.service.j2
+    dest: /etc/systemd/system/ros2-bridge.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start ros2-bridge service
+  systemd:
+    name: ros2-bridge
+    enabled: yes
+    state: started
+  become: yes
