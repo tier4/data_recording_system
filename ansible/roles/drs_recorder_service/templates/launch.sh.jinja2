@@ -29,7 +29,7 @@ fi
 
 # Launch ROS2 application
 exec ros2 launch proto_recorder proto_recorder.launch.xml \
-    uri:=/mnt/ssd/data/${SENSING_SYSTEM_ID}_${MODULE_ID} \
+    uri:={{ drs_recorder_data_dir }}/${SENSING_SYSTEM_ID}_${MODULE_ID} \
     topics_file:=/opt/drs/config/${CONFIG_FILE} \
     storage_config_uri:=/opt/drs/config/mcap_options.yaml \
     max_bagfile_duration:=30 \

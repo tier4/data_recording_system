@@ -8,6 +8,15 @@
     mode: '0755'
   become: true
 
+- name: Create data recording directory
+  ansible.builtin.file:
+    path: "{{ drs_recorder_data_dir }}"
+    state: directory
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: '0755'
+  become: true
+
 - name: Create recorder launch script
   ansible.builtin.template:
     src: launch.sh.jinja2

@@ -3,3 +3,6 @@
 drs_user: "{{ ansible_user | default('nvidia') }}"
 drs_group: "{{ ansible_user | default('nvidia') }}"
 drs_install_dir: /opt/drs/install
+
+# Data recording directory
+drs_recorder_data_dir: /mnt/ssd/data
