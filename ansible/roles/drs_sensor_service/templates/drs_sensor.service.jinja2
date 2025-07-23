@@ -16,6 +16,11 @@ KillMode=mixed
 KillSignal=SIGINT
 TimeoutStopSec=30
 
+# Real-time scheduling capabilities
+AmbientCapabilities=CAP_SYS_NICE
+LimitRTPRIO={{ sensor_trigger_rtprio | default(85) }}
+LimitMEMLOCK={{ sensor_trigger_memlock | default('infinity') }}
+
 # Logging configuration (journald)
 StandardOutput=journal
 StandardError=journal
