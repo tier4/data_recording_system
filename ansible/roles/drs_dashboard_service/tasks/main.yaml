@@ -1,0 +1,55 @@
+---
+- name: Create DRS config directory
+  file:
+    path: /opt/drs/config
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+- name: Copy api-gateway configuration file
+  copy:
+    src: api-gateway.yaml
+    dest: /opt/drs/config/api-gateway.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Copy drs-dashboard systemd service file
+  copy:
+    src: drs-dashboard.service
+    dest: /etc/systemd/system/drs-dashboard.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Copy api-gateway systemd service file
+  copy:
+    src: api-gateway.service
+    dest: /etc/systemd/system/api-gateway.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start drs-dashboard service
+  systemd:
+    name: drs-dashboard
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Enable and start api-gateway service
+  systemd:
+    name: api-gateway
+    enabled: yes
+    state: started
+  become: yes

@@ -1,0 +1,17 @@
+[Unit]
+Description=DRS API Service (API Gateway)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/api-gateway -config=/opt/drs/config/api-gateway.yaml
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=drs-api
+
+[Install]
+WantedBy=multi-user.target

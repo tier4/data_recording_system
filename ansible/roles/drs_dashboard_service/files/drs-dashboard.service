@@ -1,0 +1,24 @@
+[Unit]
+Description=DRS Dashboard UI Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+
+# Start container with logging to journald
+ExecStart=/usr/bin/docker run --rm \
+  --name drs-dashboard \
+  --log-driver=journald \
+  --log-opt tag="drs-dashboard" \
+  --network host \
+  tier4/drs-dashboard:latest
+
+# Stop container gracefully
+ExecStop=/usr/bin/docker stop drs-dashboard
+
+[Install]
+WantedBy=multi-user.target
