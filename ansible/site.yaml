@@ -30,6 +30,10 @@
       tags: ['system', 'nvidia']
       when: ansible_architecture == "aarch64"
       
+    - role: jetson
+      tags: ['system', 'nvidia', 'performance']
+      when: ansible_architecture == "aarch64"
+      
     - role: journald
       tags: ['system', 'logging']
       
@@ -70,6 +74,15 @@
     - role: drs_sensor_service
       tags: ['drs', 'services', 'sensor']
       
+    # - role: drs_api_service
+    #   tags: ['drs', 'services', 'api']
+      
+    # - role: drs_dashboard_service
+    #   tags: ['drs', 'services', 'dashboard']
+      
+    # - role: ros2_bridge
+    #   tags: ['drs', 'services', 'ros2-bridge']
+      
     # Phase 8: Additional components
     - role: tier4_hdr_camera_driver
       tags: ['drivers', 'camera']
@@ -103,6 +116,11 @@
           Services status can be checked with:
           - systemctl status drs_recorder.service
           - systemctl status drs_sensor.service
+          - systemctl status drs-api.service
+          - systemctl status drs-dashboard.service
+          - systemctl status api-gateway.service
+          - systemctl status ros2-bridge.service
+          - systemctl status jetson-clocks.service
           
     - name: Reboot notification
       debug:
