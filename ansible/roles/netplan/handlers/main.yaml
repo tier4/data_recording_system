@@ -1,0 +1,14 @@
+---
+- name: netplan_apply_required
+  debug:
+    msg: |
+      ============================================
+      IMPORTANT: Network configuration has changed!
+      ============================================
+      
+      To apply the network changes, run:
+        sudo netplan apply
+      
+      WARNING: This may temporarily disrupt network connectivity.
+      It's recommended to run this command when you're ready.
+      ============================================
