@@ -17,7 +17,7 @@ ros_domain_id: 0
 # CycloneDDS Configuration
 cyclonedds:
   network_interface: ['lo', 'enP1p1s0']
-  minimum_socket_receive_buffer_size: 20971520  # 20MB
+  minimum_socket_receive_buffer_size: 20MB
   ipfrag_time: 3
   ipfrag_high_thresh: 134217728
   rmem_max: 2147483647
