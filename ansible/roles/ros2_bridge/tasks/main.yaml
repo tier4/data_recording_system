@@ -1,4 +1,13 @@
 ---
+- name: Build ros2_bridge packages
+  ansible.builtin.shell:
+    cd {{ drs_src_dir }}
+    source /opt/drs/config/drs.env
+    source /opt/ros/humble/setup.bash
+    colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-select ros2_bridge
+  args:
+    executable: /bin/bash
+
 - name: Create ros2_bridge service directory
   file:
     path: /opt/drs/service/ros2_bridge
@@ -9,8 +18,8 @@
   become: yes
 
 - name: Copy ros2_bridge launch script
-  copy:
-    src: launch.sh
+  ansible.builtin.template:
+    src: launch.sh.j2
     dest: /opt/drs/service/ros2_bridge/launch.sh
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
