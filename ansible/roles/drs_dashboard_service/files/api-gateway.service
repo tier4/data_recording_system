@@ -1,17 +1,25 @@
 [Unit]
-Description=DRS API Service (API Gateway)
-After=network-online.target
-Wants=network-online.target
+Description=DRS API Gateway Container
+After=docker.service
+Requires=docker.service
 
 [Service]
 Type=simple
-User=root
-ExecStart=/usr/local/bin/api-gateway -config=/opt/drs/config/api-gateway.yaml
-Restart=on-failure
+Restart=always
 RestartSec=5
-StandardOutput=journal
-StandardError=journal
-SyslogIdentifier=drs-api
+TimeoutStartSec=0
+
+# Start container with logging to journald
+ExecStart=/usr/bin/docker run --rm \
+  --name drs-api-gateway \
+  --log-driver=journald \
+  --log-opt tag="drs-api-gateway" \
+  --network host \
+  -v /opt/drs/config/api-gateway.yaml:/etc/api-gateway/config.yaml:ro \
+  tier4/drs-api-gateway:latest
+
+# Stop container gracefully
+ExecStop=/usr/bin/docker stop drs-api-gateway
 
 [Install]
 WantedBy=multi-user.target

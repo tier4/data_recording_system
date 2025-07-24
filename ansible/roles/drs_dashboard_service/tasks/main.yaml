@@ -1,4 +1,16 @@
 ---
+- name: Check if Docker build script exists
+  stat:
+    path: "{{ playbook_dir }}/../src/drs-api/docker/build.sh"
+  register: docker_build_script
+
+- name: Build Docker images
+  shell: |
+    {{ playbook_dir }}/../src/drs-api/docker/build.sh
+  when: docker_build_script.stat.exists
+  register: build_result
+  changed_when: true
+
 - name: Create DRS config directory
   file:
     path: /opt/drs/config
