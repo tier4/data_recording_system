@@ -6,7 +6,7 @@
 
 - name: Build DRS API binary with Docker
   shell: |
-    {{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh
+    {{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh all
   when: drs_api_build_script.stat.exists
   register: build_result
   changed_when: true
@@ -60,7 +60,7 @@
 - name: Deploy systemd service file
   become: true
   template:
-    src: drs_api.service.jinja2
+    src: drs-api.service.jinja2
     dest: /etc/systemd/system/drs-api.service
     owner: root
     group: root
