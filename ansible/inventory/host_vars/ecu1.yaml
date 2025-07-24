@@ -3,6 +3,9 @@
 
 drs_ecu_id: 1
 
+# Module manager configuration
+module_manager_config: module-manager-ecu1.yaml
+
 # Use ECU1 specific netplan configuration
 netplan_files:
   - 99-drs-ecu1.yaml

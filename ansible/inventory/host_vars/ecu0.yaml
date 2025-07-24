@@ -3,6 +3,9 @@
 
 drs_ecu_id: 0
 
+# Module manager configuration
+module_manager_config: module-manager-ecu0.yaml
+
 # Use ECU0 specific netplan configuration
 netplan_files:
   - 99-drs-ecu0.yaml

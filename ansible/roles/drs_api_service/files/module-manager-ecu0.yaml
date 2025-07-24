@@ -2,7 +2,7 @@ server:
   port: 50051
 
 disk:
-  enabled: true 
+  enabled: true
   monitor_path: "/mnt/ssd/data"
 
 services:
@@ -18,9 +18,6 @@ services:
 system:
   enable_reboot: true
   enable_shutdown: true
-  max_delay_seconds: 60
-  allow_reboot: true
-  allow_shutdown: true
 
 ptp:
   enabled: true

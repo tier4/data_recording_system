@@ -1,8 +1,57 @@
 ---
+- name: Check if DRS API build script exists
+  stat:
+    path: "{{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh"
+  register: drs_api_build_script
+
+- name: Build DRS API binary with Docker
+  shell: |
+    {{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh
+  when: drs_api_build_script.stat.exists
+  register: build_result
+  changed_when: true
+
+- name: Copy module-manager binary to /usr/local/bin
+  copy:
+    src: "{{ playbook_dir }}/../src/drs-api/services/module-manager/bin/module-manager-arm64-static"
+    dest: /usr/local/bin/module-manager
+    mode: '0755'
+    remote_src: yes
+  when: drs_api_build_script.stat.exists
+  become: yes
+  notify: restart drs-api
+
+- name: Copy drs-cli binary to /usr/local/bin
+  copy:
+    src: "{{ playbook_dir }}/../src/drs-api/tools/drs-cli/bin/drs-cli-arm64-static"
+    dest: /usr/local/bin/drs-cli
+    mode: '0755'
+    remote_src: yes
+  when: drs_api_build_script.stat.exists
+  become: yes
+
+- name: Create DRS API service directory
+  ansible.builtin.file:
+    path: /opt/drs/service/drs_api
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Copy drs_api launch script
+  ansible.builtin.copy:
+    src: launch.sh
+    dest: /opt/drs/service/drs_api/launch.sh
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
 - name: Deploy module-manager configuration
   become: true
   copy:
-    src: module-manager.yaml
+    src: "{{ module_manager_config }}"
     dest: /opt/drs/config/module-manager.yaml
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
