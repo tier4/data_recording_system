@@ -15,6 +15,24 @@
     creates: /usr/bin/docker
   become: yes
 
+# Temporary workaround: Downgrade Docker due to issues with v28
+- name: Downgrade Docker to specific version
+  apt:
+    name:
+      - docker-ce=5:27.5.1-1~ubuntu.22.04~jammy
+      - docker-ce-cli=5:27.5.1-1~ubuntu.22.04~jammy
+    state: present
+    allow_downgrades: yes
+  become: yes
+
+# Temporary workaround: Prevent Docker from being upgraded
+- name: Hold Docker packages to prevent upgrades
+  command: apt-mark hold {{ item }}
+  loop:
+    - docker-ce
+    - docker-ce-cli
+  become: yes
+
 - name: Enable and start Docker service
   systemd:
     name: docker
