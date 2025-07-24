@@ -26,10 +26,10 @@
     mode: '0755'
   become: yes
 
-- name: Deploy ros2-bridge systemd service file
+- name: Deploy drs-ros2-bridge systemd service file
   template:
-    src: ros2-bridge.service.j2
-    dest: /etc/systemd/system/ros2-bridge.service
+    src: drs-ros2-bridge.service.j2
+    dest: /etc/systemd/system/drs-ros2-bridge.service
     owner: root
     group: root
     mode: '0644'
@@ -40,9 +40,9 @@
     daemon_reload: yes
   become: yes
 
-- name: Enable and start ros2-bridge service
+- name: Enable and start drs-ros2-bridge service
   systemd:
-    name: ros2-bridge
+    name: drs-ros2-bridge
     enabled: yes
     state: started
   become: yes
