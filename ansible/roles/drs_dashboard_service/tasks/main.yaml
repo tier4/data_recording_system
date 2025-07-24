@@ -38,10 +38,10 @@
     mode: '0644'
   become: yes
 
-- name: Copy api-gateway systemd service file
+- name: Copy drs-api-gateway systemd service file
   copy:
-    src: api-gateway.service
-    dest: /etc/systemd/system/api-gateway.service
+    src: drs-api-gateway.service
+    dest: /etc/systemd/system/drs-api-gateway.service
     owner: root
     group: root
     mode: '0644'
@@ -59,9 +59,9 @@
     state: started
   become: yes
 
-- name: Enable and start api-gateway service
+- name: Enable and start drs-api-gateway service
   systemd:
-    name: api-gateway
+    name: drs-api-gateway
     enabled: yes
     state: started
   become: yes
