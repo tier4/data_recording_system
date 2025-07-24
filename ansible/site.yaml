@@ -118,7 +118,7 @@
           - systemctl status drs_sensor.service
           - systemctl status drs-api.service
           - systemctl status drs-dashboard.service
-          - systemctl status api-gateway.service
+          - systemctl status drs-api-gateway.service
           - systemctl status ros2-bridge.service
           - systemctl status jetson-clocks.service
           
