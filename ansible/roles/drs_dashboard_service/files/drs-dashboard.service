@@ -1,24 +1,31 @@
 [Unit]
-Description=DRS Dashboard UI Container
+Description=DRS Dashboard Service (Dashboard UI and API Gateway)
 After=docker.service
 Requires=docker.service
+PartOf=docker.service
 
 [Service]
 Type=simple
-Restart=always
+Restart=on-failure
 RestartSec=5
 TimeoutStartSec=0
+TimeoutStopSec=120
+WorkingDirectory=/opt/drs/service/drs_dashboard
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=drs-dashboard
 
-# Start container with logging to journald
-ExecStart=/usr/bin/docker run --rm \
-  --name drs-dashboard \
-  --log-driver=journald \
-  --log-opt tag="drs-dashboard" \
-  --network host \
-  tier4/drs-dashboard:latest
+# Remove any existing containers before starting
+ExecStartPre=-/usr/bin/docker-compose down --remove-orphans
 
-# Stop container gracefully
-ExecStop=/usr/bin/docker stop drs-dashboard
+# Start containers in foreground mode
+ExecStart=/usr/bin/docker-compose up --abort-on-container-exit
+
+# Stop containers gracefully with timeout
+ExecStop=/usr/bin/docker-compose down --timeout 30
+
+# Clean up on failure
+ExecStopPost=-/usr/bin/docker-compose down --remove-orphans
 
 [Install]
 WantedBy=multi-user.target

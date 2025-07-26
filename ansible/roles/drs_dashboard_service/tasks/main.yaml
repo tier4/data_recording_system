@@ -11,9 +11,9 @@
   register: build_result
   changed_when: true
 
-- name: Create DRS config directory
+- name: Create DRS service directory
   file:
-    path: /opt/drs/config
+    path: /opt/drs/service/drs_dashboard
     state: directory
     owner: root
     group: root
@@ -23,25 +23,44 @@
 - name: Copy api-gateway configuration file
   copy:
     src: api-gateway.yaml
-    dest: /opt/drs/config/api-gateway.yaml
+    dest: /opt/drs/service/drs_dashboard/api-gateway.yaml
     owner: root
     group: root
     mode: '0644'
   become: yes
 
-- name: Copy drs-dashboard systemd service file
+- name: Copy docker-compose.yml file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/drs/service/drs_dashboard/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Stop and disable old services if they exist
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  with_items:
+    - drs-api-gateway
+    - drs-dashboard
+  failed_when: false
+  become: yes
+
+- name: Remove old systemd service files
+  file:
+    path: "/etc/systemd/system/{{ item }}.service"
+    state: absent
+  with_items:
+    - drs-api-gateway
+  become: yes
+
+- name: Copy unified drs-dashboard systemd service file
   copy:
     src: drs-dashboard.service
     dest: /etc/systemd/system/drs-dashboard.service
-    owner: root
-    group: root
-    mode: '0644'
-  become: yes
-
-- name: Copy drs-api-gateway systemd service file
-  copy:
-    src: drs-api-gateway.service
-    dest: /etc/systemd/system/drs-api-gateway.service
     owner: root
     group: root
     mode: '0644'
@@ -52,16 +71,9 @@
     daemon_reload: yes
   become: yes
 
-- name: Enable and start drs-dashboard service
+- name: Enable and start unified drs-dashboard service
   systemd:
     name: drs-dashboard
-    enabled: yes
-    state: started
-  become: yes
-
-- name: Enable and start drs-api-gateway service
-  systemd:
-    name: drs-api-gateway
     enabled: yes
     state: started
   become: yes
