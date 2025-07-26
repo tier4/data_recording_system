@@ -5,7 +5,7 @@ After=network-online.target cyclonedds-local.service
 
 [Service]
 Type=exec
-ExecStart=/opt/drs/service/ros2_bridge/launch.sh
+ExecStart=/opt/drs/service/drs_ros2_bridge/launch.sh
 Restart=on-failure
 RestartSec=5
 User={{ drs_user }}
