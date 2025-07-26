@@ -23,13 +23,14 @@
   become: yes
 
 - name: Set Jetson to maximum performance mode (nvpmodel -m 0)
-  command: nvpmodel -m 0
+  shell: echo "YES" | nvpmodel -m 0
   when: "'NV Power Mode: MAXN' not in current_power_mode.stdout"
   become: yes
   register: nvpmodel_result
   failed_when: 
     - nvpmodel_result.rc != 0
     - "'Reboot required' not in nvpmodel_result.stdout"
+    - "'rebooting' not in nvpmodel_result.stdout"
   notify: reboot_required
 
 - name: Check if reboot is required for power mode change
