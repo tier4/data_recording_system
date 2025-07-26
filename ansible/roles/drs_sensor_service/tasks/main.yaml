@@ -20,7 +20,7 @@
 
 - name: Create systemd service file
   ansible.builtin.template:
-    src: drs_sensor.service.jinja2
+    src: drs-sensor.service.jinja2
     dest: /etc/systemd/system/drs-sensor.service
     owner: root
     group: root
