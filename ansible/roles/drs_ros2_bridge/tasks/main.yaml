@@ -8,19 +8,19 @@
   args:
     executable: /bin/bash
 
-- name: Create ros2_bridge service directory
+- name: Create drs_ros2_bridge service directory
   file:
-    path: /opt/drs/service/ros2_bridge
+    path: /opt/drs/service/drs_ros2_bridge
     state: directory
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
     mode: '0755'
   become: yes
 
-- name: Copy ros2_bridge launch script
+- name: Copy drs_ros2_bridge launch script
   ansible.builtin.template:
     src: launch.sh.j2
-    dest: /opt/drs/service/ros2_bridge/launch.sh
+    dest: /opt/drs/service/drs_ros2_bridge/launch.sh
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
     mode: '0755'
