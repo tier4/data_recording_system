@@ -1,6 +1,6 @@
 ---
 - name: Build ros2_bridge packages
-  ansible.builtin.shell:
+  ansible.builtin.shell: |
     cd {{ drs_src_dir }}
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
