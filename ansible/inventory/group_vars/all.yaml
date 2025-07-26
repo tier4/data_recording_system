@@ -12,7 +12,7 @@ drs_install_dir: /opt/drs/install
 drs_build_type: RelWithDebInfo
 
 # ROS2 Configuration
-ros_domain_id: 0
+ros_domain_id: 1
 
 # CycloneDDS Configuration
 cyclonedds:
@@ -46,9 +46,6 @@ sync_to_nas_timer_interval: 5min
 # netplan_files:
 #   - src: 99-drs-ecu0.yaml
 #     dest: /etc/netplan/99-drs.yaml
-
-# Feature flags
-tier4_hdr_camera_driver_enabled: false
 
 # Journald Configuration
 journald_system_max_use: 500M

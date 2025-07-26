@@ -86,7 +86,6 @@
     # Phase 8: Additional components
     - role: tier4_hdr_camera_driver
       tags: ['drivers', 'camera']
-      when: tier4_hdr_camera_driver_enabled | default(false)
       
     - role: c2_readout_delay_setter
       tags: ['drivers', 'camera', 'c2']
