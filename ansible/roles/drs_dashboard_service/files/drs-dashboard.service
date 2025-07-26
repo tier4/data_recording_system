@@ -16,16 +16,16 @@ StandardError=journal
 SyslogIdentifier=drs-dashboard
 
 # Remove any existing containers before starting
-ExecStartPre=-/usr/bin/docker-compose down --remove-orphans
+ExecStartPre=-/usr/bin/docker compose down --remove-orphans
 
 # Start containers in foreground mode
-ExecStart=/usr/bin/docker-compose up --abort-on-container-exit
+ExecStart=/usr/bin/docker compose up --abort-on-container-exit
 
 # Stop containers gracefully with timeout
-ExecStop=/usr/bin/docker-compose down --timeout 30
+ExecStop=/usr/bin/docker compose down --timeout 30
 
 # Clean up on failure
-ExecStopPost=-/usr/bin/docker-compose down --remove-orphans
+ExecStopPost=-/usr/bin/docker compose down --remove-orphans
 
 [Install]
 WantedBy=multi-user.target

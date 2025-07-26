@@ -38,26 +38,7 @@
     mode: '0644'
   become: yes
 
-- name: Stop and disable old services if they exist
-  systemd:
-    name: "{{ item }}"
-    enabled: no
-    state: stopped
-  with_items:
-    - drs-api-gateway
-    - drs-dashboard
-  failed_when: false
-  become: yes
-
-- name: Remove old systemd service files
-  file:
-    path: "/etc/systemd/system/{{ item }}.service"
-    state: absent
-  with_items:
-    - drs-api-gateway
-  become: yes
-
-- name: Copy unified drs-dashboard systemd service file
+- name: Copy drs-dashboard systemd service file
   copy:
     src: drs-dashboard.service
     dest: /etc/systemd/system/drs-dashboard.service
