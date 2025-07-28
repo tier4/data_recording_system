@@ -5,14 +5,9 @@
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="True"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
-  <arg name="calibration_file_path_right" default=""
-       description="File path for calibration file path of right Robin LiDAR - only needed for A sample device data"/>
-  <arg name="calibration_file_path_left" default=""
-       description="File path for calibration file path of left Robin LiDAR - only needed for A sample device data"/>
-  <arg name="has_front4d" default="False"
-       description="Should be True when a front-mounted 4D LiDAR is present"/>
-  <arg name="publish_tf" default="True"/>
-
+  <arg name="publish_tf" default="False"/>
+  <arg name="concatenate_pointcloud" default="False"
+       description="If true, pointclouds from all LiDARs will be concatenated into a single topic"/>
   <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
   <group>
@@ -42,9 +37,9 @@
           <arg name="lidar_model" value="RobinW"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
           <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-          <arg name="calibration_file_path" value="$(var calibration_file_path_right)"/>
-          <arg name="sensor_ip" value="192.168.3.203"/>
-          <arg name="host_ip" value="192.168.3.1"/>
+          <arg name="calibration_file_path" value="">
+          <arg name="sensor_ip" value="192.168.2.203"/>
+          <arg name="host_ip" value="192.168.2.1"/>
         </include>
       </group>
 
@@ -71,20 +66,22 @@
           <arg name="lidar_model" value="RobinW"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
           <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-          <arg name="calibration_file_path" value="$(var calibration_file_path_left)"/>
-          <arg name="sensor_ip" value="192.168.3.204"/>
-          <arg name="host_ip" value="192.168.3.2"/>
+          <arg name="calibration_file_path" value=""/>
+          <arg name="sensor_ip" value="192.168.2.204"/>
+          <arg name="host_ip" value="192.168.2.2"/>
         </include>
       </group>
     </group>
   </group>
 
-  <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">
-    <arg name="base_frame" value="base_link"/>
-    <arg name="use_intra_process" value="true"/>
-    <arg name="use_multithread" value="true"/>
-    <arg name="use_pointcloud_container" value="false"/>
-  </include>
+  <group if="$(var concatenate_pointcloud)">
+    <include file="$(find-pkg-share pointcloud_concatenate)/launch/pointcloud_concatenate.launch.py">
+      <arg name="base_frame" value="base_link"/>
+      <arg name="use_intra_process" value="true"/>
+      <arg name="use_multithread" value="true"/>
+      <arg name="use_pointcloud_container" value="false"/>
+    </include>
+  </group>
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
