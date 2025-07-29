@@ -1,5 +1,4 @@
 <launch>
-  <!-- Entry point of DRS launcher -->
   <arg name="vehicle_id" default="default"/>
   <arg name="live_sensor" default="False"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
@@ -37,9 +36,10 @@
           <arg name="lidar_model" value="RobinW"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
           <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-          <arg name="calibration_file_path" value="">
+          <arg name="calibration_file_path" value=""/>
           <arg name="sensor_ip" value="192.168.2.203"/>
           <arg name="host_ip" value="192.168.2.1"/>
+          <arg name="data_port" value="8010"/>
         </include>
       </group>
 
