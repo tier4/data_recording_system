@@ -52,4 +52,4 @@ journald_system_max_use: 500M
 
 # Sensor Trigger Configuration
 sensor_trigger_rtprio: 85
-sensor_trigger_memlock: unlimited
+sensor_trigger_memlock: infinity
