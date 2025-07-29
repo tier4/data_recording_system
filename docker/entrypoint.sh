@@ -24,13 +24,17 @@ else
     # Set HOME environment variable
     export HOME=/home/"$USER_NAME"
 
+    # Copy bashrc to user's home
+    cp /etc/bash.bashrc "$HOME/.bashrc"
+    chown "$USER_NAME:$GROUP_NAME" "$HOME/.bashrc"
+
     # Source ROS2
     source "/opt/ros/$ROS_DISTRO/setup.bash"
     source /opt/drs/install/setup.bash
 
     # Set working directory
     cd "$HOME"
-
+    
     # Execute the command as the user
     exec gosu "$USER_NAME" "$@"
 fi
