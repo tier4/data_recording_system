@@ -1,4 +1,3 @@
-
 #!/usr/bin/bash
 
 # Get the user ID and group ID of the local user
@@ -22,10 +21,16 @@ else
     # Add sudo privileges to the user
     echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
 
+    # Set HOME environment variable
+    export HOME=/home/"$USER_NAME"
+
     # Source ROS2
     source "/opt/ros/$ROS_DISTRO/setup.bash"
     source /opt/drs/install/setup.bash
 
+    # Set working directory
+    cd "$HOME"
+
     # Execute the command as the user
-    exec /usr/sbin/gosu "$USER_NAME" "$@"
+    exec gosu "$USER_NAME" "$@"
 fi
