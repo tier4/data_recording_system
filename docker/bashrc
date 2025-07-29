@@ -25,3 +25,13 @@ shopt -s histappend
 
 # Check window size after each command
 shopt -s checkwinsize
+
+# Source ROS2 environment
+if [ -f /opt/ros/$ROS_DISTRO/setup.bash ]; then
+    source /opt/ros/$ROS_DISTRO/setup.bash
+fi
+
+# Source DRS environment
+if [ -f /opt/drs/install/setup.bash ]; then
+    source /opt/drs/install/setup.bash
+fi
