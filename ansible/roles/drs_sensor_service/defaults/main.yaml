@@ -5,3 +5,6 @@ drs_group: "{{ ansible_user | default('nvidia') }}"
 # DRS paths
 drs_install_dir: /opt/drs/install
 
+# Parameter configuration
+drs_use_custom_params: true
+drs_param_root_dir: /opt/drs/config/params

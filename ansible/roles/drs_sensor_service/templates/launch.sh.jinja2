@@ -18,4 +18,8 @@ if [ -f {{ drs_install_dir }}/setup.bash ]; then
 fi
 
 # Launch ROS2 application
+{% if drs_use_custom_params | bool %}
+exec ros2 launch drs_launch drs.launch.xml param_root_dir:={{ drs_param_root_dir }}
+{% else %}
 exec ros2 launch drs_launch drs.launch.xml
+{% endif %}

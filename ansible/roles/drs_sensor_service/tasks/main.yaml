@@ -8,6 +8,17 @@
     mode: '0755'
   become: true
 
+- name: Copy default parameters when custom params enabled
+  ansible.builtin.copy:
+    src: "{{ drs_install_dir }}/share/individual_params/config/default/"
+    dest: "{{ drs_param_root_dir }}"
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: '0755'
+    remote_src: true
+  become: true
+  when: drs_use_custom_params | bool
+
 - name: Create DRS launch script
   ansible.builtin.template:
     src: launch.sh.jinja2
