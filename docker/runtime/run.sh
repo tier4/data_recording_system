@@ -11,4 +11,4 @@ docker run -it --rm \
     -e XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
     -e NVIDIA_DRIVER_CAPABILITIES=all \
     -v /etc/localtime:/etc/localtime:ro \
-    tier4/drs:latest "$@"
+    tier4/drs-runtime:latest "$@"
