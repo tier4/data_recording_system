@@ -1,4 +1,15 @@
 ---
+- name: Install dependencies for drs_ros2_bridge
+  ansible.builtin.apt:
+    name:
+      - libgrpc++-dev
+      - protobuf-compiler
+      - protobuf-compiler-grpc
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
 - name: Build ros2_bridge packages
   ansible.builtin.shell: |
     cd {{ drs_src_dir }}
