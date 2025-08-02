@@ -32,27 +32,27 @@
       become: yes
 
     - name: Generate overlay DTS file
-      command: python3 make_overlay_dts_anvil.py -4 C3 -4 C2 R36
+      command: python3 make_overlay_dts_anvil.py -4 C3 -4 C2 R36 -o tier4-camera-device-tree-overlay-anvil.dts
       args:
         chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
-        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dts
+        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dts
 
     - name: Compile DTS to DTB
-      command: dtc -O dtb -o tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo -@ tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dts
+      command: dtc -O dtb -o tier4-camera-device-tree-overlay-anvil.dtbo -@ tier4-camera-device-tree-overlay-anvil.dts
       args:
         chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
-        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+        creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dtbo
 
     - name: Copy DTBO file to /boot
       copy:
-        src: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
-        dest: /boot/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+        src: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dtbo
+        dest: /boot/tier4-camera-device-tree-overlay-anvil.dtbo
         remote_src: yes
         mode: '0644'
       become: yes
 
     - name: Apply device tree overlay
-      command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-imx490-imx728-gmsl-device-tree-overlay-anvil-r36.dtbo
+      command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-camera-device-tree-overlay-anvil.dtbo
       args:
         chdir: /boot/
         creates: /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb
