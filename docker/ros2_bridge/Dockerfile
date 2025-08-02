@@ -87,5 +87,4 @@ ADD docker/bashrc /etc/bash.bashrc
 ADD docker/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
-# entrypointとしてentrypoint.shを設定
 ENTRYPOINT ["/entrypoint.sh"]
