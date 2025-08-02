@@ -32,7 +32,7 @@
       become: yes
 
     - name: Generate overlay DTS file
-      command: python3 make_overlay_dts_anvil.py -4 C3 -4 C2 R36 -o tier4-camera-device-tree-overlay-anvil.dts
+      command: python3 make_overlay_dts_anvil.py {{ make_overlay_dts_anvil_option }} R36 -o tier4-camera-device-tree-overlay-anvil.dts
       args:
         chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
         creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dts
