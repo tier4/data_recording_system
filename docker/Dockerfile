@@ -37,7 +37,7 @@ RUN apt update && \
 
 # Install ROS2 Humble and required packages
 RUN apt update && \
-    apt install -y ros-${ROS_DISTRO}-desktop ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2 && \
+    apt install -y ros-${ROS_DISTRO}-ros-core ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
