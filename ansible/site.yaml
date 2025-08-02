@@ -74,13 +74,13 @@
     - role: drs_sensor_service
       tags: ['drs', 'services', 'sensor']
       
-    # - role: drs_api_service
-    #   tags: ['drs', 'services', 'api']
+    - role: drs_api_service
+      tags: ['drs', 'services', 'api']
       
     # - role: drs_dashboard_service
     #   tags: ['drs', 'services', 'dashboard']
       
-    # - role: ros2_bridge
+    # - role: drs_ros2_bridge
     #   tags: ['drs', 'services', 'ros2-bridge']
       
     # Phase 8: Additional components
@@ -113,12 +113,12 @@
           Module ID: {{ module_id }}
           
           Services status can be checked with:
-          - systemctl status drs_recorder.service
-          - systemctl status drs_sensor.service
+          - systemctl status drs-recorder.service
+          - systemctl status drs-sensor.service
           - systemctl status drs-api.service
           - systemctl status drs-dashboard.service
           - systemctl status drs-api-gateway.service
-          - systemctl status ros2-bridge.service
+          - systemctl status drs-ros2-bridge.service
           - systemctl status jetson-clocks.service
           
     - name: Reboot notification
