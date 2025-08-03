@@ -99,11 +99,11 @@ if [[ -n "$ECU_VARS" ]]; then
     ansible-playbook \
         -i inventory/localhost.yaml \
         -e @"$ECU_VARS" \
-        site.yaml \
+        drs-setup.yaml \
         "$@"
 else
     ansible-playbook \
         -i inventory/localhost.yaml \
-        site.yaml \
+        drs-setup.yaml \
         "$@"
 fi
