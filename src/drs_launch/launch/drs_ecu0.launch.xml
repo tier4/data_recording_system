@@ -90,13 +90,15 @@
     </node>
   </group>
 
-  <!-- CAN -->
-  <!-- vehicle interface -->
-  <!-- <group if="$(var live_sensor)">
-    <include file="$(find-pkg-share drs_launch)/launch/component/can_interface.launch.xml">
-      <arg name="vehicle_id" value="$(var vehicle_id)"/>
+  <!-- vehicle -->
+  <!--   
+  <group>
+    <push-ros-namespace namespace="vehicle"/>
+    <include file="$(find-pkg-share drs_launch)/launch/component/vehicle.launch.xml">
+      <arg name="launch_driver" value="$(var live_sensor)"/>
     </include>
-  </group> -->
+  </group>
+  -->
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
