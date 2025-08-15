@@ -31,3 +31,7 @@ repositories:
     type: git
     url: git@github.com:tier4/proto_recorder.git
     version: main
+  drs-api:
+    type: git
+    url: git@github.com:tier4/drs-api.git
+    version: main
