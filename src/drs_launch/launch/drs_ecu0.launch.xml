@@ -91,12 +91,14 @@
   </group>
 
   <!-- vehicle -->
+  <!--
   <group>
     <push-ros-namespace namespace="vehicle"/>
     <include file="$(find-pkg-share drs_launch)/launch/component/vehicle.launch.xml">
       <arg name="launch_driver" value="$(var live_sensor)"/>
     </include>
   </group>
+  -->
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">

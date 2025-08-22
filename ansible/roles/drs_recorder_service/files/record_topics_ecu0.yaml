@@ -56,6 +56,3 @@ topics:
   - name: /sensing/ins/oxts/velocity
     min_rate: 45.0
     max_rate: 55.0
-  - name: /vehicle/from_can_bus
-    min_rate: 300.0
-    max_rate: 1500.0
