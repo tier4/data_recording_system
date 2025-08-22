@@ -2,7 +2,7 @@
   <arg name="lidar_position"/>
   <arg name="live_sensor" default="true" />
   <arg name="publish_pointcloud" default="true" />
-  <arg name="lidar_name" default="seyond" />
+  <arg name="lidar_name" default="lidar_$(var lidar_position)" />
   <arg name="sensor_ip" default="172.168.1.10" />
   <arg name="data_port" default="8010" />
   <arg name="reflectance_mode" default="true" />
@@ -13,8 +13,6 @@
   <arg name="min_range" default="0.4" />
 
   <group>
-    <push-ros-namespace namespace="sensing/lidar/$(var lidar_position)"/>
-
     <node pkg="seyond" exec="seyond_component_node" name="$(var lidar_name)" output="screen" >
       <param name="replay_rosbag" value="$(eval 'not $(var live_sensor)')" />
       <param name="packet_mode" value="true" />

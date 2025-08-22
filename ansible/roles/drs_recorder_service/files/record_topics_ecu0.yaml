@@ -23,10 +23,10 @@ topics:
   - name: /sensing/camera/camera3/camera_info
     min_rate: 18.0
     max_rate: 21.0
-  - name: /sensing/lidar/front/nebula_packets
+  - name: /sensing/lidar/front/seyond_packets
     min_rate: 9.0
     max_rate: 15.0
-  - name: /sensing/lidar/right/nebula_packets
+  - name: /sensing/lidar/right/seyond_packets
     min_rate: 9.0
     max_rate: 15.0
   - name: /tf_static # tf
@@ -56,3 +56,6 @@ topics:
   - name: /sensing/ins/oxts/velocity
     min_rate: 45.0
     max_rate: 55.0
+  - name: /vehicle/from_can_bus
+    min_rate: 300.0
+    max_rate: 1500.0

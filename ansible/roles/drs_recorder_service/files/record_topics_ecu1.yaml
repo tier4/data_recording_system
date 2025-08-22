@@ -23,9 +23,9 @@ topics:
   - name: /sensing/camera/camera7/camera_info
     min_rate: 1.0
     max_rate: 50.0
-  - name: /sensing/lidar/rear/nebula_packets
+  - name: /sensing/lidar/rear/seyond_packets
     min_rate: 9.0
     max_rate: 15.0
-  - name: /sensing/lidar/left/nebula_packets
+  - name: /sensing/lidar/left/seyond_packets
     min_rate: 9.0
     max_rate: 15.0
