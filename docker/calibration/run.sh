@@ -49,7 +49,6 @@ BASE_DOCKER_OPTS=(
     -e "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
     -e "NVIDIA_DRIVER_CAPABILITIES=all"
     -v "/etc/localtime:/etc/localtime:ro"
-    -v "$HOME/cyclonedds.xml:/opt/drs/config/cyclonedds.xml:ro"
 )
 
 # Additional Docker options and command arguments

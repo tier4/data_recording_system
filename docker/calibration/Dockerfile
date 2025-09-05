@@ -62,7 +62,8 @@ RUN mkdir -p /opt/drs/install
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     colcon build --symlink-install --install-base /opt/drs/install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to sensor_calibration_tools
 
-# cyclonedds.xml shall be mounted from host pc
+# Add cyclonedds.xml
+ADD docker/cyclonedds.xml /opt/drs/config/
 ENV CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
 
 # Add ROS environment variables

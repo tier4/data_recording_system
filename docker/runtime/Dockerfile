@@ -134,7 +134,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # Copy only built packages from builder stage (already cleaned)
 COPY --from=builder /opt/drs/install /opt/drs/install
 
-# cyclonedds.xml shall be mounted from host pc
+# Add cyclonedds.xml
+ADD docker/cyclonedds.xml /opt/drs/config/
 ENV CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
 
 # Add ROS environment variables
