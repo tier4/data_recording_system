@@ -44,10 +44,12 @@ BASE_DOCKER_OPTS=(
     -e "LOCAL_GROUP=$(id -gn)"
     -e "DISPLAY=$DISPLAY"
     -v "/tmp/.X11-unix/:/tmp/.X11-unix"
+    --device=/dev/dri
     -e "XAUTHORITY=${XAUTHORITY}"
     -e "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
     -e "NVIDIA_DRIVER_CAPABILITIES=all"
     -v "/etc/localtime:/etc/localtime:ro"
+    -v "$HOME/cyclonedds.xml:/opt/drs/config/cyclonedds.xml:ro"
 )
 
 # Additional Docker options and command arguments
@@ -92,4 +94,4 @@ done
 # echo "Command args: ${COMMAND_ARGS[@]}"
 
 # Execute Docker command
-docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" tier4/drs-runtime:latest "${COMMAND_ARGS[@]}"
+docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" ghcr.io/tier4/drs-runtime:latest "${COMMAND_ARGS[@]}"

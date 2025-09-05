@@ -7,7 +7,7 @@
   <arg name="publish_tf" default="False"/>
   <arg name="concatenate_pointcloud" default="False"
        description="If true, pointclouds from all LiDARs will be concatenated into a single topic"/>
-  <let name="param_root_dir" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+  <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
 
   <group>
     <push-ros-namespace namespace="sensing"/>
@@ -15,7 +15,6 @@
       <push-ros-namespace namespace="lidar"/>
       <group>
         <push-ros-namespace namespace="front"/>
-        <!-- front LiDAR -->
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
           <arg name="lidar_position" value="front"/>
           <arg name="lidar_model" value="Falcon"/>
@@ -30,7 +29,6 @@
 
       <group>
         <push-ros-namespace namespace="right"/>
-        <!-- right LiDAR -->
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
           <arg name="lidar_position" value="right"/>
           <arg name="lidar_model" value="RobinW"/>
@@ -45,7 +43,6 @@
 
       <group>
         <push-ros-namespace namespace="rear"/>
-        <!-- rear LiDAR -->
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
           <arg name="lidar_position" value="rear"/>
           <arg name="lidar_model" value="Falcon"/>
@@ -60,7 +57,6 @@
 
       <group>
         <push-ros-namespace namespace="left"/>
-        <!-- left LiDAR -->
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
           <arg name="lidar_position" value="left"/>
           <arg name="lidar_model" value="RobinW"/>
