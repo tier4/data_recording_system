@@ -25,6 +25,9 @@
     - role: ssd_mount
       tags: ['storage', 'ssd']
       
+    - role: external_ssd_mount
+      tags: ['storage', 'ssd', 'external']
+      
     # Phase 2: System configuration (no dependencies)
     - role: jetpack
       tags: ['system', 'nvidia']
