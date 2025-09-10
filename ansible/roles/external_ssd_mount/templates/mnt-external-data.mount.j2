@@ -1,0 +1,12 @@
+[Unit]
+Description=Mount COMLOPS External SSD
+After=multi-user.target
+
+[Mount]
+What=LABEL={{ ssd_label }}
+Where={{ mount_point }}
+Type={{ filesystem_type }}
+Options={{ mount_options }}
+
+[Install]
+WantedBy=multi-user.target

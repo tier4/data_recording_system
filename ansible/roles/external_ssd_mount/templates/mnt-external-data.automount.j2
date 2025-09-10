@@ -1,0 +1,10 @@
+[Unit]
+Description=Automount COMLOPS External SSD
+After=multi-user.target
+
+[Automount]
+Where={{ mount_point }}
+TimeoutIdleSec={{ automount_timeout_idle_sec }}
+
+[Install]
+WantedBy=multi-user.target

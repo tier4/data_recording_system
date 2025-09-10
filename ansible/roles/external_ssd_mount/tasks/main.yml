@@ -1,0 +1,42 @@
+---
+- name: Ensure parent directory exists
+  ansible.builtin.file:
+    path: "{{ mount_point | dirname }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Install systemd mount unit for external SSD
+  ansible.builtin.template:
+    src: mnt-external-data.mount.j2
+    dest: /etc/systemd/system/mnt-external-data.mount
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload systemd daemon
+
+- name: Install systemd automount unit for external SSD
+  ansible.builtin.template:
+    src: mnt-external-data.automount.j2
+    dest: /etc/systemd/system/mnt-external-data.automount
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload systemd daemon
+
+- name: Stop and disable direct mount unit
+  ansible.builtin.systemd:
+    name: mnt-external-data.mount
+    enabled: no
+    state: stopped
+    daemon_reload: yes
+
+- name: Enable and start automount unit
+  ansible.builtin.systemd:
+    name: mnt-external-data.automount
+    enabled: yes
+    state: started
+    daemon_reload: yes
