@@ -35,6 +35,10 @@ else
     # Set working directory
     cd "$HOME"
     
+    # Prepare runtime directory
+    mkdir -m 700 /run/user/$USER_ID
+    chown "$USER_NAME":"$GROUP_NAME" /run/user/$USER_ID
+
     # Execute the command as the user
     exec gosu "$USER_NAME" "$@"
 fi
