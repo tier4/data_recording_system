@@ -15,7 +15,7 @@
         <arg name="camera_id" value="4"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="set_readout_delay" value="False"/>
+        <arg name="set_readout_delay" value="True"/>
         <arg name="startup_delay" value="0.0"/>
       </include>
 
@@ -23,7 +23,7 @@
         <arg name="camera_id" value="5"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
-        <arg name="set_readout_delay" value="False"/>
+        <arg name="set_readout_delay" value="True"/>
         <arg name="startup_delay" value="0.1"/>
       </include>
 
