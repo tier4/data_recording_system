@@ -8,3 +8,8 @@
     name: mnt-external-data.mount
     enabled: yes
     state: started
+
+- name: Reload udev rules
+  ansible.builtin.shell: |
+    udevadm control --reload-rules
+    udevadm trigger
