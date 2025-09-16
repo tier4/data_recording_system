@@ -64,7 +64,11 @@
       when: ansible_os_family == "Debian"
 
   roles:
-    # Phase 1: Network configuration (VLAN, interfaces)
+    # Phase 1: Time synchronization setup
+    - role: raspi_time_sync
+      tags: ['raspi', 'raspi_time_sync']
+
+    # Phase 2: Network configuration (VLAN, interfaces)
     - role: raspi_network
       tags: ['raspi', 'network']
 

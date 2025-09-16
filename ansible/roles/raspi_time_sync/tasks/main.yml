@@ -1,0 +1,50 @@
+---
+# Time synchronization setup for Raspberry Pi
+
+- name: Set timezone to Asia/Tokyo
+  timezone:
+    name: Asia/Tokyo
+
+- name: Install chrony for time synchronization
+  apt:
+    name: chrony
+    state: present
+    update_cache: yes
+
+- name: Stop systemd-timesyncd if present
+  systemd:
+    name: systemd-timesyncd
+    state: stopped
+    enabled: no
+  failed_when: false
+
+- name: Deploy chrony configuration
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart chrony
+
+- name: Enable and start chrony service
+  systemd:
+    name: chrony
+    enabled: yes
+    state: started
+
+- name: Check time synchronization status
+  command: chronyc sources
+  register: chrony_sources
+  changed_when: false
+  failed_when: false
+
+- name: Display time sync status
+  debug:
+    msg: |
+      Timezone: Asia/Tokyo
+      NTP Server: ntp.nict.jp
+
+      Current sources:
+      {{ chrony_sources.stdout | default('Chrony starting...') }}
