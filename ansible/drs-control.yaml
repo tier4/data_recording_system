@@ -20,20 +20,38 @@
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
 
-  roles:      
+  roles:
+    # Phase 1: Network configuration (VLAN, interfaces)
+    - role: raspi_network
+      tags: ['network', 'control', 'raspi']
+
+    # Phase 2: WiFi Access Point setup
+    - role: raspi_hostapd
+      tags: ['wifi', 'ap', 'control', 'raspi']
+
+    # Phase 3: DHCP and DNS services
+    - role: raspi_dnsmasq
+      tags: ['dhcp', 'dns', 'control', 'raspi']
+
+    # Phase 4: Firewall and NAT configuration
+    - role: raspi_iptables
+      tags: ['firewall', 'nat', 'control', 'raspi']
+
+    # Phase 5: Container runtime
+    - role: raspi_docker
+      tags: ['docker', 'containers', 'control', 'raspi']
+
+    # Phase 6: VPN connectivity (optional)
+    - role: raspi_tailscale
+      tags: ['vpn', 'tailscale', 'control', 'raspi']
+      when: setup_vpn | default(false)
+
+    # Phase 7: DRS services (if needed for control module)
     - role: journald
       tags: ['journald']
-
-    - role: netplan
-      tags: ['netplan']
-      when: netplan_files is defined and netplan_files | length > 0
-            
-    - role: drs_env
-      tags: ['drs', 'environment']
-      
     - role: cyclonedds
       tags: ['cyclonedds']
-      
+
     - role: drs_api_service
       tags: ['drs', 'service', 'drs_api_service']
 
@@ -47,13 +65,19 @@
     - name: Display installation summary
       debug:
         msg: |
-          Data Recording System installation completed!
-          
-          ECU ID: {{ drs_ecu_id }}
-          Sensing System ID: {{ sensing_system_id }}
-          Module ID: {{ module_id }}
-          
+          Raspberry Pi Control Module configuration complete!
+
+          The system is now configured as:
+          - WiFi Access Point (SSID: drs-ap)
+          - DHCP/DNS server for WiFi and wired clients
+          - NAT router for network connectivity
+          - Docker runtime installed
+          - Tailscale VPN installed (requires manual authentication)
+
           Services status can be checked with:
+          - systemctl status hostapd.service
+          - systemctl status dnsmasq.service
+          - systemctl status docker.service
           - systemctl status drs-api.service
           - systemctl status drs-dashboard.service
           - systemctl status drs-ros2-bridge.service

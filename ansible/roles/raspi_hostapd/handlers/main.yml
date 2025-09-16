@@ -1,0 +1,5 @@
+---
+- name: restart hostapd
+  systemd:
+    name: hostapd
+    state: restarted

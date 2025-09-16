@@ -1,0 +1,27 @@
+---
+- name: Install iptables-persistent
+  apt:
+    name: iptables-persistent
+    state: present
+    update_cache: yes
+
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Configure iptables rules
+  template:
+    src: rules.v4.j2
+    dest: /etc/iptables/rules.v4
+    backup: yes
+  notify: restore iptables
+
+- name: Ensure iptables-persistent is enabled
+  systemd:
+    name: netfilter-persistent
+    enabled: yes
+    state: started

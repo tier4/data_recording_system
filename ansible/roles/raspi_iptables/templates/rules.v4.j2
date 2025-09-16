@@ -1,0 +1,28 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+# Allow forwarding from wlan0 to eth0.20 (internet via Ethernet)
+-A FORWARD -i wlan0 -o eth0.20 -j ACCEPT
+-A FORWARD -i eth0.20 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Allow forwarding from wlan0 to lte0 (internet via LTE)
+-A FORWARD -i wlan0 -o lte0 -j ACCEPT
+-A FORWARD -i lte0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Allow forwarding from eth0.10 to eth0.20 (internet via Ethernet)
+-A FORWARD -i eth0.10 -o eth0.20 -j ACCEPT
+-A FORWARD -i eth0.20 -o eth0.10 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Allow forwarding from eth0.10 to lte0 (internet via LTE)
+-A FORWARD -i eth0.10 -o lte0 -j ACCEPT
+-A FORWARD -i lte0 -o eth0.10 -m state --state RELATED,ESTABLISHED -j ACCEPT
+COMMIT
+
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+# NAT for outgoing traffic on eth0.20
+-A POSTROUTING -o eth0.20 -j MASQUERADE
+# NAT for outgoing traffic on lte0 (LTE)
+-A POSTROUTING -o lte0 -j MASQUERADE
+COMMIT

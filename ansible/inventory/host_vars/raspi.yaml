@@ -1,0 +1,34 @@
+---
+# Raspberry Pi Control Module configuration
+
+# Device identification
+device_type: raspi
+module_type: control
+
+# Network configuration for Access Point
+ap_ssid: "drs-ap"
+ap_password: "drs-control-2024"
+ap_channel: 6
+ap_hw_mode: g
+ap_country_code: JP
+
+# DHCP configuration
+dhcp_range_start: "192.168.4.2"
+dhcp_range_end: "192.168.4.100"
+dhcp_lease_time: "12h"
+
+# Network interfaces
+wifi_interface: wlan0
+ethernet_interface: eth0
+
+# VPN configuration (optional)
+setup_vpn: false
+tailscale_authkey: ""  # Set if using Tailscale
+
+# DRS services (optional for control module)
+setup_drs_api: false
+setup_drs_dashboard: false
+
+# Docker configuration
+docker_users:
+  - "{{ ansible_user }}"

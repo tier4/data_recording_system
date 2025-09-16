@@ -1,0 +1,46 @@
+---
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+    update_cache: yes
+
+- name: Stop systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+
+- name: Remove resolv.conf symlink
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Create new resolv.conf
+  copy:
+    content: |
+      nameserver 127.0.0.1
+      nameserver 8.8.8.8
+      nameserver 8.8.4.4
+    dest: /etc/resolv.conf
+    mode: '0644'
+
+- name: Configure dnsmasq local DNS
+  template:
+    src: 10-local-dns.conf.j2
+    dest: /etc/dnsmasq.d/10-local-dns.conf
+    backup: yes
+  notify: restart dnsmasq
+
+- name: Configure dnsmasq DRS settings
+  template:
+    src: 99-drs.conf.j2
+    dest: /etc/dnsmasq.d/99-drs.conf
+    backup: yes
+  notify: restart dnsmasq
+
+- name: Enable and start dnsmasq
+  systemd:
+    name: dnsmasq
+    enabled: yes
+    state: started

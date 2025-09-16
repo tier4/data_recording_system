@@ -1,0 +1,39 @@
+# /etc/netplan/10-drs.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: false
+      dhcp6: false
+      optional: false
+    wlan0:
+      addresses: [{{ wlan0_address }}]
+      dhcp4: no
+      dhcp6: no
+      optional: false
+    lte0:
+      dhcp4: true
+      dhcp6: false
+      optional: true
+      dhcp4-overrides:
+        route-metric: 200
+
+  vlans:
+    eth0.10:
+      id: 10
+      link: eth0
+      addresses: [{{ eth0_10_address }}]
+      dhcp4: false
+      dhcp6: false
+      routes:
+        - to: {{ route_to_network }}
+          via: {{ route_via_address }}
+      optional: false
+    eth0.20:
+      id: 20
+      link: eth0
+      dhcp4: true
+      optional: true
+      dhcp4-overrides:
+        route-metric: 100

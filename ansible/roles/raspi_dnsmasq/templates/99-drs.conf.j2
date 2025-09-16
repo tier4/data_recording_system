@@ -1,0 +1,45 @@
+# Specify the interfaces on which this Raspberry Pi provides DHCP and DNS services
+interface=wlan0
+interface=eth0.10
+
+# Listen only on the specified interfaces (improves security)
+bind-interfaces
+
+# ---- wlan0 (Wi-Fi) configuration ----
+dhcp-range=interface:wlan0,{{ wlan0_dhcp_range_start }},{{ wlan0_dhcp_range_end }},{{ wlan0_netmask }},{{ dhcp_lease_time }}
+
+# Gateway address to distribute to wlan0 connected clients (Raspberry Pi itself)
+dhcp-option=interface:wlan0,option:router,{{ wlan0_gateway }}
+
+# DNS server address to distribute to wlan0 connected clients (Raspberry Pi itself)
+dhcp-option=interface:wlan0,option:dns-server,{{ wlan0_gateway }}
+
+# ---- eth0.10 (wired LAN) configuration ----
+dhcp-range=interface:eth0.10,{{ eth0_10_dhcp_range_start }},{{ eth0_10_dhcp_range_end }},{{ eth0_10_netmask }},{{ dhcp_lease_time }}
+
+# Gateway address to distribute to eth0.10 connected clients (Raspberry Pi itself)
+dhcp-option=interface:eth0.10,option:router,{{ eth0_10_gateway }}
+
+# DNS server address to distribute to eth0.10 connected clients (Raspberry Pi itself)
+dhcp-option=interface:eth0.10,option:dns-server,{{ eth0_10_gateway }}
+# If you want to specify external DNS servers directly to clients, change as follows
+# dhcp-option=interface:eth0.10,option:dns-server,{{ dns_servers }}
+
+# ---- DNS configuration ----
+# Do not forward hostnames without domain names to upstream DNS servers
+domain-needed
+# Do not forward private IP address space name resolution requests to upstream DNS servers
+bogus-priv
+
+# Specify upstream DNS servers that dnsmasq uses for DNS resolution (e.g., Google Public DNS)
+{% for server in upstream_dns_servers %}
+server={{ server }}
+{% endfor %}
+
+# Local domain name (optional)
+# If distributing domain names to clients
+# domain=raspi.local
+# dhcp-option=option:domain-name,"raspi.local"
+
+# DNS cache size (optional, default is 150)
+# cache-size=1000
