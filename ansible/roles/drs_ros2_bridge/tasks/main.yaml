@@ -1,45 +1,38 @@
 ---
-- name: Install dependencies for drs_ros2_bridge
-  ansible.builtin.apt:
-    name:
-      - libgrpc++-dev
-      - protobuf-compiler
-      - protobuf-compiler-grpc
-    state: present
-    update_cache: yes
-    cache_valid_time: 3600
-  become: yes
+- name: Check if Docker build script exists
+  stat:
+    path: "{{ playbook_dir }}/../docker/ros2_bridge/build.sh"
+  register: docker_build_script
 
-- name: Build ros2_bridge packages
-  ansible.builtin.shell: |
-    cd {{ drs_src_dir }}
-    source /opt/drs/config/drs.env
-    source /opt/ros/humble/setup.bash
-    colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-select ros2_bridge
-  args:
-    executable: /bin/bash
+- name: Build DRS ROS2 Bridge Docker image
+  shell: |
+    cd {{ playbook_dir }}/..
+    bash docker/ros2_bridge/build.sh
+  when: docker_build_script.stat.exists
+  register: build_result
+  changed_when: true
 
-- name: Create drs_ros2_bridge service directory
+- name: Create DRS service directory for ros2_bridge
   file:
     path: /opt/drs/service/drs_ros2_bridge
     state: directory
-    owner: "{{ drs_user }}"
-    group: "{{ drs_group }}"
+    owner: root
+    group: root
     mode: '0755'
   become: yes
 
-- name: Copy drs_ros2_bridge launch script
-  ansible.builtin.template:
-    src: launch.sh.j2
-    dest: /opt/drs/service/drs_ros2_bridge/launch.sh
-    owner: "{{ drs_user }}"
-    group: "{{ drs_group }}"
-    mode: '0755'
+- name: Copy docker-compose.yml file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/drs/service/drs_ros2_bridge/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0644'
   become: yes
 
-- name: Deploy drs-ros2-bridge systemd service file
-  template:
-    src: drs-ros2-bridge.service.j2
+- name: Copy drs-ros2-bridge systemd service file
+  copy:
+    src: drs-ros2-bridge.service
     dest: /etc/systemd/system/drs-ros2-bridge.service
     owner: root
     group: root

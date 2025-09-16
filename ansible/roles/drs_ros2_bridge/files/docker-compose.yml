@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  drs-ros2-bridge:
+    image: tier4/drs-ros2-bridge:latest
+    container_name: drs-ros2-bridge
+    network_mode: host
+    pid: host
+    ipc: host
+    environment:
+      - ROS_DOMAIN_ID=1
+      - ROS_LOCALHOST_ONLY=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
+    volumes:
+      - /opt/drs/config/cyclonedds.xml:/opt/drs/config/cyclonedds.xml:ro
+    command: ros2 run ros2_bridge ros2_bridge_node
+    restart: unless-stopped
