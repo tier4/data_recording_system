@@ -7,7 +7,7 @@ server:
   write_timeout: 30s
 
 # API Gateway host module (will be restarted last)
-api_gateway_host: "ecu0"
+api_gateway_host: "raspi"
 
 # Module service definitions
 modules:
@@ -33,6 +33,12 @@ modules:
       - "system"
       - "disk"  # NAS only enables system and disk monitoring
 
+  raspi:
+    address: "192.168.20.10:50051"
+    enabled_services:
+      - "system"
+      - "disk"
+
 # gRPC client settings
 grpc:
   timeout: 2s
@@ -47,7 +53,7 @@ ros2_bridge:
 cors:
   allowed_origins:
     - "http://localhost:3000"  # React dev server
-    - "http://192.168.20.1:3000"  # Production dashboard without proxy
+    - "http://192.168.20.10:3000"  # Production dashboard without proxy
   allowed_methods:
     - "GET"
     - "POST"
