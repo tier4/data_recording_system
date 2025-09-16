@@ -38,7 +38,7 @@
       tags: ['firewall', 'nat', 'control', 'raspi']
 
     # Phase 5: Container runtime
-    - role: raspi_docker
+    - role: docker
       tags: ['docker', 'containers', 'control', 'raspi']
 
     # Phase 6: VPN connectivity (optional)
