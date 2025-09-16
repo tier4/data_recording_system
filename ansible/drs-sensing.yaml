@@ -43,7 +43,7 @@
     - role: ros2
       tags: ['ros2']
       
-    - role: docker
+    - role: anvil_docker
       tags: ['anvil', 'docker']
       
     - role: drs_env
