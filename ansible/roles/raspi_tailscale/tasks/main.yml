@@ -1,45 +1,47 @@
 ---
-- name: Add Tailscale GPG key
-  apt_key:
-    url: https://pkgs.tailscale.com/stable/ubuntu/noble.gpg
-    state: present
+# Simplified Tailscale installation using official script
 
-- name: Add Tailscale repository
-  apt_repository:
-    repo: "deb https://pkgs.tailscale.com/stable/ubuntu noble main"
-    state: present
-    filename: tailscale
+- name: Download and run Tailscale official installer
+  shell: |
+    curl -fsSL https://tailscale.com/install.sh | sh
+  args:
+    creates: /usr/bin/tailscale
+  become: yes
 
-- name: Update apt cache
-  apt:
-    update_cache: yes
-
-- name: Install Tailscale
-  apt:
-    name: tailscale
-    state: present
-
-- name: Check if Tailscale is already authenticated
+- name: Check Tailscale status
   command: tailscale status
   register: tailscale_status
   changed_when: false
   failed_when: false
 
-- name: Display Tailscale authentication instructions
+- name: Authenticate with Tailscale (if authkey provided)
+  command: tailscale up --authkey={{ tailscale_authkey }}
+  when:
+    - tailscale_authkey is defined
+    - tailscale_authkey != ""
+    - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+
+- name: Display manual authentication instructions
   debug:
     msg: |
-      Tailscale has been installed. To authenticate this device:
-      1. Run: sudo tailscale up
-      2. Follow the URL provided to authenticate
-      3. The device will be connected to your Tailscale network
-  when: tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+      Tailscale installed successfully!
 
-- name: Enable IP forwarding for Tailscale
-  lineinfile:
-    path: /etc/sysctl.d/99-tailscale.conf
-    line: "{{ item }}"
-    create: yes
+      To authenticate manually:
+      1. Run: sudo tailscale up
+      2. Visit the URL shown to authenticate
+      3. Device will join your Tailscale network
+  when:
+    - tailscale_authkey is not defined or tailscale_authkey == ""
+    - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+
+- name: Enable IP forwarding for subnet routing (optional)
+  sysctl:
+    name: "{{ item }}"
+    value: '1'
+    state: present
+    reload: yes
   loop:
-    - "net.ipv4.ip_forward = 1"
-    - "net.ipv6.conf.all.forwarding = 1"
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+  when: tailscale_enable_routing | default(false)
   notify: reload sysctl
