@@ -51,8 +51,27 @@ else
     echo "Ansible is already installed."
 fi
 
-# Detect ECU ID
+# Detect device type and select playbook
 HOSTNAME=$(hostname)
+PLAYBOOK=""
+
+# Check for Raspberry Pi
+if [[ -e /proc/device-tree/model ]] && grep -q "Raspberry" /proc/device-tree/model 2>/dev/null; then
+    PLAYBOOK="drs-control.yaml"
+    echo "Detected Raspberry Pi - using control module playbook"
+else
+    # Default to sensing module (Jetson/x86)
+    PLAYBOOK="drs-sensing.yaml"
+    echo "Using sensing module playbook (Jetson/x86)"
+fi
+
+# Override playbook with environment variable if set
+if [[ -n "$DRS_PLAYBOOK" ]]; then
+    PLAYBOOK="$DRS_PLAYBOOK"
+    echo "Overriding with playbook from environment: $PLAYBOOK"
+fi
+
+# Detect ECU ID for inventory
 if [[ $HOSTNAME == *"ecu0"* ]]; then
     echo "Detected ECU0 from hostname"
     ECU_ID=0
@@ -66,15 +85,22 @@ elif [[ -n "$DRS_ECU_ID" ]]; then
     ECU_ID=$DRS_ECU_ID
     ECU_VARS="inventory/host_vars/ecu${ECU_ID}.yaml"
 else
-    echo "ERROR: Could not detect ECU ID from hostname."
-    echo ""
-    echo "Your hostname is: $HOSTNAME"
-    echo ""
-    echo "Please either:"
-    echo "  1. Set DRS_ECU_ID environment variable:"
-    echo "     DRS_ECU_ID=0 $0"
-    echo "  2. Ensure hostname contains 'ecu0' or 'ecu1'"
-    exit 1
+    # For control modules, ECU ID might not be needed
+    if [[ "$PLAYBOOK" == "drs-control.yaml" ]]; then
+        echo "Control module detected - ECU ID not required"
+        ECU_ID=""
+        ECU_VARS=""
+    else
+        echo "ERROR: Could not detect ECU ID from hostname."
+        echo ""
+        echo "Your hostname is: $HOSTNAME"
+        echo ""
+        echo "Please either:"
+        echo "  1. Set DRS_ECU_ID environment variable:"
+        echo "     DRS_ECU_ID=0 $0"
+        echo "  2. Ensure hostname contains 'ecu0' or 'ecu1'"
+        exit 1
+    fi
 fi
 
 # Check if ECU vars file exists
@@ -91,7 +117,12 @@ export DRS_ECU_ID=$ECU_ID
 export ANSIBLE_HOST_KEY_CHECKING=False
 
 echo ""
-echo "Starting Ansible playbook for ECU${ECU_ID}..."
+if [[ -n "$ECU_ID" ]]; then
+    echo "Starting Ansible playbook for ECU${ECU_ID}..."
+else
+    echo "Starting Ansible playbook..."
+fi
+echo "Playbook: $PLAYBOOK"
 echo ""
 
 # Run the playbook
@@ -99,11 +130,11 @@ if [[ -n "$ECU_VARS" ]]; then
     ansible-playbook \
         -i inventory/localhost.yaml \
         -e @"$ECU_VARS" \
-        drs-setup.yaml \
+        "$PLAYBOOK" \
         "$@"
 else
     ansible-playbook \
         -i inventory/localhost.yaml \
-        drs-setup.yaml \
+        "$PLAYBOOK" \
         "$@"
 fi
