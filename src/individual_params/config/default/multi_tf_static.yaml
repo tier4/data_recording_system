@@ -1,108 +1,101 @@
-# Multi TF Static Publisher Configuration
-# This file combines all static transforms for the DRS system
-
-# Base link transform
 base_link:
   drs_base_link:
-    x: 0.759
+    x: 0.6895
     y: 0.0
-    z: 1.961
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
+    z: 1.971
+    roll: 0.000
+    pitch: -0.020
+    yaw: 0.000
 
 # LiDAR transforms
 drs_base_link:
   lidar_left:
-    x: 0.026968
-    y: 0.659445
-    z: -0.036271
-    roll: -0.007124
-    pitch: -0.001234
-    yaw: 1.590125
+    x: 0.194518
+    y: 0.573308
+    z: -0.082136
+    roll: 0.009696
+    pitch: 0.021243
+    yaw: 1.595519
   lidar_right:
-    x: 0.004318
-    y: -0.680856
-    z: -0.045516
-    roll: -0.000598
-    pitch: 0.000109
-    yaw: -1.564044
+    x: 0.171077
+    y: -0.294568
+    z: -0.129714
+    roll: 0.012146
+    pitch: 0.013548
+    yaw: -1.563993
   lidar_rear:
-    x: -1.023234
-    y: -0.050086
-    z: 0.017103
-    roll: -0.001145
-    pitch: 0.007604
-    yaw: -3.137614
+    x: -0.143425
+    y: 0.142890
+    z: 0.009151
+    roll: 0.000525
+    pitch: -0.000471
+    yaw: -3.126031
   lidar_front:
-    x: 1.022
-    y: 0.0
-    z: 0.033
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
+    x: 0.474300
+    y: 0.050000
+    z: -0.070200
+    roll: 0.005000
+    pitch: -0.000000
+    yaw: -0.000000
 
 # Camera transforms
 lidar_front:
   camera0/camera_link:
-    x: 0.110941
-    y: 0.032096
-    z: -0.103283
-    roll: 0.010459
-    pitch: 0.002266
-    yaw: -0.001484
+    x: 0.230303
+    y: 0.155361
+    z: -0.097986
+    roll: -0.003804
+    pitch: -0.000142
+    yaw: 0.009256
   camera1/camera_link:
-    x: 0.082455
-    y: -0.003543
-    z: -0.107017
-    roll: 0.000455
-    pitch: 0.000639
-    yaw: 0.003958
-
+    x: 0.087616
+    y: 0.116812
+    z: -0.093916
+    roll: -0.004731
+    pitch: -0.000857
+    yaw: 0.00451
 lidar_right:
   camera2/camera_link:
-    x: -0.002767
-    y: 0.148234
-    z: -0.039258
-    roll: -0.010529
-    pitch: 0.463232
-    yaw: 0.527158
+    x: 0.029175
+    y: 0.12498
+    z: -0.061026
+    roll: -0.018254
+    pitch: 0.429079
+    yaw: 0.464042
   camera3/camera_link:
-    x: -0.000157
-    y: -0.125043
-    z: -0.041561
-    roll: 0.020588
-    pitch: 0.474067
-    yaw: -0.51947
-
+    x: 0.026659
+    y: -0.134691
+    z: -0.062201
+    roll: 0.010777
+    pitch: 0.439619
+    yaw: -0.506656
 lidar_rear:
   camera4/camera_link:
-    x: 0.131668
-    y: 0.027960
-    z: -0.096338
-    roll: -0.001220
-    pitch: -0.018024
-    yaw: -0.031994
+    x: 0.306892
+    y: 0.028482
+    z: -0.113794
+    roll: -0.004247
+    pitch: 0.017831
+    yaw: -0.022474
   camera5/camera_link:
-    x: 0.119978
-    y: -0.027712
-    z: -0.084768
-    roll: 0.000931
-    pitch: -0.002591
-    yaw: 0.001349
-
+    x: 0.064681
+    y: -0.033444
+    z: -0.084188
+    roll: -0.004089
+    pitch: -0.001773
+    yaw: -0.007032
 lidar_left:
   camera6/camera_link:
-    x: 0.022433
-    y: 0.107046
-    z: -0.049811
-    roll: 0.000151
-    pitch: 0.435774
-    yaw: 0.509218
+    x: 0.036955
+    y: 0.111873
+    z: -0.042622
+    roll: -0.021394
+    pitch: 0.45338
+    yaw: 0.46397
   camera7/camera_link:
-    x: 0.030392
-    y: -0.115399
-    z: -0.057354
-    roll: 0.006199
-    pitch: 0.441843
-    yaw: -0.54110
+    x: 0.081
+    y: -0.159
+    z: -0.064
+    roll: 0.011
+    pitch: 0.444
+    yaw: -0.522
