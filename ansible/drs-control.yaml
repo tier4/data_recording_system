@@ -23,32 +23,33 @@
   roles:
     # Phase 1: Network configuration (VLAN, interfaces)
     - role: raspi_network
-      tags: ['network', 'control', 'raspi']
+      tags: ['raspi', 'network']
 
     # Phase 2: WiFi Access Point setup
     - role: raspi_hostapd
-      tags: ['wifi', 'ap', 'control', 'raspi']
+      tags: ['raspi', 'hostapd']
 
     # Phase 3: DHCP and DNS services
     - role: raspi_dnsmasq
-      tags: ['dhcp', 'dns', 'control', 'raspi']
+      tags: ['raspi', 'dnsmasq']
 
     # Phase 4: Firewall and NAT configuration
     - role: raspi_iptables
-      tags: ['firewall', 'nat', 'control', 'raspi']
+      tags: ['raspi', 'iptables']
 
     # Phase 5: Container runtime
     - role: docker
-      tags: ['docker', 'containers', 'control', 'raspi']
+      tags: ['docker']
 
     # Phase 6: VPN connectivity (optional)
     - role: tailscale
-      tags: ['vpn', 'tailscale', 'control', 'raspi']
+      tags: ['tailscale']
       when: setup_vpn | default(false)
 
-    # Phase 7: DRS services (if needed for control module)
+    # Phase 7: DRS services
     - role: journald
       tags: ['journald']
+
     - role: cyclonedds
       tags: ['cyclonedds']
 
