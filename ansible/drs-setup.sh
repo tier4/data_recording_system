@@ -71,36 +71,51 @@ if [[ -n "$DRS_PLAYBOOK" ]]; then
     echo "Overriding with playbook from environment: $PLAYBOOK"
 fi
 
-# Detect ECU ID for inventory
-if [[ $HOSTNAME == *"ecu0"* ]]; then
-    echo "Detected ECU0 from hostname"
-    ECU_ID=0
-    ECU_VARS="inventory/host_vars/ecu0.yaml"
-elif [[ $HOSTNAME == *"ecu1"* ]]; then
-    echo "Detected ECU1 from hostname"
-    ECU_ID=1
-    ECU_VARS="inventory/host_vars/ecu1.yaml"
-elif [[ -n "$DRS_ECU_ID" ]]; then
-    echo "Using ECU ID from environment variable: $DRS_ECU_ID"
-    ECU_ID=$DRS_ECU_ID
-    ECU_VARS="inventory/host_vars/ecu${ECU_ID}.yaml"
-else
-    # For control modules, ECU ID might not be needed
-    if [[ "$PLAYBOOK" == "drs-control.yaml" ]]; then
-        echo "Control module detected - ECU ID not required"
+# Detect target host based on exact hostname match
+TARGET_HOST=""
+case "$HOSTNAME" in
+    ecu0)
+        echo "Detected ECU0 from hostname"
+        TARGET_HOST="ecu0"
+        ECU_ID=0
+        ;;
+    ecu1)
+        echo "Detected ECU1 from hostname"
+        TARGET_HOST="ecu1"
+        ECU_ID=1
+        ;;
+    raspi)
+        echo "Detected Raspberry Pi from hostname"
+        TARGET_HOST="raspi"
         ECU_ID=""
-        ECU_VARS=""
-    else
-        echo "ERROR: Could not detect ECU ID from hostname."
-        echo ""
-        echo "Your hostname is: $HOSTNAME"
-        echo ""
-        echo "Please either:"
-        echo "  1. Set DRS_ECU_ID environment variable:"
-        echo "     DRS_ECU_ID=0 $0"
-        echo "  2. Ensure hostname contains 'ecu0' or 'ecu1'"
-        exit 1
-    fi
+        ;;
+    *)
+        # Allow override with environment variable for testing
+        if [[ -n "$DRS_TARGET_HOST" ]]; then
+            echo "Using target host from environment: $DRS_TARGET_HOST"
+            TARGET_HOST="$DRS_TARGET_HOST"
+            # Set ECU_ID for ecu hosts
+            case "$TARGET_HOST" in
+                ecu0) ECU_ID=0 ;;
+                ecu1) ECU_ID=1 ;;
+                raspi) ECU_ID="" ;;
+                *) ECU_ID="" ;;
+            esac
+        else
+            echo "ERROR: Hostname must be exactly 'ecu0', 'ecu1', or 'raspi'"
+            echo "Current hostname: $HOSTNAME"
+            echo ""
+            echo "To fix:"
+            echo "  1. Set hostname: sudo hostnamectl set-hostname [ecu0|ecu1|raspi]"
+            echo "  2. Or override: DRS_TARGET_HOST=[ecu0|ecu1|raspi] $0"
+            exit 1
+        fi
+        ;;
+esac
+
+# Set vars file path based on target host
+if [[ -n "$TARGET_HOST" ]]; then
+    ECU_VARS="inventory/host_vars/${TARGET_HOST}.yaml"
 fi
 
 # Check if ECU vars file exists
@@ -125,14 +140,16 @@ fi
 echo "Playbook: $PLAYBOOK"
 echo ""
 
-# Run the playbook
-if [[ -n "$ECU_VARS" ]]; then
+# Run the playbook with target host
+if [[ -n "$TARGET_HOST" ]]; then
+    # Use detected/specified host with automatic host_vars loading
     ansible-playbook \
         -i inventory/localhost.yaml \
-        -e @"$ECU_VARS" \
+        -e "target_host=$TARGET_HOST" \
         "$PLAYBOOK" \
         "$@"
 else
+    # Fallback to localhost
     ansible-playbook \
         -i inventory/localhost.yaml \
         "$PLAYBOOK" \
