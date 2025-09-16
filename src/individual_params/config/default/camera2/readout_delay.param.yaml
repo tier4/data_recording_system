@@ -1,5 +1,5 @@
 /**:
   ros__parameters:
-    delay_ms: 46
+    delay_ms: 41
     eval_topic_num: 10
     expected_hz: 20
