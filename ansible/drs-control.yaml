@@ -42,7 +42,7 @@
       tags: ['docker', 'containers', 'control', 'raspi']
 
     # Phase 6: VPN connectivity (optional)
-    - role: raspi_tailscale
+    - role: tailscale
       tags: ['vpn', 'tailscale', 'control', 'raspi']
       when: setup_vpn | default(false)
 
