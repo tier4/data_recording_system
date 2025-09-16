@@ -30,17 +30,14 @@
     src: 10-local-dns.conf.j2
     dest: /etc/dnsmasq.d/10-local-dns.conf
     backup: yes
-  notify: restart dnsmasq
 
 - name: Configure dnsmasq DRS settings
   template:
     src: 99-drs.conf.j2
     dest: /etc/dnsmasq.d/99-drs.conf
     backup: yes
-  notify: restart dnsmasq
 
-- name: Enable and start dnsmasq
+- name: Enable dnsmasq service
   systemd:
     name: dnsmasq
     enabled: yes
-    state: started
