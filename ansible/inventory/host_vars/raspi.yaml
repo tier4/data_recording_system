@@ -5,6 +5,10 @@
 device_type: raspi
 module_type: control
 
+# Hostname configuration (applied at the end of setup)
+# Set to desired hostname (e.g., "drs-control-01") or leave empty to keep "raspi"
+custom_hostname: ""
+
 # Network configuration for Access Point
 ap_ssid: "drs-ap"
 ap_password: "drs-control-2024"
