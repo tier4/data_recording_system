@@ -22,7 +22,6 @@ wifi_interface: wlan0
 ethernet_interface: eth0
 
 # VPN configuration (optional)
-setup_vpn: false
 tailscale_authkey: ""  # Set if using Tailscale
 
 # DRS services (optional for control module)

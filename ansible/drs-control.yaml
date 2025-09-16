@@ -44,7 +44,6 @@
     # Phase 6: VPN connectivity (optional)
     - role: tailscale
       tags: ['tailscale']
-      when: setup_vpn | default(false)
 
     # Phase 7: DRS services
     - role: journald
