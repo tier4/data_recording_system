@@ -35,3 +35,6 @@ setup_drs_dashboard: false
 # Docker configuration
 docker_users:
   - "{{ ansible_user }}"
+
+# Module manager configuration
+module_manager_config: module-manager-raspi.yaml

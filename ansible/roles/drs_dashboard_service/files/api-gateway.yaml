@@ -37,7 +37,6 @@ modules:
     address: "192.168.20.10:50051"
     enabled_services:
       - "system"
-      - "disk"
 
 # gRPC client settings
 grpc:
