@@ -1,0 +1,70 @@
+---
+# Data Recording System - Local Installation Playbook
+# This playbook installs and configures all components for the DRS on the local host
+
+- name: Setup Data Recording System | Control Module
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    # Determine ECU ID from hostname or environment variable
+    drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
+    sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
+    module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
+    
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  roles:      
+    - role: journald
+      tags: ['journald']
+
+    - role: netplan
+      tags: ['netplan']
+      when: netplan_files is defined and netplan_files | length > 0
+            
+    - role: drs_env
+      tags: ['drs', 'environment']
+      
+    - role: cyclonedds
+      tags: ['cyclonedds']
+      
+    - role: drs_api_service
+      tags: ['drs', 'service', 'drs_api_service']
+
+    - role: drs_ros2_bridge_service
+      tags: ['drs', 'service', 'drs_ros2_bridge_service']
+
+    - role: drs_dashboard_service
+      tags: ['drs', 'service', 'drs_dashboard_service']
+
+  post_tasks:
+    - name: Display installation summary
+      debug:
+        msg: |
+          Data Recording System installation completed!
+          
+          ECU ID: {{ drs_ecu_id }}
+          Sensing System ID: {{ sensing_system_id }}
+          Module ID: {{ module_id }}
+          
+          Services status can be checked with:
+          - systemctl status drs-api.service
+          - systemctl status drs-dashboard.service
+          - systemctl status drs-ros2-bridge.service
+          
+    - name: Reboot notification
+      debug:
+        msg: "A system reboot may be required to apply all configurations."
+      changed_when: true
+      notify: reboot_required
+      
+  handlers:
+    - name: reboot_required
+      debug:
+        msg: "Please reboot the system to ensure all changes take effect."
