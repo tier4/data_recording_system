@@ -2,7 +2,7 @@
 # Data Recording System - Local Installation Playbook
 # This playbook installs and configures all components for the DRS on the local host
 
-- name: Setup Data Recording System (Local)
+- name: Setup Data Recording System | Sensing Module
   hosts: localhost
   become: yes
   gather_facts: yes
@@ -21,85 +21,64 @@
       when: ansible_os_family == "Debian"
       
   roles:
-    # Phase 1: Storage setup (no dependencies)
     - role: ssd_mount
-      tags: ['storage', 'ssd']
+      tags: ['anvil', 'ssd_mount']
       
-    # Phase 2: System configuration (no dependencies)
     - role: jetpack
-      tags: ['system', 'nvidia']
-      when: ansible_architecture == "aarch64"
+      tags: ['anvil', 'nvidia', 'jetpack']
       
     - role: jetson
-      tags: ['system', 'nvidia', 'performance']
-      when: ansible_architecture == "aarch64"
+      tags: ['anvil', 'nvidia', 'jetson']
       
     - role: journald
-      tags: ['system', 'logging']
-      
+      tags: ['journald']
+
     - role: netplan
-      tags: ['network']
+      tags: ['netplan']
       when: netplan_files is defined and netplan_files | length > 0
-      
-    # - role: ntp
-    #   tags: ['time', 'ntp']
-      
+            
     - role: ptp
-      tags: ['time', 'ptp']
-      when: ptp is defined
+      tags: ['ptp']
       
-    # Phase 3: Core software installation
     - role: ros2
-      tags: ['ros2', 'core']
+      tags: ['ros2']
       
     - role: docker
-      tags: ['docker', 'containers']
+      tags: ['anvil', 'docker']
       
-    # Phase 4: DRS environment setup
     - role: drs_env
       tags: ['drs', 'environment']
       
-    # Phase 5: Middleware configuration
     - role: cyclonedds
-      tags: ['drs', 'middleware']
+      tags: ['cyclonedds']
       
-    # Phase 6: DRS installation
     - role: drs
-      tags: ['drs', 'build']
+      tags: ['drs']
       
-    # Phase 7: Services setup
     - role: drs_recorder_service
-      tags: ['drs', 'services', 'recorder']
+      tags: ['drs', 'service', 'drs_recorder_service']
       
     - role: drs_sensor_service
-      tags: ['drs', 'services', 'sensor']
+      tags: ['drs', 'service', 'drs_sensor_service']
       
     - role: drs_api_service
-      tags: ['drs', 'services', 'api']
+      tags: ['drs', 'service', 'drs_api_service']
       
-    # - role: drs_dashboard_service
-    #   tags: ['drs', 'services', 'dashboard']
-      
-    # - role: drs_ros2_bridge
-    #   tags: ['drs', 'services', 'ros2-bridge']
-      
-    # Phase 8: Additional components
     - role: tier4_hdr_camera_driver
-      tags: ['drivers', 'camera']
+      tags: ['anvil', 'driver', 'tier4_hdr_camera_driver']
       
     - role: c2_readout_delay_setter
-      tags: ['drivers', 'camera', 'c2']
+      tags: ['anvil', 'driver', 'c2_readout_delay_setter']
       
     - role: sensor_trigger
-      tags: ['sensor', 'trigger']
+      tags: ['anvil', 'driver', 'sensor_trigger']
       
-    # Phase 9: Data management
     - role: nas_mount
-      tags: ['storage', 'nas']
+      tags: ['nas', 'nas_mount']
       when: nas_address is defined
       
     - role: sync_to_nas
-      tags: ['storage', 'sync']
+      tags: ['nas', 'sync_to_nas']
       when: nas_address is defined
       
   post_tasks:
@@ -116,8 +95,6 @@
           - systemctl status drs-recorder.service
           - systemctl status drs-sensor.service
           - systemctl status drs-api.service
-          - systemctl status drs-dashboard.service
-          - systemctl status drs-ros2-bridge.service
           - systemctl status jetson-clocks.service
           
     - name: Reboot notification
