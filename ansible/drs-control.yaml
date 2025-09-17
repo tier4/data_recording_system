@@ -33,29 +33,63 @@
         - hostname_input.user_input is defined
         - hostname_input.user_input != ""
 
+    - name: Ask for WiFi AP password if not specified
+      pause:
+        prompt: |
+
+          Enter WiFi Access Point password (8-63 characters)
+          Press Enter to use default password: comlops1
+      register: wifi_password_input
+      when:
+        - ap_wpa_passphrase is not defined or ap_wpa_passphrase == ""
+
+    - name: Set WiFi password from user input
+      set_fact:
+        ap_wpa_passphrase: "{{ wifi_password_input.user_input | default('comlops1', true) }}"
+      when:
+        - wifi_password_input is defined
+
     - name: Apply hostname change
       hostname:
         name: "{{ custom_hostname }}"
+        use: systemd
       when:
         - custom_hostname is defined
         - custom_hostname != ""
         - custom_hostname != ansible_hostname
       register: hostname_changed
 
+    - name: Update /etc/hosts with new hostname
+      lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.1\.1\s+'
+        line: "127.0.1.1\t{{ custom_hostname }}"
+      when:
+        - custom_hostname is defined
+        - custom_hostname != ""
+        - custom_hostname != ansible_hostname
+
     - name: Refresh ansible facts after hostname change
       setup:
       when: hostname_changed is changed
 
-    - name: Display hostname configuration
+    - name: Set dynamic AP SSID based on hostname
+      set_fact:
+        ap_ssid: "{{ custom_hostname | default(ansible_hostname) }}-ap"
+      when: ap_ssid is not defined
+
+    - name: Display configuration summary
       debug:
         msg: |
+          Configuration Summary:
+          =====================
           {% if hostname_changed is changed %}
-          Hostname changed from 'raspi' to '{{ custom_hostname }}'
-          WiFi AP SSID will be: {{ custom_hostname }}-ap
+          Hostname: {{ custom_hostname }} (changed from 'raspi')
           {% else %}
-          Keeping current hostname: {{ ansible_hostname }}
-          WiFi AP SSID will be: {{ ansible_hostname }}-ap
+          Hostname: {{ ansible_hostname }}
           {% endif %}
+          WiFi AP SSID: {{ ap_ssid | default((custom_hostname | default(ansible_hostname)) + '-ap') }}
+          WiFi Password: [configured]
 
     - name: Update apt cache
       apt:

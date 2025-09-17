@@ -10,8 +10,10 @@ module_type: control
 custom_hostname: ""
 
 # Network configuration for Access Point
-ap_ssid: "drs-ap"
-ap_password: "drs-control-2024"
+# SSID will be dynamically set based on hostname (hostname-ap)
+# To override, uncomment and set custom values:
+#ap_ssid: "custom-ssid"
+#ap_wpa_passphrase: "custom-password"
 ap_channel: 6
 ap_hw_mode: g
 ap_country_code: JP
