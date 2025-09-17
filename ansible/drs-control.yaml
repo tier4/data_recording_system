@@ -51,7 +51,7 @@
         - wifi_password_input.user_input | length < 8 or wifi_password_input.user_input | length > 63
 
     - name: Apply hostname change
-      hostname::
+      hostname:
         name: "{{ custom_hostname }}"
         use: systemd
       when:
