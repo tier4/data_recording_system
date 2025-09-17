@@ -33,24 +33,25 @@
         - hostname_input.user_input is defined
         - hostname_input.user_input != ""
 
-    - name: Ask for WiFi AP password if not specified
+    - name: Ask for WiFi AP password
       pause:
         prompt: |
 
-          Enter WiFi Access Point password (8-63 characters)
-          Press Enter to use default password: comlops1
+          Enter WiFi Access Point password (8-63 characters required):
       register: wifi_password_input
       when:
-        - ap_wpa_passphrase is not defined or ap_wpa_passphrase == ""
+        - ap_wpa_passphrase is not defined or ap_wpa_passphrase == "" or ap_wpa_passphrase == "comlops1"
 
-    - name: Set WiFi password from user input
+    - name: Validate and set WiFi password
       set_fact:
-        ap_wpa_passphrase: "{{ wifi_password_input.user_input | default('comlops1', true) }}"
+        ap_wpa_passphrase: "{{ wifi_password_input.user_input }}"
       when:
         - wifi_password_input is defined
+      failed_when:
+        - wifi_password_input.user_input | length < 8 or wifi_password_input.user_input | length > 63
 
     - name: Apply hostname change
-      hostname:
+      ansible.builtin.hostname::
         name: "{{ custom_hostname }}"
         use: systemd
       when:
