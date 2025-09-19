@@ -9,7 +9,8 @@
   apt:
     name: chrony
     state: present
-    update_cache: yes
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Stop systemd-timesyncd if present
   systemd:
