@@ -14,6 +14,19 @@
     module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
     
   pre_tasks:
+    - name: Disable cloud-init permanently
+      copy:
+        dest: /etc/cloud/cloud-init.disabled
+        content: "disabled\n"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Remove cloud-init netplan
+      file:
+        path: /etc/netplan/50-cloud-init.yaml
+        state: absent
+
     - name: Ask for custom hostname if not specified
       pause:
         prompt: |
