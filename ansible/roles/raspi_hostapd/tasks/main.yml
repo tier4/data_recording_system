@@ -33,8 +33,7 @@
     name: hostapd
     masked: no
 
-- name: Enable and start hostapd
+- name: Enable hostapd
   systemd:
     name: hostapd
     enabled: yes
-    state: started
