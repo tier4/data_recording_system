@@ -33,5 +33,4 @@
     src: 99-drs.yaml.j2
     dest: /etc/netplan/10-drs.yaml
     backup: yes
-  notify: apply netplan
 
