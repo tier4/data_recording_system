@@ -45,7 +45,7 @@ grpc:
 
 # ROS2 Bridge settings (single bridge for all modules)
 ros2_bridge:
-  address: "localhost:50052"
+  address: "192.168.20.10:50052"
   enabled: true
   
 # CORS settings for web dashboard
