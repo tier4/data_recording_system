@@ -73,15 +73,21 @@
         - custom_hostname != ansible_hostname
       register: hostname_changed
 
+    - name: Ensure localhost entry in /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.0\.1\s+'
+        line: "127.0.0.1\tlocalhost"
+        create: yes
+
     - name: Update /etc/hosts with new hostname
       lineinfile:
         path: /etc/hosts
         regexp: '^127\.0\.1\.1\s+'
-        line: "127.0.1.1\t{{ custom_hostname }}"
+        line: "127.0.1.1\t{{ custom_hostname | default(ansible_hostname) }}"
       when:
         - custom_hostname is defined
         - custom_hostname != ""
-        - custom_hostname != ansible_hostname
 
     - name: Refresh ansible facts after hostname change
       setup:
