@@ -20,7 +20,6 @@
     dest: /etc/hostapd/hostapd.conf
     mode: '0600'
     backup: yes
-  notify: restart hostapd
 
 - name: Configure hostapd daemon
   lineinfile:
