@@ -23,7 +23,7 @@ if ! command -v pip3 &> /dev/null; then
     echo "pip3 not found. Installing python3-pip..."
     sudo apt-get update
     sudo apt-get install -y python3-pip
-    
+
     if ! command -v pip3 &> /dev/null; then
         echo "ERROR: Failed to install pip3. Please install python3-pip manually."
         exit 1
@@ -31,22 +31,34 @@ if ! command -v pip3 &> /dev/null; then
     echo "pip3 installed successfully."
 fi
 
-# Check if ansible is installed, if not, install it
-if ! command -v ansible-playbook &> /dev/null; then
-    echo "Ansible not found. Installing ansible..."
-    pip3 install --user ansible
+# Check if pipx is installed, if not, install it
+if ! command -v pipx &> /dev/null; then
+    echo "pipx not found. Installing pipx..."
+    sudo apt-get update
+    sudo apt-get install -y pipx
 
-    # Add user's pip bin directory to PATH if not already there
-    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-        export PATH="$HOME/.local/bin:$PATH"
+    if ! command -v pipx &> /dev/null; then
+        echo "ERROR: Failed to install pipx. Please install pipx manually."
+        exit 1
     fi
+    echo "pipx installed successfully."
+
+    # Ensure pipx bin directory is in PATH
+    pipx ensurepath
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Check if ansible is installed, if not, install it with pipx
+if ! command -v ansible-playbook &> /dev/null; then
+    echo "Ansible not found. Installing ansible with pipx..."
+    pipx install --include-deps ansible-core
 
     # Verify installation
     if ! command -v ansible-playbook &> /dev/null; then
         echo "ERROR: Failed to install ansible. Please install it manually."
         exit 1
     fi
-    echo "Ansible installed successfully."
+    echo "Ansible installed successfully with pipx."
 else
     echo "Ansible is already installed."
 fi
