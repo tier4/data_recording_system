@@ -35,12 +35,12 @@ fi
 if ! command -v ansible-playbook &> /dev/null; then
     echo "Ansible not found. Installing ansible..."
     pip3 install --user ansible
-    
+
     # Add user's pip bin directory to PATH if not already there
     if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
         export PATH="$HOME/.local/bin:$PATH"
     fi
-    
+
     # Verify installation
     if ! command -v ansible-playbook &> /dev/null; then
         echo "ERROR: Failed to install ansible. Please install it manually."
@@ -49,6 +49,20 @@ if ! command -v ansible-playbook &> /dev/null; then
     echo "Ansible installed successfully."
 else
     echo "Ansible is already installed."
+fi
+
+# Install Ansible Galaxy requirements
+echo "Installing Ansible Galaxy requirements..."
+if [[ -f requirements.yml ]]; then
+    ansible-galaxy collection install -r requirements.yml --force
+    if [[ $? -eq 0 ]]; then
+        echo "Ansible Galaxy requirements installed successfully."
+    else
+        echo "WARNING: Failed to install some Ansible Galaxy requirements."
+        echo "Some playbook features may not work correctly."
+    fi
+else
+    echo "WARNING: requirements.yml not found. Skipping Galaxy requirements installation."
 fi
 
 # Detect device type and select playbook
