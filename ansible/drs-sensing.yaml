@@ -3,7 +3,7 @@
 # This playbook installs and configures all components for the DRS on the local host
 
 - name: Setup Data Recording System | Sensing Module
-  hosts: localhost
+  hosts: "{{ target_host | default('localhost') }}"
   become: yes
   gather_facts: yes
   
