@@ -51,7 +51,7 @@ fi
 # Check if ansible is installed, if not, install it with pipx
 if ! command -v ansible-playbook &> /dev/null; then
     echo "Ansible not found. Installing ansible with pipx..."
-    pipx install --include-deps ansible-core
+    pipx install --force --include-deps ansible-core
 
     # Verify installation
     if ! command -v ansible-playbook &> /dev/null; then
@@ -171,6 +171,7 @@ if [[ -n "$TARGET_HOST" ]]; then
     # Use detected/specified host with automatic host_vars loading
     ansible-playbook \
         -i inventory/localhost.yaml \
+        -K \
         -e "target_host=$TARGET_HOST" \
         "$PLAYBOOK" \
         "$@"
@@ -178,6 +179,7 @@ else
     # Fallback to localhost
     ansible-playbook \
         -i inventory/localhost.yaml \
+        -K \
         "$PLAYBOOK" \
         "$@"
 fi
