@@ -36,7 +36,10 @@
     - role: netplan
       tags: ['netplan']
       when: netplan_files is defined and netplan_files | length > 0
-            
+
+    - role: iptables
+      tags: ['iptables']
+
     - role: ptp
       tags: ['ptp']
       

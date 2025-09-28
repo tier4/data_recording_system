@@ -1,0 +1,11 @@
+[Unit]
+Description=Add iptables rules
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/drs/service/iptables/add_iptables_rules.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
