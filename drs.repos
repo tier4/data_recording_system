@@ -35,3 +35,7 @@ repositories:
     type: git
     url: git@github.com:tier4/drs-api.git
     version: main
+  bag_converter:
+    type: git
+    url: git@github.com:0x126/bag_converter.git
+    version: feat/nebula_decoder

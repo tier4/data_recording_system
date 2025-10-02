@@ -1,0 +1,28 @@
+<launch>
+  <arg name="lidar_position"/>
+  <arg name="lidar_model"/>
+  <arg name="return_mode" default="Dual"/>
+  <arg name="scan_phase" default="0.0"/>
+  <arg name="min_range" default="0.3"/>
+  <arg name="max_range" default="200.0"/>
+  <arg name="frequency_ms" default="100.0"/>
+  <arg name="use_sensor_time" default="true"/>
+
+  <group>
+    <let name="lidar_name" value="lidar_$(var lidar_position)"/>
+
+    <node pkg="nebula_decoder" exec="nebula_decoder_node_exe"
+      name="$(var lidar_name)_decoder" output="screen">
+      <param name="sensor_model" value="$(var lidar_model)"/>
+      <param name="return_mode" value="$(var return_mode)"/>
+      <param name="frame_id" value="$(var lidar_name)"/>
+      <param name="scan_phase" value="$(var scan_phase)"/>
+      <param name="min_range" value="$(var min_range)"/>
+      <param name="max_range" value="$(var max_range)"/>
+      <param name="frequency_ms" value="$(var frequency_ms)"/>
+      <param name="use_sensor_time" value="$(var use_sensor_time)"/>
+      <remap from="~/nebula_packets" to="nebula_packets"/>
+      <remap from="~/nebula_points" to="nebula_points"/>
+    </node>
+  </group>
+</launch>
