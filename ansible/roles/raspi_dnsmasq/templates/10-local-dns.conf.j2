@@ -1,0 +1,5 @@
+# ---- Local DNS entries ----
+# Map drs-dashboard to the Raspberry Pi's IP address based on interface
+# Return different IP addresses depending on which interface the query comes from
+interface-name=drs-dashboard,eth0.10,{{ eth0_10_gateway }}
+interface-name=drs-dashboard,wlan0,{{ wlan0_gateway }}

@@ -1,0 +1,5 @@
+---
+wlan0_address: 192.168.30.1/24
+eth0_10_address: 192.168.20.10/24
+route_to_network: 192.168.10.0/24
+route_via_address: 192.168.20.1

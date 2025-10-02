@@ -1,0 +1,195 @@
+---
+# Data Recording System - Local Installation Playbook
+# This playbook installs and configures all components for the DRS on the local host
+
+- name: Setup Data Recording System | Control Module
+  hosts: "{{ target_host | default('localhost') }}"
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    # Determine ECU ID from hostname or environment variable
+    drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
+    sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
+    module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
+    
+  pre_tasks:
+    - name: Disable cloud-init permanently
+      copy:
+        dest: /etc/cloud/cloud-init.disabled
+        content: "disabled\n"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Remove cloud-init netplan
+      file:
+        path: /etc/netplan/50-cloud-init.yaml
+        state: absent
+
+    - name: Ask for custom hostname if not specified
+      pause:
+        prompt: |
+
+          Current hostname: {{ ansible_hostname }}
+
+          Enter new hostname for this device (or press Enter to keep 'raspi'):
+          Examples: drs-control-01, raspi-main, control-module-1
+      register: hostname_input
+      when:
+        - custom_hostname is not defined or custom_hostname == ""
+
+    - name: Set custom_hostname from user input
+      set_fact:
+        custom_hostname: "{{ hostname_input.user_input }}"
+      when:
+        - hostname_input.user_input is defined
+        - hostname_input.user_input != ""
+
+    - name: Ask for WiFi AP password
+      pause:
+        prompt: |
+
+          Enter WiFi Access Point password (8-63 characters required):
+      register: wifi_password_input
+      when:
+        - ap_wpa_passphrase is not defined or ap_wpa_passphrase == "" or ap_wpa_passphrase == "comlops1"
+
+    - name: Validate and set WiFi password
+      set_fact:
+        ap_wpa_passphrase: "{{ wifi_password_input.user_input }}"
+      when:
+        - wifi_password_input is defined
+      failed_when:
+        - wifi_password_input.user_input | length < 8 or wifi_password_input.user_input | length > 63
+
+    - name: Apply hostname change
+      hostname:
+        name: "{{ custom_hostname }}"
+        use: systemd
+      when:
+        - custom_hostname is defined
+        - custom_hostname != ""
+        - custom_hostname != ansible_hostname
+      register: hostname_changed
+
+    - name: Ensure localhost entry in /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.0\.1\s+'
+        line: "127.0.0.1\tlocalhost"
+        create: yes
+
+    - name: Update /etc/hosts with new hostname
+      lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.1\.1\s+'
+        line: "127.0.1.1\t{{ custom_hostname | default(ansible_hostname) }}"
+      when:
+        - custom_hostname is defined
+        - custom_hostname != ""
+
+    - name: Refresh ansible facts after hostname change
+      setup:
+      when: hostname_changed is changed
+
+    - name: Set dynamic AP SSID based on hostname
+      set_fact:
+        ap_ssid: "{{ custom_hostname | default(ansible_hostname) }}-ap"
+      when: ap_ssid is not defined
+
+    - name: Display configuration summary
+      debug:
+        msg: |
+          Configuration Summary:
+          =====================
+          {% if hostname_changed is changed %}
+          Hostname: {{ custom_hostname }} (changed from 'raspi')
+          {% else %}
+          Hostname: {{ ansible_hostname }}
+          {% endif %}
+          WiFi AP SSID: {{ ap_ssid | default((custom_hostname | default(ansible_hostname)) + '-ap') }}
+          WiFi Password: [configured]
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  roles:
+    # Phase 1: Time synchronization setup
+    - role: raspi_time_sync
+      tags: ['raspi', 'raspi_time_sync']
+
+    # Phase 2: Network configuration (VLAN, interfaces)
+    - role: raspi_network
+      tags: ['raspi', 'network']
+
+    # Phase 2: WiFi Access Point setup
+    - role: raspi_hostapd
+      tags: ['raspi', 'hostapd']
+
+    # Phase 3: DHCP and DNS services
+    - role: raspi_dnsmasq
+      tags: ['raspi', 'dnsmasq']
+
+    # Phase 4: Firewall and NAT configuration
+    - role: raspi_iptables
+      tags: ['raspi', 'iptables']
+
+    # Phase 5: Container runtime
+    - role: docker
+      tags: ['docker']
+
+    # Phase 6: VPN connectivity (optional)
+    - role: tailscale
+      tags: ['tailscale']
+
+    # Phase 7: DRS services
+    - role: journald
+      tags: ['journald']
+
+    - role: cyclonedds
+      tags: ['cyclonedds']
+
+    - role: drs_api_service
+      tags: ['drs', 'service', 'drs_api_service']
+
+    - role: drs_ros2_bridge_service
+      tags: ['drs', 'service', 'drs_ros2_bridge_service']
+
+    - role: drs_dashboard_service
+      tags: ['drs', 'service', 'drs_dashboard_service']
+
+  post_tasks:
+    - name: Display installation summary
+      debug:
+        msg: |
+          Raspberry Pi Control Module configuration complete!
+
+          The system is now configured as:
+          - WiFi Access Point (SSID: drs-ap)
+          - DHCP/DNS server for WiFi and wired clients
+          - NAT router for network connectivity
+          - Docker runtime installed
+          - Tailscale VPN installed (requires manual authentication)
+
+          Services status can be checked with:
+          - systemctl status hostapd.service
+          - systemctl status dnsmasq.service
+          - systemctl status docker.service
+          - systemctl status drs-api.service
+          - systemctl status drs-dashboard.service
+          - systemctl status drs-ros2-bridge.service
+          
+    - name: Reboot notification
+      debug:
+        msg: "A system reboot may be required to apply all configurations."
+      changed_when: true
+      notify: reboot_required
+      
+  handlers:
+    - name: reboot_required
+      debug:
+        msg: "Please reboot the system to ensure all changes take effect."

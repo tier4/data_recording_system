@@ -1,0 +1,47 @@
+---
+# Simplified Tailscale installation using official script
+
+- name: Download and run Tailscale official installer
+  shell: |
+    curl -fsSL https://tailscale.com/install.sh | sh
+  args:
+    creates: /usr/bin/tailscale
+  become: yes
+
+- name: Check Tailscale status
+  command: tailscale status
+  register: tailscale_status
+  changed_when: false
+  failed_when: false
+
+- name: Authenticate with Tailscale (if authkey provided)
+  command: tailscale up --authkey={{ tailscale_authkey }}
+  when:
+    - tailscale_authkey is defined
+    - tailscale_authkey != ""
+    - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+
+- name: Display manual authentication instructions
+  debug:
+    msg: |
+      Tailscale installed successfully!
+
+      To authenticate manually:
+      1. Run: sudo tailscale up
+      2. Visit the URL shown to authenticate
+      3. Device will join your Tailscale network
+  when:
+    - tailscale_authkey is not defined or tailscale_authkey == ""
+    - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+
+- name: Enable IP forwarding for subnet routing (optional)
+  sysctl:
+    name: "{{ item }}"
+    value: '1'
+    state: present
+    reload: yes
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+  when: tailscale_enable_routing | default(false)
+  notify: reload sysctl

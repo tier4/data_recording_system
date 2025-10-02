@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Add iptables rules for ECU network routing
+iptables -t nat -A POSTROUTING -s 192.168.20.0/24 -d 192.168.10.0/24 -j MASQUERADE
+iptables -A FORWARD -i enP1p1s0 -o mgbe1 -j ACCEPT
+iptables -A FORWARD -i mgbe1 -o enP1p1s0 -j ACCEPT

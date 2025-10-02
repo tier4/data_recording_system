@@ -1,0 +1,36 @@
+---
+- name: Install network packages
+  apt:
+    name:
+      - vlan
+      - netplan.io
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Load 8021q module
+  modprobe:
+    name: 8021q
+    state: present
+
+- name: Ensure 8021q module loads on boot
+  lineinfile:
+    path: /etc/modules
+    line: 8021q
+    create: yes
+
+- name: Configure udev rules for LTE dongle
+  copy:
+    src: 10-persistent-lte.rules
+    dest: /etc/udev/rules.d/10-persistent-lte.rules
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload udev
+
+- name: Configure netplan
+  template:
+    src: 99-drs.yaml.j2
+    dest: /etc/netplan/10-drs.yaml
+    backup: yes
+

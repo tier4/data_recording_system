@@ -4,10 +4,22 @@
     path: "{{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh"
   register: drs_api_build_script
 
+- name: Check if module-manager binary already exists
+  stat:
+    path: "{{ playbook_dir }}/../src/drs-api/services/module-manager/bin/module-manager-arm64-static"
+  register: module_manager_binary
+
+- name: Check if drs-cli binary already exists
+  stat:
+    path: "{{ playbook_dir }}/../src/drs-api/tools/drs-cli/bin/drs-cli-arm64-static"
+  register: drs_cli_binary
+
 - name: Build DRS API binary with Docker
   shell: |
     {{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh all
-  when: drs_api_build_script.stat.exists
+  when:
+    - drs_api_build_script.stat.exists
+    - not (module_manager_binary.stat.exists and drs_cli_binary.stat.exists)
   register: build_result
   changed_when: true
 

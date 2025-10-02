@@ -1,0 +1,5 @@
+# I-O DATA UD-USC1 LTE dongle
+SUBSYSTEM=="net", ACTION=="add", \
+    ATTRS{idVendor}=="05c6", \
+    ATTRS{idProduct}=="f612", \
+    NAME="lte0"

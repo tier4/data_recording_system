@@ -1,0 +1,31 @@
+[Unit]
+Description=DRS ROS2 Bridge Service
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=0
+TimeoutStopSec=120
+WorkingDirectory=/opt/drs/service/drs_ros2_bridge
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=drs-ros2-bridge
+
+# Remove any existing containers before starting
+ExecStartPre=-/usr/bin/docker compose down --remove-orphans
+
+# Start containers in foreground mode
+ExecStart=/usr/bin/docker compose up --abort-on-container-exit
+
+# Stop containers gracefully with timeout
+ExecStop=/usr/bin/docker compose down --timeout 30
+
+# Clean up on failure
+ExecStopPost=-/usr/bin/docker compose down --remove-orphans
+
+[Install]
+WantedBy=multi-user.target

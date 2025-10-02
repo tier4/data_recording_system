@@ -1,0 +1,15 @@
+server:
+  port: 50051
+
+disk:
+  enabled: false
+
+services:
+  enabled: false
+
+system:
+  enable_reboot: true
+  enable_shutdown: true
+
+ptp:
+  enabled: false

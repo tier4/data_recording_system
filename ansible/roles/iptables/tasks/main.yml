@@ -1,0 +1,43 @@
+---
+- name: Install iptables
+  apt:
+    name: iptables
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
+- name: Create iptables service directory
+  file:
+    path: /opt/drs/service/iptables
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  become: yes
+
+- name: Deploy iptables rules script
+  template:
+    src: add_iptables_rules.sh.j2
+    dest: /opt/drs/service/iptables/add_iptables_rules.sh
+    mode: '0755'
+    owner: root
+    group: root
+  become: yes
+
+- name: Deploy iptables systemd service
+  template:
+    src: iptables.service.j2
+    dest: /etc/systemd/system/iptables.service
+    mode: '0644'
+    owner: root
+    group: root
+  notify: reload systemd
+  become: yes
+
+- name: Enable iptables service
+  systemd:
+    name: iptables
+    enabled: yes
+    daemon_reload: yes
+  become: yes

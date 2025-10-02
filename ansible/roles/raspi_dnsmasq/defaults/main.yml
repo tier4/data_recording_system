@@ -1,0 +1,19 @@
+---
+# wlan0 DHCP settings
+wlan0_dhcp_range_start: 192.168.30.100
+wlan0_dhcp_range_end: 192.168.30.255
+wlan0_netmask: 255.255.255.0
+wlan0_gateway: 192.168.30.1
+
+# eth0.10 DHCP settings
+eth0_10_dhcp_range_start: 192.168.20.100
+eth0_10_dhcp_range_end: 192.168.20.255
+eth0_10_netmask: 255.255.255.0
+eth0_10_gateway: 192.168.20.10
+
+# Common settings
+dhcp_lease_time: 24h
+dns_servers: 8.8.8.8,8.8.4.4
+upstream_dns_servers:
+  - 8.8.8.8
+  - 8.8.4.4
