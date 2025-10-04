@@ -30,8 +30,6 @@ topics:
     min_rate: 9.0
     max_rate: 15.0
   - name: /tf_static # tf
-    min_rate: 0.1
-    max_rate: 10.0
   - name: /sensing/ins/oxts/imu
   - name: /sensing/ins/oxts/imu_bias
   - name: /sensing/ins/oxts/lever_arm
