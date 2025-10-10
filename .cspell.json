@@ -1,0 +1,26 @@
+{
+  "language": "en",
+  "words": [
+    "autoware",
+    "c1",
+    "c2",
+    "c3",
+    "colcon",
+    "cyclonedds",
+    "drs",
+    "falconk",
+    "ins",
+    "ncom",
+    "nebula",
+    "oxts",
+    "pandar",
+    "robinw",
+    "robosense",
+    "seyond",
+    "v4l2"
+  ],
+  "import": [
+    "https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"
+  ],
+  "useGitignore": true
+}
