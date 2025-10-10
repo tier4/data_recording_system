@@ -3,3 +3,6 @@ repos:
     rev: v6.17.2
     hooks:
       - id: ansible-lint
+        additional_dependencies:
+          - 'ansible-core==2.17.14'
+          - 'ansible==10.7.9'
