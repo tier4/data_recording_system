@@ -4,4 +4,4 @@ repos:
     hooks:
       - id: ansible-lint
         additional_dependencies: 
-          - ansible-core>=2.13.3
+          - ansible>=8.0.0
