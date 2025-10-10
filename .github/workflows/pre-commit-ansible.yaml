@@ -10,7 +10,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install Ansible collections for lint
+        run: |
+          python3 -m pip install --user 'ansible-core>=2.18,<2.19'
+          ansible-galaxy collection install -r ansible/requirements.yml -p ansible/collections
+        env:
+          ANSIBLE_CONFIG: ansible/ansible.cfg
+          ANSIBLE_COLLECTIONS_PATHS: ansible/collections:~/.ansible/collections:/usr/share/ansible/collections
+
       - name: Run pre-commit
         uses: autowarefoundation/autoware-github-actions/pre-commit@v1
         with:
           pre-commit-config: .pre-commit-config-ansible.yaml
+        env:
+          ANSIBLE_CONFIG: ansible/ansible.cfg
+          ANSIBLE_COLLECTIONS_PATHS: ansible/collections:~/.ansible/collections:/usr/share/ansible/collections
