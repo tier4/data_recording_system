@@ -1,0 +1,4 @@
+# Prevent udisks2 from auto-mounting COMLOPS labeled drive
+# This ensures only systemd mount unit handles this drive
+
+SUBSYSTEM=="block", ENV{ID_FS_LABEL}=="{{ ssd_label }}", ENV{UDISKS_IGNORE}="1"

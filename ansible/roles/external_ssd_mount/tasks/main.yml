@@ -1,0 +1,18 @@
+---
+- name: Install udev rule to prevent udisks2 auto-mounting
+  ansible.builtin.template:
+    src: 99-no-automount-comlops.rules.j2
+    dest: /etc/udev/rules.d/99-no-automount-comlops.rules
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload udev rules
+
+- name: Ensure parent directory exists
+  ansible.builtin.file:
+    path: "{{ mount_point | dirname }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root

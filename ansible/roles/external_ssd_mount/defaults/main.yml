@@ -1,0 +1,6 @@
+---
+ssd_label: COMLOPS
+mount_point: /mnt/external/data
+filesystem_type: ext4
+mount_options: defaults,noatime,nodiratime,errors=remount-ro
+automount_timeout_idle_sec: 0  # 0 = never unmount automatically

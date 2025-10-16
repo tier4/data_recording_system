@@ -22,8 +22,11 @@
       
   roles:
     - role: ssd_mount
-      tags: ['anvil', 'ssd_mount']
-      
+      tags: ['anvil', 'ssd_mount', 'internal']
+
+    - role: external_ssd_mount
+      tags: ['anvil', 'ssd_mount', 'external']
+
     - role: jetpack
       tags: ['anvil', 'nvidia', 'jetpack']
       
