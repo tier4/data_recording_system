@@ -17,3 +17,11 @@ log/
 
 # Jetbrains
 .idea/
+
+# External repositories
+src/bag_converter/
+src/drs-api/
+src/proto_recorder
+
+# Ansible temporary directories
+.ansible/
