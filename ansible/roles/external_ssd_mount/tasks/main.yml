@@ -16,3 +16,18 @@
     mode: '0755'
     owner: root
     group: root
+
+- name: Ensure the fstab entry is removed for NAS
+  ansible.posix.mount:
+    path: "{{ nas_mount_point }}"
+    state: absent
+
+- name: Add fstab entry for COMLOPS
+  ansible.posix.mount:
+    path: "{{ mount_point | dirname }}"
+    src: LABEL=COMLOPS
+    fstype: ext4
+    opts: defaults,noatime,nodiratime,errors=remount-ro,nofail,x-systemd.automount,x-systemd.idle-timeout=0
+    dump: 0
+    passno: 0
+    state: present
