@@ -2,36 +2,36 @@ repositories:
   dependencies/sensor_trigger:
     type: git
     url: https://github.com/tier4/sensor_trigger.git
-    version: fix/trigger_cpu_affinity
+    version: f854dd055f6fd33d95cf1a466d9f2dc599edcdf9  # fix/trigger_cpu_affinity
   dependencies/ros2_v4l2_camera:
     type: git
     url: https://github.com/tier4/ros2_v4l2_camera.git
-    version: feature/for_l4t36
+    version: 5b506efada094a1deb8f479f6a5e5756957b63ca  # feature/for_l4t36
   dependencies/accelerated_image_processor:
     type: git
-    url: git@github.com:tier4/accelerated_image_processor.git
-    version: main
+    url: https://github.com/tier4/accelerated_image_processor.git
+    version: 1647db7bc121d1a427a2ad86e9d403416303fbab  # main
   dependencies/nebula:
     type: git
     url: https://github.com/tier4/nebula_drs.git
-    version: aeva_seyond
+    version: 7081f40b32341d8d82ef00dee20b856e4283d4e9  # aeva_seyond
   dependencies/transport_drivers:
     type: git
     url: https://github.com/mojomex/transport_drivers
-    version: mutable-buffer-in-udp-callback
+    version: abf8aa8e171f33e0acd6d845c3d795192c964e9c  # mutable-buffer-in-udp-callback
   dependencies/oxts_ros2_driver:
     type: git
     url: https://github.com/tier4/oxts_ros2_driver.git
-    version: feat/data_recording_system
+    version: 022d160e13e378bdfe34e5222a0e89f3a51cf081  # feat/data_recording_system
   dependencies/c2_readout_delay_setter:
     type: git
     url: git@github.com:tier4/c2_readout_delay_setter.git
-    version: feat/drs
+    version: 47ed673503a4796099478e1e11646a11d2709c7d  # feat/drs
   proto_recorder:
     type: git
     url: git@github.com:tier4/proto_recorder.git
-    version: main
+    version: 13b9c84aacf16e9d7a22915c3b929e4ddf68e6a6  # main
   drs-api:
     type: git
     url: git@github.com:tier4/drs-api.git
-    version: main
+    version: 058feb116fecdaccfbdc47571ba98400be3dfe7d  # main
