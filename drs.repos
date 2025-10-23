@@ -15,6 +15,15 @@ repositories:
     type: git
     url: https://github.com/tier4/nebula_drs.git
     version: 7081f40b32341d8d82ef00dee20b856e4283d4e9  # aeva_seyond
+  dependencies/seyond_ros_driver:
+    type: git
+    url: git@github.com:tier4/seyond_ros_driver.git
+    version: 516db2d344105935b56c979b0c1b138e28b08434  # tier4/develop
+    recursive: true
+  dependencies/seyond_ros_driver/src/seyond_lidar_ros/src/seyond_sdk:
+    type: git
+    url: git@github.com:Seyond-Inc/inno-lidar-sdk.git
+    version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
   dependencies/transport_drivers:
     type: git
     url: https://github.com/mojomex/transport_drivers
