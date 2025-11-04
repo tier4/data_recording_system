@@ -10,7 +10,7 @@ The Data Recording System (DRS) is a high-performance sensor data recording syst
 - **Distributed Architecture**: Parallel processing across multiple ECUs (ecu0/ecu1)
 - **High-Precision Time Synchronization**: Inter-sensor synchronization via PTP (Precision Time Protocol)
 - **Hardware Trigger**: GPIO-based sensor synchronization trigger generation
-- **ROS2-Based**: Native build with ROS2 Humble, optimized for embedded systems
+- **ROS 2 Based**: Native build with ROS 2 Humble, optimized for embedded systems
 - **API/Dashboard**: System management via gRPC API and Web dashboard
 
 ## Dependencies
