@@ -1,6 +1,8 @@
 {
   "language": "en",
   "words": [
+    "ros",
+    "ros2",
     "autoware",
     "c1",
     "c2",
@@ -19,8 +21,6 @@
     "seyond",
     "v4l2"
   ],
-  "import": [
-    "https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"
-  ],
+  "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],
   "useGitignore": true
 }
