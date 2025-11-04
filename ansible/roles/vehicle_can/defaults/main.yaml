@@ -1,0 +1,4 @@
+---
+# Default value for vehicle CAN enable/disable
+vehicle_can_enabled: false
+

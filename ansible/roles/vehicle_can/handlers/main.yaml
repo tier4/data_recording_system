@@ -1,0 +1,13 @@
+---
+- name: restart drs-sensor
+  ansible.builtin.systemd:
+    name: drs-sensor.service
+    state: restarted
+  become: true
+
+- name: restart drs-recorder
+  ansible.builtin.systemd:
+    name: drs-recorder.service
+    state: restarted
+  become: true
+
