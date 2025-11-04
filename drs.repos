@@ -37,5 +37,5 @@ repositories:
     version: 058feb116fecdaccfbdc47571ba98400be3dfe7d  # main
   bag_converter:
     type: git
-    url: git@github.com:tier4/bag_converter.git
+    url: https://github.com/tier4/bag_converter.git
     version: e793f10b3884819f6042672a52e7d92d1bab2aa5 # main
