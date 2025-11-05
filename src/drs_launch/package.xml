@@ -19,6 +19,8 @@
   <exec_depend>accelerated_image_processor</exec_depend>
   <exec_depend>c2_readout_delay_setter</exec_depend>
   <exec_depend>multi_transform_publisher</exec_depend>
+  <exec_depend>pointcloud_concatenate</exec_depend>
+  <exec_depend>nebula_decoder</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

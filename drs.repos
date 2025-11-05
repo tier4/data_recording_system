@@ -35,3 +35,12 @@ repositories:
     type: git
     url: git@github.com:tier4/drs-api.git
     version: 058feb116fecdaccfbdc47571ba98400be3dfe7d  # main
+  bag_converter:
+    type: git
+    url: https://github.com/tier4/bag_converter.git
+    version: 2413e30400a0845c4390af7243093ba3160ab3be  # main
+  bag_converter/src/seyond_decoder/src/seyond_sdk:
+    type: git
+    url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
+    version: 622223c6f9ec7e32326aa6a2d83f83cb6a84dfcb  # main
+
