@@ -12,6 +12,8 @@
        description="Should be False when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>
+  <arg name="has_vehicle_can" default="False"
+       description="Should be True when vehicle CAN is availbale"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
@@ -20,6 +22,7 @@
     <arg name="has_front4d" value="$(var has_front4d)"/>
     <arg name="publish_tf" value="$(var publish_tf)"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
+    <arg name="has_vehicle_can" value="$(var has_vehicle_can)"/>
   </include>
 
 </launch>
