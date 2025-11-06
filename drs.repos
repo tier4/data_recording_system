@@ -51,5 +51,5 @@ repositories:
   bag_converter/src/seyond_decoder/src/seyond_sdk:
     type: git
     url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
-    version: 622223c6f9ec7e32326aa6a2d83f83cb6a84dfcb  # main
+    version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
 
