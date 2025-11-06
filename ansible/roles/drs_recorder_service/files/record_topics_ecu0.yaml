@@ -38,3 +38,4 @@ topics:
   - name: /sensing/ins/oxts/ncom
   - name: /sensing/ins/oxts/odometry
   - name: /sensing/ins/oxts/velocity
+#  - name: /vehicle/from_can_bus

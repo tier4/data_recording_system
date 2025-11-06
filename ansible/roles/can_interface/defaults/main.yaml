@@ -1,0 +1,5 @@
+can_interfaces:
+  - name: "can0"
+    bitrate: 500000
+    restart_sec: "100ms"
+

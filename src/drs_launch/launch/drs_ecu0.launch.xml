@@ -5,6 +5,7 @@
   <arg name="has_front4d" default="False"/>
   <arg name="publish_tf" default="True"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+  <arg name="has_vehicle_can" default="False"/>
 
   <group>
     <push-ros-namespace namespace="sensing"/>
@@ -91,14 +92,12 @@
   </group>
 
   <!-- vehicle -->
-  <!--   
-  <group>
+  <group if="$(var has_vehicle_can)">
     <push-ros-namespace namespace="vehicle"/>
     <include file="$(find-pkg-share drs_launch)/launch/component/vehicle.launch.xml">
       <arg name="launch_driver" value="$(var live_sensor)"/>
     </include>
   </group>
-  -->
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">

@@ -37,6 +37,10 @@
       tags: ['netplan']
       when: netplan_files is defined and netplan_files | length > 0
 
+    - role: can_interface
+      tags: ['can']
+      when: drs_ecu_id == 0 or drs_ecu_id == '0'
+
     - role: iptables
       tags: ['iptables']
 

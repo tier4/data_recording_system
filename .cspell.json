@@ -17,7 +17,10 @@
     "robinw",
     "robosense",
     "seyond",
-    "v4l2"
+    "v4l2",
+    "jsonfile",
+    "aabbccdd",
+    "eeffgghh"
   ],
   "import": [
     "https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"
