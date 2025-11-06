@@ -1,0 +1,10 @@
+[Match]
+Name={{ item.name }}
+
+[CAN]
+BitRate={{ item.bitrate }}
+RestartSec={{ item.restart_sec | default('100ms') }}
+
+[Link]
+# bring the interface up
+ActivationPolicy=up
