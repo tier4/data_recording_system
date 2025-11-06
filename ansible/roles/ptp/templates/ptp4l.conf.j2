@@ -5,12 +5,10 @@ step_threshold          1.0
 first_step_threshold    1.0
 tx_timestamp_timeout    1000
 boundary_clock_jbod     1
-# clock_class_threshold   51
 clockClass              {{ ptp.clock_class }}
 priority1               {{ ptp.priority1 }}
 priority2               {{ ptp.priority2 }}
 utc_offset              0
-# ptp_minor_version       0
 
 time_stamping           hardware
 delay_mechanism         E2E
