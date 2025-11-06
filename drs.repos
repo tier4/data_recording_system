@@ -22,7 +22,7 @@ repositories:
     recursive: true
   dependencies/seyond_ros_driver/src/seyond_lidar_ros/src/seyond_sdk:
     type: git
-    url: git@github.com:Seyond-Inc/inno-lidar-sdk.git
+    url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
     version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
   dependencies/transport_drivers:
     type: git
