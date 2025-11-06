@@ -48,7 +48,7 @@
       <push-ros-namespace namespace="lidar"/>
       <group>
         <push-ros-namespace namespace="rear"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
           <arg name="lidar_position" value="rear"/>
           <arg name="lidar_model" value="Falcon"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -62,7 +62,7 @@
 
       <group>
         <push-ros-namespace namespace="left"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_seyond.launch.xml">
+        <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
           <arg name="lidar_position" value="left"/>
           <arg name="lidar_model" value="RobinW"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
