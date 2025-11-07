@@ -3,7 +3,7 @@ server:
 
 disk:
   enabled: true
-  monitor_path: "/share/data"
+  monitor_path: /share/data
 
 services:
   enabled: false

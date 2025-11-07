@@ -1,4 +1,3 @@
----
 # Simplified Tailscale installation using official script
 
 - name: Download and run Tailscale official installer
@@ -36,7 +35,7 @@
 
 - name: Enable IP forwarding for subnet routing (optional)
   sysctl:
-    name: "{{ item }}"
+    name: { { item } }
     value: "1"
     state: present
     reload: true

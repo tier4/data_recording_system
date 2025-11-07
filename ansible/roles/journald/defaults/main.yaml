@@ -1,3 +1,2 @@
----
 # journald configuration defaults
-journald_system_max_use: "500M"
+journald_system_max_use: 500M

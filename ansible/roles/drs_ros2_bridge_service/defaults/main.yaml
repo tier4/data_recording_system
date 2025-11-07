@@ -1,6 +1,5 @@
----
-drs_user: "{{ ansible_user | default('nvidia') }}"
-drs_group: "{{ ansible_user | default('nvidia') }}"
+drs_user: {{ ansible_user | default('nvidia') }}
+drs_group: {{ ansible_user | default('nvidia') }}
 
 drs_src_dir: "{{ playbook_dir }}/../"
 drs_install_dir: /opt/drs/install

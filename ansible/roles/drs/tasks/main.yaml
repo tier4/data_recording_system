@@ -1,11 +1,10 @@
----
 - name: Create DRS installation directory
   file:
-    path: "{{ drs_install_dir }}"
+    path: { { drs_install_dir } }
     state: directory
     mode: "0755"
-    owner: "{{ drs_user }}"
-    group: "{{ drs_group }}"
+    owner: { { drs_user } }
+    group: { { drs_group } }
   become: true
 
 # todo: Inspect failed tasks and fix them
@@ -15,9 +14,9 @@
 #     vcs import src < drs.repos
 #   args:
 #     executable: /bin/bash
-#   become_user: "{{ drs_user }}"
+#   become_user: {{ drs_user }}
 #   environment:
-#     HOME: "/home/{{ drs_user }}"
+#     HOME: /home/{{ drs_user }}
 
 - name: Initialize rosdep system-wide
   shell: |
@@ -32,9 +31,9 @@
     rosdep update
   args:
     executable: /bin/bash
-  become_user: "{{ drs_user }}"
+  become_user: { { drs_user } }
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Install ROS dependencies with rosdep
   shell: |
@@ -43,9 +42,9 @@
     rosdep install -y -r --from-paths src --ignore-src
   args:
     executable: /bin/bash
-  become_user: "{{ drs_user }}"
+  become_user: { { drs_user } }
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Build DRS packages directly to installation directory
   shell: |

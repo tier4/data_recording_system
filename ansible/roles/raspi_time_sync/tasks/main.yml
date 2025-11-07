@@ -1,4 +1,3 @@
----
 # Time synchronization setup for Raspberry Pi
 
 - name: Set timezone to Asia/Tokyo

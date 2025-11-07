@@ -1,4 +1,3 @@
----
 - name: Install lvm2
   apt:
     name: lvm2
@@ -50,7 +49,7 @@
   filesystem:
     fstype: ext4
     dev: /dev/ssd_vg/ssd_lv
-    opts: "-E lazy_itable_init=0,lazy_journal_init=0,stride=64,stripe-width=128"
+    opts: -E lazy_itable_init=0,lazy_journal_init=0,stride=64,stripe-width=128
   become: true
 
 - name: Ensure mountpoint exists

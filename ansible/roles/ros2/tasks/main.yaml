@@ -1,4 +1,3 @@
----
 # ROS2 Humble Installation Role for Ubuntu 22.04 (Jammy)
 # Setup Sources
 - name: Update apt cache
@@ -32,11 +31,11 @@
 
 - name: Extract ROS APT source version
   ansible.builtin.set_fact:
-    ros_apt_source_version: "{{ ros_apt_source_release.json.tag_name }}"
+    ros_apt_source_version: { { ros_apt_source_release.json.tag_name } }
 
 - name: Download ROS2 APT source package
   ansible.builtin.get_url:
-    url: "https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb"
+    url: https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb
     dest: /tmp/ros2-apt-source.deb
     mode: 0644
 
@@ -85,8 +84,8 @@
 - name: Set ROS_DOMAIN_ID in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
-    regexp: "^export ROS_DOMAIN_ID="
-    line: "export ROS_DOMAIN_ID={{ ros_domain_id }}"
+    regexp: ^export ROS_DOMAIN_ID=
+    line: export ROS_DOMAIN_ID={{ ros_domain_id }}
     state: present
     create: true
   become: true
@@ -94,8 +93,8 @@
 - name: Set ROS_DISTRO in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
-    regexp: "^export ROS_DISTRO="
-    line: "export ROS_DISTRO=humble"
+    regexp: ^export ROS_DISTRO=
+    line: export ROS_DISTRO=humble
     state: present
     create: true
   become: true
@@ -103,8 +102,8 @@
 - name: Set ROS_LOG_DIR in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
-    regexp: "^export ROS_LOG_DIR="
-    line: "export ROS_LOG_DIR=/tmp/drs/log"
+    regexp: ^export ROS_LOG_DIR=
+    line: export ROS_LOG_DIR=/tmp/drs/log
     state: present
     create: true
   become: true

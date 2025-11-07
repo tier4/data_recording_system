@@ -1,4 +1,3 @@
----
 - name: Copy jetson-clocks systemd service file
   copy:
     src: jetson-clocks.service
@@ -35,7 +34,7 @@
 
 - name: Check if reboot is required for power mode change
   debug:
-    msg: "Reboot required to apply Jetson power mode change"
+    msg: Reboot required to apply Jetson power mode change
   when:
     - nvpmodel_result is defined
     - nvpmodel_result.changed

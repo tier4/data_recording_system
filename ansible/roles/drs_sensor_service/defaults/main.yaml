@@ -1,6 +1,6 @@
 # User configuration
-drs_user: "{{ ansible_user | default('nvidia') }}"
-drs_group: "{{ ansible_user | default('nvidia') }}"
+drs_user: { { ansible_user | default('nvidia') } }
+drs_group: { { ansible_user | default('nvidia') } }
 
 # DRS paths
 drs_install_dir: /opt/drs/install

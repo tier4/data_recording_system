@@ -7,8 +7,8 @@
 
 - name: Copy network config file
   ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "/etc/netplan/{{ item }}"
+    src: { { item } }
+    dest: /etc/netplan/{{ item }}
     mode: 0644
   with_items: "{{ netplan_files }}"
   become: true
@@ -21,7 +21,7 @@
 
 - name: Schedule netplan apply for later
   debug:
-    msg: "Netplan configuration has been updated. Run 'sudo netplan apply' after Ansible completes to apply network changes."
+    msg: Netplan configuration has been updated. Run 'sudo netplan apply' after Ansible completes to apply network changes.
   when: netplan_config_changed.changed
   changed_when: netplan_config_changed.changed
   notify: netplan_apply_required

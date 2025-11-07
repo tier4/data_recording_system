@@ -14,7 +14,7 @@
 - name: Backup original chrony.conf
   ansible.builtin.copy:
     src: /etc/chrony/chrony.conf
-    dest: "/etc/chrony/chrony.conf.{{ ansible_date_time.epoch }}.bak"
+    dest: /etc/chrony/chrony.conf.{{ ansible_date_time.epoch }}.bak
     remote_src: true
     mode: "0644"
   become: true

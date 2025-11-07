@@ -1,2 +1,2 @@
-compression: "Zstd"
-compressionLevel: "Fastest"
+compression: Zstd
+compressionLevel: Fastest

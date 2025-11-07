@@ -1,4 +1,3 @@
----
 - name: Ensure can-utils is installed
   ansible.builtin.package:
     name: can-utils
@@ -8,7 +7,7 @@
 - name: Create CAN network files for systemd-networkd
   ansible.builtin.template:
     src: can.network.j2
-    dest: "/etc/systemd/network/50-{{ item.name }}.network"
+    dest: /etc/systemd/network/50-{{ item.name }}.network
     owner: root
     group: root
     mode: "0644"

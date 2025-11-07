@@ -1,4 +1,3 @@
----
 - name: Download Docker installation script
   get_url:
     url: https://get.docker.com
@@ -19,7 +18,7 @@
 
 - name: Add user to docker group
   user:
-    name: "{{ ansible_env.USER }}"
+    name: { { ansible_env.USER } }
     groups: docker
     append: true
   when: docker_add_user_to_group | default(true)

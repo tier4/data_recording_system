@@ -1,4 +1,3 @@
----
 - name: Check if DRS API build script exists
   stat:
     path: "{{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh"
@@ -63,10 +62,10 @@
 - name: Deploy module-manager configuration
   become: true
   copy:
-    src: "{{ module_manager_config }}"
+    src: {{ module_manager_config }}
     dest: /opt/drs/config/module-manager.yaml
-    owner: "{{ drs_user }}"
-    group: "{{ drs_group }}"
+    owner: {{ drs_user }}
+    group: {{ drs_group }}
     mode: "0644"
 
 - name: Deploy systemd service file

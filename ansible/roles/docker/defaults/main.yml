@@ -1,6 +1,5 @@
----
 # Add current user to docker group
 docker_add_user_to_group: true
 
 # User to add to docker group (defaults to current user)
-docker_user: "{{ ansible_user | default(ansible_env.USER | default('pi')) }}"
+docker_user: { { ansible_user | default(ansible_env.USER | default('pi')) } }

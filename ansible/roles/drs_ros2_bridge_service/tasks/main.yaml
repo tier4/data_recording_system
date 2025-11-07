@@ -1,4 +1,3 @@
----
 - name: Check if Docker build script exists
   stat:
     path: "{{ playbook_dir }}/../docker/ros2_bridge/build.sh"
