@@ -1,4 +1,3 @@
----
 - name: Create journald.conf.d directory
   file:
     path: /etc/systemd/journald.conf.d

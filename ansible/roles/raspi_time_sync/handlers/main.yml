@@ -1,4 +1,3 @@
----
 - name: restart chrony
   systemd:
     name: chrony

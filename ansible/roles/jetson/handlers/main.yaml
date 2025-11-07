@@ -1,4 +1,3 @@
----
 - name: reboot_required
   debug:
     msg: "System reboot is required to apply Jetson power mode changes. Please reboot at your convenience."

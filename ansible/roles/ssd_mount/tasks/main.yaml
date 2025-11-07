@@ -1,4 +1,3 @@
----
 - name: Install lvm2
   apt:
     name: lvm2

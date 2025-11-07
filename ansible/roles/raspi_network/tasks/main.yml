@@ -1,4 +1,3 @@
----
 - name: Install network packages
   apt:
     name:

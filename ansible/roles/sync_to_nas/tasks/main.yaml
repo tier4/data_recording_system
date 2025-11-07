@@ -1,4 +1,3 @@
----
 - name: Create sync_to_nas directory
   ansible.builtin.file:
     path: "{{ sync_to_nas_script_path | dirname }}"

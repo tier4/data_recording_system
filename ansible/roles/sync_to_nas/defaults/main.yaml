@@ -1,4 +1,3 @@
----
 # Source and destination directories
 sync_to_nas_source_dir: "/mnt/ssd/data"
 sync_to_nas_base_dir: "/mnt/nas/data"

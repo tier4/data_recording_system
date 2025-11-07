@@ -1,4 +1,3 @@
----
 - name: Download Docker installation script
   get_url:
     url: https://get.docker.com

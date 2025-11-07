@@ -1,4 +1,3 @@
----
 ptp:
   # Port configuration
   master_port: mgbe0

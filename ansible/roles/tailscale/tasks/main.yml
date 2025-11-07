@@ -1,4 +1,3 @@
----
 # Simplified Tailscale installation using official script
 
 - name: Download and run Tailscale official installer

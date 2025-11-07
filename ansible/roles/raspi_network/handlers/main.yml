@@ -1,4 +1,3 @@
----
 - name: reload udev
   systemd:
     name: systemd-udevd

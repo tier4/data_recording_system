@@ -1,4 +1,3 @@
----
 - name: Create DRS installation directory
   file:
     path: "{{ drs_install_dir }}"

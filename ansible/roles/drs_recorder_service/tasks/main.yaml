@@ -1,4 +1,3 @@
----
 - name: Create recorder service directory
   ansible.builtin.file:
     path: /opt/drs/service/drs_recorder

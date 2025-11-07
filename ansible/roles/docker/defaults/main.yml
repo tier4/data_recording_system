@@ -1,4 +1,3 @@
----
 # Add current user to docker group
 docker_add_user_to_group: true
 

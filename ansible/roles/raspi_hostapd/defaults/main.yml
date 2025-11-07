@@ -1,4 +1,3 @@
----
 ap_interface: wlan0
 ap_ssid: "{{ ansible_hostname }}-ap"
 ap_wpa_passphrase: comlops1

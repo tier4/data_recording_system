@@ -1,4 +1,3 @@
----
 # Global variables for Data Recording System
 # These can be overridden in host_vars or at runtime
 

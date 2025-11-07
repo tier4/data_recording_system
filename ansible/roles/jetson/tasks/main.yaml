@@ -1,4 +1,3 @@
----
 - name: Copy jetson-clocks systemd service file
   copy:
     src: jetson-clocks.service
