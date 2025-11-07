@@ -33,7 +33,7 @@
       KERNEL=="gpiochip*", GROUP="gpio", MODE="0660"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
   notify: reload udev
 

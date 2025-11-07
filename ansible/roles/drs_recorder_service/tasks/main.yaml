@@ -5,7 +5,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Create data recording directory
@@ -14,7 +14,7 @@
     state: directory
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Create recorder launch script
@@ -23,7 +23,7 @@
     dest: /opt/drs/service/drs_recorder/launch.sh
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
   notify: restart drs-recorder
 
@@ -33,7 +33,7 @@
     dest: "/opt/drs/config/{{ item }}"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: true
   loop:
     - record_topics_ecu0.yaml
@@ -47,7 +47,7 @@
     dest: /etc/systemd/system/drs-recorder.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: true
   notify:
     - reload systemd

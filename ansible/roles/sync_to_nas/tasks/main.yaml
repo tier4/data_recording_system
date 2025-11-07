@@ -12,7 +12,7 @@
     dest: "{{ sync_to_nas_script_path }}"
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   register: sync_script
   become: true
 
@@ -22,7 +22,7 @@
     dest: /etc/systemd/system/sync-to-nas.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: systemd_service
   become: true
 
@@ -32,7 +32,7 @@
     dest: /etc/systemd/system/sync-to-nas.timer
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: systemd_timer
   become: true
 

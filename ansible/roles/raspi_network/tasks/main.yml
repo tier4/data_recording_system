@@ -25,7 +25,7 @@
     dest: /etc/udev/rules.d/10-persistent-lte.rules
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify: reload udev
 
 - name: Configure netplan
@@ -33,4 +33,3 @@
     src: 99-drs.yaml.j2
     dest: /etc/netplan/10-drs.yaml
     backup: yes
-

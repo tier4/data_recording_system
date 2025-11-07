@@ -60,6 +60,7 @@ lidar_front:
 ## Camera Optical Link Transform
 
 When `publish_camera_optical_link` is true, the node automatically creates transforms from `camera_link` to `camera_optical_link` frames with a fixed rotation that aligns the optical frame with ROS conventions:
+
 - No translation
 - Rotation: quaternion (0.5, -0.5, 0.5, -0.5)
 

@@ -18,7 +18,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: yes
 
 - name: Copy docker-compose.yml file
@@ -27,7 +27,7 @@
     dest: /opt/drs/service/drs_ros2_bridge/docker-compose.yml
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Copy drs-ros2-bridge systemd service file
@@ -36,7 +36,7 @@
     dest: /etc/systemd/system/drs-ros2-bridge.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Reload systemd daemon

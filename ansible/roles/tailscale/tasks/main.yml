@@ -37,7 +37,7 @@
 - name: Enable IP forwarding for subnet routing (optional)
   sysctl:
     name: "{{ item }}"
-    value: '1'
+    value: "1"
     state: present
     reload: yes
   loop:

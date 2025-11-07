@@ -5,7 +5,7 @@
     dest: /etc/systemd/system/jetson-clocks.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Enable and start jetson-clocks service
@@ -27,7 +27,7 @@
   when: "'NV Power Mode: MAXN' not in current_power_mode.stdout"
   become: yes
   register: nvpmodel_result
-  failed_when: 
+  failed_when:
     - nvpmodel_result.rc != 0
     - "'Reboot required' not in nvpmodel_result.stdout"
     - "'rebooting' not in nvpmodel_result.stdout"
@@ -36,7 +36,7 @@
 - name: Check if reboot is required for power mode change
   debug:
     msg: "Reboot required to apply Jetson power mode change"
-  when: 
+  when:
     - nvpmodel_result is defined
     - nvpmodel_result.changed
     - "'Reboot required' in nvpmodel_result.stdout"

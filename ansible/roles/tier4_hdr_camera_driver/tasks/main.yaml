@@ -4,7 +4,7 @@
       get_url:
         url: https://github.com/tier4/tier4_automotive_hdr_camera/releases/download/v2.0.0/tier4-camera-gmsl_2.0.0_arm64.deb
         dest: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
-        mode: '0644'
+        mode: "0644"
 
     - name: Install Tier4 camera driver package
       apt:
@@ -48,7 +48,7 @@
         src: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dtbo
         dest: /boot/tier4-camera-device-tree-overlay-anvil.dtbo
         remote_src: yes
-        mode: '0644'
+        mode: "0644"
       become: yes
 
     - name: Apply device tree overlay
@@ -89,29 +89,29 @@
         dest: /boot/extlinux/extlinux.conf
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
       become: yes
 
     - name: Configure tier4_imx490 modprobe options
       lineinfile:
         path: /etc/modprobe.d/tier4-imx490.conf
-        regexp: '^options tier4_imx490'
-        line: 'options tier4_imx490 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7'
+        regexp: "^options tier4_imx490"
+        line: "options tier4_imx490 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7"
         create: yes
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
       become: yes
 
     - name: Configure tier4_imx728 modprobe options
       lineinfile:
         path: /etc/modprobe.d/tier4-imx728.conf
-        regexp: '^options tier4_imx728'
-        line: 'options tier4_imx728 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7'
+        regexp: "^options tier4_imx728"
+        line: "options tier4_imx728 trigger_mode=3 enable_auto_exposure=1 enable_distortion_correction=0 shutter_time_min=11000 shutter_time_max=11000 fsync_mfp=7"
         create: yes
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
       become: yes
 
     - name: Clean up temporary files

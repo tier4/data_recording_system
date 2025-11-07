@@ -17,7 +17,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: yes
 
 - name: Copy api-gateway configuration file
@@ -26,7 +26,7 @@
     dest: /opt/drs/service/drs_dashboard/api-gateway.yaml
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Copy docker-compose.yml file
@@ -35,7 +35,7 @@
     dest: /opt/drs/service/drs_dashboard/docker-compose.yml
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Copy drs-dashboard systemd service file
@@ -44,7 +44,7 @@
     dest: /etc/systemd/system/drs-dashboard.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Reload systemd daemon

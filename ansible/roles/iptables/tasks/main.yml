@@ -11,7 +11,7 @@
   file:
     path: /opt/drs/service/iptables
     state: directory
-    mode: '0755'
+    mode: "0755"
     owner: root
     group: root
   become: yes
@@ -20,7 +20,7 @@
   template:
     src: add_iptables_rules.sh.j2
     dest: /opt/drs/service/iptables/add_iptables_rules.sh
-    mode: '0755'
+    mode: "0755"
     owner: root
     group: root
   become: yes
@@ -29,7 +29,7 @@
   template:
     src: iptables.service.j2
     dest: /etc/systemd/system/iptables.service
-    mode: '0644'
+    mode: "0644"
     owner: root
     group: root
   notify: reload systemd

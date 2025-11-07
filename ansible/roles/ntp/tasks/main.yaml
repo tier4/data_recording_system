@@ -16,7 +16,7 @@
     src: /etc/chrony/chrony.conf
     dest: "/etc/chrony/chrony.conf.{{ ansible_date_time.epoch }}.bak"
     remote_src: yes
-    mode: '0644'
+    mode: "0644"
   become: yes
   when: chrony_conf_stat.stat.exists
 
@@ -26,7 +26,7 @@
     dest: /etc/chrony/chrony.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Restart and enable chrony service

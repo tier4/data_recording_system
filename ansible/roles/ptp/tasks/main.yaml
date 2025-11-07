@@ -13,7 +13,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: yes
 
 - name: Deploy ptp4l configuration file
@@ -22,7 +22,7 @@
     dest: "{{ ptp_service_dir }}/ptp4l.conf"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Deploy phc2sys startup script
@@ -31,7 +31,7 @@
     dest: "{{ ptp_service_dir }}/phc2sys.sh"
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: yes
 
 - name: Deploy ptp4l systemd service file
@@ -40,7 +40,7 @@
     dest: /etc/systemd/system/ptp4l.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Deploy phc2sys systemd service file
@@ -49,7 +49,7 @@
     dest: /etc/systemd/system/phc2sys.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
 
 - name: Reload systemd daemon
