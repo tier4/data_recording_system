@@ -5,5 +5,6 @@ skip_list:
   - meta-no-info # We don't publish to Ansible Galaxy.
   - package-latest # Since this is a development environment, we allow the latest versions.
   - fqcn # Ignore all FQCN requirement errors.
+  - no-changed-when # Ignore changed_when requirement for commands.
 
 warn_list: []
