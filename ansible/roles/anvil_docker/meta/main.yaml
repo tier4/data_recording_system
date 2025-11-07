@@ -1,2 +1,2 @@
 dependencies:
-  - ssd_mount
+  - role: ssd_mount
