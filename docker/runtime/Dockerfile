@@ -135,7 +135,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 COPY --from=builder /opt/drs/install /opt/drs/install
 
 # Add cyclonedds.xml
-ADD docker/cyclonedds.xml /opt/drs/config/
+COPY docker/cyclonedds.xml /opt/drs/config/
 ENV CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
 
 # Add ROS environment variables
@@ -145,8 +145,8 @@ ENV ROS_LOCALHOST_ONLY=0
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 # Copy bashrc and entrypoint
-ADD docker/bashrc /etc/bash.bashrc
-ADD docker/entrypoint.sh /
+COPY docker/bashrc /etc/bash.bashrc
+COPY docker/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 # entrypointとしてentrypoint.shを設定

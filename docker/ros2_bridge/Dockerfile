@@ -73,7 +73,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     colcon build --symlink-install --install-base /opt/drs/install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to ros2_bridge
 
 # Add cyclonedds.xml
-ADD docker/cyclonedds.xml /opt/drs/config/
+COPY docker/cyclonedds.xml /opt/drs/config/
 ENV CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
 
 # Add ROS environment variables
@@ -83,8 +83,8 @@ ENV ROS_LOCALHOST_ONLY=0
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 # Copy bashrc and entrypoint
-ADD docker/bashrc /etc/bash.bashrc
-ADD docker/entrypoint.sh /
+COPY docker/bashrc /etc/bash.bashrc
+COPY docker/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
