@@ -5,7 +5,7 @@
     mode: "0755"
 
 - name: Install Docker using official script
-  shell: sh /tmp/get-docker.sh
+  command: sh /tmp/get-docker.sh
   args:
     creates: /usr/bin/docker
   become: true

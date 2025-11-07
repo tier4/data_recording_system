@@ -19,8 +19,7 @@
 #     HOME: /home/{{ drs_user }}
 
 - name: Initialize rosdep system-wide
-  shell: |
-    rosdep init
+  command: rosdep init
   args:
     executable: /bin/bash
   become: true
