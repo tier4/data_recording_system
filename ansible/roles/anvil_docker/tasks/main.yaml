@@ -9,7 +9,9 @@
   become: true
 
 - name: Download and install Docker
-  shell: curl https://get.docker.com | sh
+  shell: |
+    set -o pipefail
+    curl https://get.docker.com | sh
   args:
     creates: /usr/bin/docker
   become: true

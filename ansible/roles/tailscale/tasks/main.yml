@@ -2,6 +2,7 @@
 
 - name: Download and run Tailscale official installer
   shell: |
+    set -o pipefail
     curl -fsSL https://tailscale.com/install.sh | sh
   args:
     creates: /usr/bin/tailscale

@@ -22,7 +22,9 @@
   become: true
 
 - name: Set Jetson to maximum performance mode (nvpmodel -m 0)
-  shell: echo "YES" | nvpmodel -m 0
+  shell: |
+    set -o pipefail
+    echo "YES" | nvpmodel -m 0
   when: "'NV Power Mode: MAXN' not in current_power_mode.stdout"
   become: true
   register: nvpmodel_result
