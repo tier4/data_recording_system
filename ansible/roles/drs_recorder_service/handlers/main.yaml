@@ -1,9 +1,9 @@
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
   become: true
 
-- name: restart drs-recorder
+- name: Restart drs-recorder
   ansible.builtin.systemd:
     name: drs-recorder.service
     state: restarted

@@ -1,2 +1,2 @@
-- name: restore iptables
+- name: Restore iptables
   shell: iptables-restore < /etc/iptables/rules.v4

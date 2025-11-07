@@ -1,9 +1,9 @@
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
   become: true
 
-- name: restart drs-sensor
+- name: Restart drs-sensor
   ansible.builtin.systemd:
     name: drs-sensor.service
     state: restarted

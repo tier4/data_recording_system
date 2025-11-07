@@ -1,4 +1,4 @@
-- name: netplan_apply_required
+- name: Netplan apply required
   debug:
     msg: |
       ============================================
