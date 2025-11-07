@@ -38,7 +38,7 @@
 
 - name: Reload systemd if service files changed
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
   when: systemd_service.changed or systemd_timer.changed
   become: true
 
@@ -46,5 +46,5 @@
   systemd:
     name: sync-to-nas.timer
     state: started
-    enabled: yes
+    enabled: true
   become: true

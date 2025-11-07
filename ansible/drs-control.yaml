@@ -4,8 +4,8 @@
 
 - name: Setup Data Recording System | Control Module
   hosts: "{{ target_host | default('localhost') }}"
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
 
   vars:
     # Determine ECU ID from hostname or environment variable
@@ -78,7 +78,7 @@
         path: /etc/hosts
         regexp: '^127\.0\.0\.1\s+'
         line: "127.0.0.1\tlocalhost"
-        create: yes
+        create: true
 
     - name: Update /etc/hosts with new hostname
       lineinfile:
@@ -113,7 +113,7 @@
 
     - name: Update apt cache
       apt:
-        update_cache: yes
+        update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
 

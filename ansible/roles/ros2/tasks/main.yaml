@@ -3,7 +3,7 @@
 # Setup Sources
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   become: true
 
@@ -15,7 +15,7 @@
 
 - name: Add universe repository
   shell: add-apt-repository -y universe
-  become: yes
+  become: true
 
 - name: Install curl
   ansible.builtin.apt:
@@ -27,7 +27,7 @@
   ansible.builtin.uri:
     url: https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest
     method: GET
-    return_content: yes
+    return_content: true
   register: ros_apt_source_release
 
 - name: Extract ROS APT source version
@@ -54,13 +54,13 @@
 # Install ROS 2 packages
 - name: Update apt cache after adding ROS2 repository
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
   become: true
 
 - name: Upgrade system packages (important for Ubuntu 22.04)
   ansible.builtin.apt:
-    upgrade: yes
-    update_cache: yes
+    upgrade: true
+    update_cache: true
   become: true
 
 - name: Install ROS2 Humble Desktop
@@ -88,7 +88,7 @@
     regexp: "^export ROS_DOMAIN_ID="
     line: "export ROS_DOMAIN_ID={{ ros_domain_id }}"
     state: present
-    create: yes
+    create: true
   become: true
 
 - name: Set ROS_DISTRO in drs.env
@@ -97,7 +97,7 @@
     regexp: "^export ROS_DISTRO="
     line: "export ROS_DISTRO=humble"
     state: present
-    create: yes
+    create: true
   become: true
 
 - name: Set ROS_LOG_DIR in drs.env
@@ -106,5 +106,5 @@
     regexp: "^export ROS_LOG_DIR="
     line: "export ROS_LOG_DIR=/tmp/drs/log"
     state: present
-    create: yes
+    create: true
   become: true

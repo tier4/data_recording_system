@@ -17,7 +17,7 @@
   lineinfile:
     path: /etc/modules
     line: 8021q
-    create: yes
+    create: true
 
 - name: Configure udev rules for LTE dongle
   copy:
@@ -32,4 +32,4 @@
   template:
     src: 99-drs.yaml.j2
     dest: /etc/netplan/10-drs.yaml
-    backup: yes
+    backup: true

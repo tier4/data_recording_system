@@ -16,14 +16,14 @@
   systemd:
     name: systemd-timesyncd
     state: stopped
-    enabled: no
+    enabled: false
   failed_when: false
 
 - name: Deploy chrony configuration
   template:
     src: chrony.conf.j2
     dest: /etc/chrony/chrony.conf
-    backup: yes
+    backup: true
     owner: root
     group: root
     mode: "0644"
@@ -32,7 +32,7 @@
 - name: Enable and start chrony service
   systemd:
     name: chrony
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Check time synchronization status

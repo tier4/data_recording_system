@@ -3,7 +3,7 @@
   ansible.builtin.package:
     name: can-utils
     state: present
-  become: yes
+  become: true
 
 - name: Create CAN network files for systemd-networkd
   ansible.builtin.template:
@@ -12,6 +12,6 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
   loop: "{{ can_interfaces }}"
   notify: Restart systemd-networkd

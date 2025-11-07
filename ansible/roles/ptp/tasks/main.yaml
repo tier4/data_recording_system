@@ -4,8 +4,8 @@
     name:
       - linuxptp
     state: present
-    update_cache: no
-  become: yes
+    update_cache: false
+  become: true
 
 - name: Create service directory
   file:
@@ -14,7 +14,7 @@
     owner: root
     group: root
     mode: "0755"
-  become: yes
+  become: true
 
 - name: Deploy ptp4l configuration file
   template:
@@ -23,7 +23,7 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Deploy phc2sys startup script
   template:
@@ -32,7 +32,7 @@
     owner: root
     group: root
     mode: "0755"
-  become: yes
+  become: true
 
 - name: Deploy ptp4l systemd service file
   template:
@@ -41,7 +41,7 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Deploy phc2sys systemd service file
   template:
@@ -50,31 +50,31 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Reload systemd daemon
   systemd:
-    daemon_reload: yes
-  become: yes
+    daemon_reload: true
+  become: true
 
 - name: Enable and start ptp4l service
   systemd:
     name: ptp4l
-    enabled: yes
+    enabled: true
     state: started
-  become: yes
+  become: true
 
 - name: Enable and start phc2sys service
   systemd:
     name: phc2sys
-    enabled: yes
+    enabled: true
     state: started
-  become: yes
+  become: true
 
 - name: Disable and stop systemd-timesyncd
   systemd:
     name: systemd-timesyncd
     state: stopped
-    enabled: no
-  become: yes
-  ignore_errors: yes
+    enabled: false
+  become: true
+  ignore_errors: true

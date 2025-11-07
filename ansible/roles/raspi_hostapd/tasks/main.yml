@@ -19,21 +19,21 @@
     src: hostapd.conf.j2
     dest: /etc/hostapd/hostapd.conf
     mode: "0600"
-    backup: yes
+    backup: true
 
 - name: Configure hostapd daemon
   lineinfile:
     path: /etc/default/hostapd
     regexp: "^#?DAEMON_CONF="
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
-    create: yes
+    create: true
 
 - name: Unmask hostapd service
   systemd:
     name: hostapd
-    masked: no
+    masked: false
 
 - name: Enable hostapd
   systemd:
     name: hostapd
-    enabled: yes
+    enabled: true

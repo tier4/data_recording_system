@@ -3,13 +3,13 @@
   apt:
     name: v4l-utils
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
-  become: yes
+  become: true
 
 - name: Add user to i2c group
   user:
     name: "{{ drs_user }}"
     groups: i2c
-    append: yes
-  become: yes
+    append: true
+  become: true
