@@ -130,9 +130,9 @@
     - role: raspi_hostapd
       tags: ['raspi', 'hostapd']
 
-    # Phase 3: DHCP and DNS services
-    - role: raspi_dnsmasq
-      tags: ['raspi', 'dnsmasq']
+    # Phase 3: DHCP services (DNS is handled by systemd-resolved)
+    - role: raspi_dhcp
+      tags: ['raspi', 'dhcp']
 
     # Phase 4: Firewall and NAT configuration
     - role: raspi_iptables
@@ -170,14 +170,16 @@
 
           The system is now configured as:
           - WiFi Access Point (SSID: drs-ap)
-          - DHCP/DNS server for WiFi and wired clients
+          - DHCP server for WiFi and wired clients
+          - DNS handled by systemd-resolved
           - NAT router for network connectivity
           - Docker runtime installed
           - Tailscale VPN installed (requires manual authentication)
 
           Services status can be checked with:
           - systemctl status hostapd.service
-          - systemctl status dnsmasq.service
+          - systemctl status dnsmasq.service (DHCP only)
+          - systemctl status systemd-resolved.service (DNS)
           - systemctl status docker.service
           - systemctl status drs-api.service
           - systemctl status drs-dashboard.service

@@ -21,6 +21,10 @@
     "jsonfile",
     "aabbccdd",
     "eeffgghh",
+    "comlops",
+    "hostapd",
+    "wlan",
+    "dnsmasq",
     "mgbe",
     "eqos",
     "jbod"
