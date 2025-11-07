@@ -45,26 +45,26 @@ find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d'
     last_modified=$(stat -c %Y "$mcap_file")
     current_time=$(date +%s)
     time_diff=$((current_time - last_modified))
-    
+
     # Skip if not enough time has passed for safe transfer
     if [ $time_diff -lt $SAFE_TIME_SECONDS ]; then
         continue
     fi
-    
+
     # Get relative path (to preserve directory structure)
     relative_path="${mcap_file#$SOURCE_DIR/}"
     dest_file="$DEST_DIR/$relative_path"
     dest_dir=$(dirname "$dest_file")
-    
+
     # Create destination directory
     mkdir -p "$dest_dir"
-    
+
     # Get file size (for logging)
     file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
     file_size_mb=$((file_size / 1048576))
-    
+
     echo "Starting transfer: $relative_path (${file_size_mb}MB)"
-    
+
     # Transfer with rsync (low priority)
     # ionice: Set I/O priority to lowest
     # nice: Set CPU priority to low
@@ -75,11 +75,11 @@ find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d'
         --no-progress \
         "$mcap_file" \
         "$dest_file"; then
-        
+
         # Transfer successful, delete source file
         rm -f "$mcap_file"
         echo "Transfer completed and deleted: $relative_path"
-        
+
         # Remove empty directories
         src_dir=$(dirname "$mcap_file")
         if [ -d "$src_dir" ] && [ -z "$(ls -A "$src_dir")" ]; then
@@ -88,7 +88,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d'
     else
         echo "ERROR: Transfer failed: $relative_path"
     fi
-    
+
     # Short sleep to reduce CPU load
     sleep 0.1
 done
@@ -98,7 +98,7 @@ echo "Starting empty directory cleanup"
 find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
     # Count files in directory (excluding metadata.yaml)
     mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
-    
+
     if [ $mcap_count -eq 0 ]; then
         # No mcap files present
         if [ -f "$dir/metadata.yaml" ]; then

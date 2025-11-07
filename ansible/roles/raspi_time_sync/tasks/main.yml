@@ -26,7 +26,7 @@
     backup: yes
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify: restart chrony
 
 - name: Enable and start chrony service

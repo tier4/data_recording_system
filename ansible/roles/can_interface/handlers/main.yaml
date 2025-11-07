@@ -5,4 +5,3 @@
     state: restarted
     daemon_reload: yes
   become: yes
-

@@ -15,4 +15,3 @@ eth0_10_gateway: 192.168.20.10
 dhcp_lease_time: 24h
 # DNS servers to distribute to DHCP clients (systemd-resolved on Raspberry Pi)
 dns_servers: 8.8.8.8,8.8.4.4
-

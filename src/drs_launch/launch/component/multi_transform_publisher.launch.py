@@ -16,25 +16,25 @@ def generate_launch_description():
         ),
         description='Path to YAML configuration file containing all transforms'
     )
-    
+
     publish_camera_optical_link_arg = DeclareLaunchArgument(
         'publish_camera_optical_link',
         default_value='true',
         description='Whether to publish camera optical link transforms'
     )
-    
+
     periodic_publish_arg = DeclareLaunchArgument(
         'periodic_publish',
         default_value='true',
         description='Whether to publish transforms periodically instead of as static transforms'
     )
-    
+
     publish_period_arg = DeclareLaunchArgument(
         'publish_period',
         default_value='1.0',
         description='Period in seconds for periodic publishing (only used when periodic_publish is true)'
     )
-    
+
     # Launch the multi_transform_publisher node
     multi_transform_publisher_node = Node(
         package='multi_transform_publisher',
@@ -48,7 +48,7 @@ def generate_launch_description():
         }],
         output='screen'
     )
-    
+
     return LaunchDescription([
         config_file_arg,
         publish_camera_optical_link_arg,

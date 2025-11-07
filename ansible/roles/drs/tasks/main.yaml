@@ -3,7 +3,7 @@
   file:
     path: "{{ drs_install_dir }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
   become: true

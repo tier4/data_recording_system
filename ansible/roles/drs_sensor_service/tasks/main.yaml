@@ -5,7 +5,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Copy default parameters when custom params enabled
@@ -14,7 +14,7 @@
     dest: "{{ drs_param_root_dir }}"
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
-    mode: '0755'
+    mode: "0755"
     remote_src: true
   become: true
   when: drs_use_custom_params | bool
@@ -25,7 +25,7 @@
     dest: /opt/drs/service/drs_sensor/launch.sh
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
   notify: restart drs-sensor
 
@@ -35,7 +35,7 @@
     dest: /etc/systemd/system/drs-sensor.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: true
   notify:
     - reload systemd

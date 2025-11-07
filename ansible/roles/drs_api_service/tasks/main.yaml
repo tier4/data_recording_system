@@ -27,7 +27,7 @@
   copy:
     src: "{{ playbook_dir }}/../src/drs-api/services/module-manager/bin/module-manager-arm64-static"
     dest: /usr/local/bin/module-manager
-    mode: '0755'
+    mode: "0755"
     remote_src: yes
   when: drs_api_build_script.stat.exists
   become: yes
@@ -37,7 +37,7 @@
   copy:
     src: "{{ playbook_dir }}/../src/drs-api/tools/drs-cli/bin/drs-cli-arm64-static"
     dest: /usr/local/bin/drs-cli
-    mode: '0755'
+    mode: "0755"
     remote_src: yes
   when: drs_api_build_script.stat.exists
   become: yes
@@ -48,7 +48,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Copy drs_api launch script
@@ -57,7 +57,7 @@
     dest: /opt/drs/service/drs_api/launch.sh
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Deploy module-manager configuration
@@ -67,7 +67,7 @@
     dest: /opt/drs/config/module-manager.yaml
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
-    mode: '0644'
+    mode: "0644"
 
 - name: Deploy systemd service file
   become: true
@@ -76,7 +76,7 @@
     dest: /etc/systemd/system/drs-api.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify:
     - reload systemd
 
