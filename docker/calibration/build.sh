@@ -9,6 +9,6 @@ cd "$(dirname "$0")/../.."
 echo "Building DRS Docker image..."
 
 # Build the image from repository root
-docker build -t tier4/drs-calibration:latest -f docker/calibration/Dockerfile .
+docker build -t tier4/pkg-drs-calibration:latest -f docker/calibration/Dockerfile .
 
-echo "Docker image built successfully: tier4/drs-calibration:latest"
+echo "Docker image built successfully: tier4/pkg-drs-calibration:latest"
