@@ -33,11 +33,11 @@ else
     source /opt/drs/install/setup.bash
 
     # Set working directory
-    cd "$HOME"
+    cd "$HOME" || exit
 
     # Prepare runtime directory
-    mkdir -m 700 /run/user/$USER_ID
-    chown "$USER_NAME":"$GROUP_NAME" /run/user/$USER_ID
+    mkdir -m 700 /run/user/"$USER_ID"
+    chown "$USER_NAME":"$GROUP_NAME" /run/user/"$USER_ID"
 
     # Execute the command as the user
     exec gosu "$USER_NAME" "$@"
