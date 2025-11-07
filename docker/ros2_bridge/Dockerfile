@@ -36,7 +36,7 @@ RUN apt-get update && \
 RUN curl -sSL https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -Po '"tag_name": "\K.*?(?=")' > /tmp/ros_apt_version && \
     curl -sSL "https://github.com/ros-infrastructure/ros-apt-source/releases/download/$(cat /tmp/ros_apt_version)/ros2-apt-source_$(cat /tmp/ros_apt_version).jammy_all.deb" -o /tmp/ros2-apt-source.deb && \
     apt-get update && \
-    apt-get install -y /tmp/ros2-apt-source.deb && \
+    apt-get install -y --no-install-recommends /tmp/ros2-apt-source.deb && \
     rm /tmp/ros2-apt-source.deb /tmp/ros_apt_version && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
