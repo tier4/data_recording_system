@@ -69,8 +69,8 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     # Remove unnecessary development files before copying to runtime
     find /opt/drs/install -name "*.a" -delete && \
     find /opt/drs/install -name "*.cmake" -delete && \
-    find /opt/drs/install -type d -name "cmake" -exec rm -rf {} + 2>/dev/null || true && \
-    find /opt/drs/install -type d -name "include" -exec rm -rf {} + 2>/dev/null || true
+    (find /opt/drs/install -type d -name "cmake" -exec rm -rf {} + 2>/dev/null || true) && \
+    (find /opt/drs/install -type d -name "include" -exec rm -rf {} + 2>/dev/null || true)
 
 # Runtime stage
 FROM nvidia/cuda:${CUDA_VERSION}-runtime-ubuntu22.04
@@ -129,7 +129,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rosdep update && \
     apt-get update && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    rosdep install -y -r --from-paths /opt/drs/src --ignore-src || true
+    (rosdep install -y -r --from-paths /opt/drs/src --ignore-src || true)
 
 # Copy only built packages from builder stage (already cleaned)
 COPY --from=builder /opt/drs/install /opt/drs/install
