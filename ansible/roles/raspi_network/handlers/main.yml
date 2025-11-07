@@ -1,4 +1,4 @@
-- name: reload udev
+- name: Reload udev
   systemd:
     name: systemd-udevd
     state: reloaded

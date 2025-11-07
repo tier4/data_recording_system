@@ -191,6 +191,6 @@
       notify: reboot_required
 
   handlers:
-    - name: reboot_required
+    - name: Reboot required
       debug:
         msg: "Please reboot the system to ensure all changes take effect."

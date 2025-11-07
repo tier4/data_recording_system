@@ -1,9 +1,9 @@
-- name: reload systemd
+- name: Reload systemd
   become: true
   systemd:
     daemon_reload: true
 
-- name: restart drs-api
+- name: Restart drs-api
   become: true
   systemd:
     name: drs-api
