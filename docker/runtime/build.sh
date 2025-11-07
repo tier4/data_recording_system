@@ -9,6 +9,6 @@ cd "$(dirname "$0")/../.."
 echo "Building DRS Docker image..."
 
 # Build the image from repository root
-docker build -t tier4/drs-runtime:latest -f docker/runtime/Dockerfile .
+docker build -t tier4/pkg-drs-runtime:latest -f docker/runtime/Dockerfile .
 
-echo "Docker image built successfully: tier4/drs-runtime:latest"
+echo "Docker image built successfully: tier4/pkg-drs-runtime:latest"

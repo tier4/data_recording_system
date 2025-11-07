@@ -93,4 +93,4 @@ done
 # echo "Command args: ${COMMAND_ARGS[@]}"
 
 # Execute Docker command
-docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" ghcr.io/tier4/drs-calibration:latest "${COMMAND_ARGS[@]}"
+docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" ghcr.io/tier4/pkg-drs-calibration:latest "${COMMAND_ARGS[@]}"
