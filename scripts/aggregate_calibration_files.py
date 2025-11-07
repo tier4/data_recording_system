@@ -8,10 +8,10 @@ from typing import Dict, List, Any, Optional
 
 def load_yaml_file(filepath: Path) -> Optional[Dict[str, Any]]:
     """Load a YAML file
-    
+
     Args:
         filepath: Path to the YAML file
-        
+
     Returns:
         Dictionary of YAML data, None on error
     """
@@ -24,11 +24,11 @@ def load_yaml_file(filepath: Path) -> Optional[Dict[str, Any]]:
 
 def save_yaml_file(data: Dict[str, Any], filepath: Path) -> bool:
     """Save data to a YAML file
-    
+
     Args:
         data: Data to save
         filepath: Path to save the file
-        
+
     Returns:
         True on success, False on failure
     """
@@ -42,11 +42,11 @@ def save_yaml_file(data: Dict[str, Any], filepath: Path) -> bool:
 
 def merge_yaml_data(base_data: Optional[Dict], new_data: Optional[Dict]) -> Dict:
     """Recursively merge YAML data
-    
+
     Args:
         base_data: Base data dictionary
         new_data: Data to merge
-        
+
     Returns:
         Merged data dictionary
     """
@@ -54,7 +54,7 @@ def merge_yaml_data(base_data: Optional[Dict], new_data: Optional[Dict]) -> Dict
         return new_data or {}
     if new_data is None:
         return base_data
-    
+
     if isinstance(new_data, dict) and isinstance(base_data, dict):
         result = base_data.copy()
         for key, value in new_data.items():
@@ -63,14 +63,14 @@ def merge_yaml_data(base_data: Optional[Dict], new_data: Optional[Dict]) -> Dict
             else:
                 result[key] = value
         return result
-    
+
     return new_data
 
 class YamlAggregator:
     """Class for aggregating YAML files"""
-    
+
     DEFAULT_OUTPUT = "multi_tf_static.yaml"
-    
+
     BASE_LINK_DATA = {
         "base_link": {
             "drs_base_link": {
@@ -83,14 +83,14 @@ class YamlAggregator:
             }
         }
     }
-    
-    
+
+
     def __init__(self, input_dir: str, output_file: str = DEFAULT_OUTPUT):
         self.input_path = Path(input_dir)
         self.output_path = Path(output_file)  # Store output path directly
         self.result_data = {}
         self.child_key_sources: Dict[str, Dict[str, List[str]]] = {}  # Track sources of child keys per parent key
-        
+
     def validate_input_directory(self) -> bool:
         """Validate the input directory"""
         if not self.input_path.exists():
@@ -100,7 +100,7 @@ class YamlAggregator:
             logging.error(f"{self.input_path} is not a directory")
             return False
         return True
-    
+
     def get_yaml_files(self) -> List[Path]:
         """Get YAML files to aggregate"""
         # Exclude output file only if it's in the input directory
@@ -109,10 +109,10 @@ class YamlAggregator:
             f for f in self.input_path.glob("*.yaml")
             if f.name != output_name and f.is_file()
         ])
-    
+
     def detect_duplicate_child_keys(self, data: Dict, filename: str, parent_key: str = "") -> None:
         """Detect duplicate child keys under parent keys
-        
+
         Args:
             data: Data to check
             filename: Source filename
@@ -120,7 +120,7 @@ class YamlAggregator:
         """
         if not isinstance(data, dict):
             return
-        
+
         for key, value in data.items():
             # Treat top-level keys as parent keys
             if not parent_key:  # At top level
@@ -128,26 +128,26 @@ class YamlAggregator:
                     # Track child keys under this parent key
                     if key not in self.child_key_sources:
                         self.child_key_sources[key] = {}
-                    
+
                     for child_key in value.keys():
                         if child_key not in self.child_key_sources[key]:
                             self.child_key_sources[key][child_key] = []
                         self.child_key_sources[key][child_key].append(filename)
-                    
+
                     # Process recursively (limit nesting depth to 2 levels)
                     self.detect_duplicate_child_keys(value, filename, key)
-    
+
     def report_duplicates(self) -> None:
         """Report warnings for duplicate child keys"""
         has_duplicates = False
         warnings = []
-        
+
         for parent_key, children in sorted(self.child_key_sources.items()):
             for child_key, sources in sorted(children.items()):
                 if len(sources) > 1:
                     has_duplicates = True
                     warnings.append((parent_key, child_key, sources))
-        
+
         if has_duplicates:
             logging.warning("Duplicate child keys detected:")
             for parent_key, child_key, sources in warnings:
@@ -158,15 +158,15 @@ class YamlAggregator:
                         logging.warning(f"    - {source} ({count} times)")
                     else:
                         logging.warning(f"    - {source}")
-    
+
     def load_and_merge_files(self, yaml_files: List[Path]) -> None:
         """Load and merge YAML files"""
         self.result_data = merge_yaml_data({}, self.BASE_LINK_DATA)
         self.child_key_sources.clear()
-        
+
         # Also track keys from BASE_LINK_DATA
         self.detect_duplicate_child_keys(self.BASE_LINK_DATA, "<built-in>")
-        
+
         for yaml_file in yaml_files:
             logging.info(f"Processing: {yaml_file.name}")
             data = load_yaml_file(yaml_file)
@@ -175,15 +175,15 @@ class YamlAggregator:
                 self.detect_duplicate_child_keys(data, yaml_file.name)
                 self.result_data = merge_yaml_data(self.result_data, data)
                 logging.info(f"  - {data}")
-        
+
         # Display duplicate key warnings
         self.report_duplicates()
-    
-    
+
+
     def write_output_file(self) -> bool:
         """Write results to output file"""
         output_path = self.output_path
-        
+
         try:
             with open(output_path, 'w', encoding='utf-8') as f:
                 # Write header comments with timestamp
@@ -196,7 +196,7 @@ class YamlAggregator:
                 ]
                 for comment in header_comments:
                     f.write(f"{comment}\n")
-                
+
                 # Write all data as a single YAML document
                 yaml.dump(
                     self.result_data,
@@ -205,41 +205,41 @@ class YamlAggregator:
                     sort_keys=False,
                     allow_unicode=True
                 )
-            
+
             print(f"Output saved to: {output_path}")
             logging.info(f"Output saved to: {output_path}")
             return True
-            
+
         except Exception as e:
             logging.error(f"Error writing output file: {e}")
             return False
-    
+
     def aggregate(self) -> bool:
         """Execute aggregation process"""
         if not self.validate_input_directory():
             return False
-        
+
         yaml_files = self.get_yaml_files()
         if not yaml_files:
             logging.warning(f"No YAML files found in {self.input_path}")
             return False
-        
+
         print(f"Found {len(yaml_files)} YAML files to aggregate")
         logging.info(f"Found {len(yaml_files)} YAML files:")
         for f in yaml_files:
             logging.info(f"  - {f.name}")
-        
+
         self.load_and_merge_files(yaml_files)
         return self.write_output_file()
 
 
 def aggregate_yaml_files(input_dir: str, output_file: str = "multi_tf_static.yaml") -> bool:
     """Aggregate all YAML files in the specified directory (wrapper for backward compatibility)
-    
+
     Args:
         input_dir: Path to input directory
         output_file: Output filename
-        
+
     Returns:
         True on success, False on failure
     """
@@ -258,7 +258,7 @@ def setup_logging(verbose: bool = False) -> None:
 def main() -> None:
     """Main function"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         prog="aggregate_calibration_files",
         description="Aggregate calibration YAML files for ROS static transforms"
@@ -285,16 +285,16 @@ def main() -> None:
         action="store_true",
         help="Suppress duplicate key warnings"
     )
-    
+
     args = parser.parse_args()
-    
+
     setup_logging(args.verbose)
-    
+
     # Suppress duplicate warnings if requested
     if args.no_warnings:
         # Set to ERROR to suppress WARNING messages
         logging.getLogger().setLevel(logging.ERROR)
-    
+
     success = aggregate_yaml_files(args.input_dir, args.output_file)
     sys.exit(0 if success else 1)
 

@@ -11,7 +11,7 @@
     dest: "/etc/systemd/network/50-{{ item.name }}.network"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   become: yes
   loop: "{{ can_interfaces }}"
   notify: Restart systemd-networkd

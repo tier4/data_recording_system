@@ -17,7 +17,7 @@ all:
           netplan_files:
             - src: 99-drs-ecu1.yaml
               dest: /etc/netplan/99-drs.yaml
-              
+
   vars:
     ansible_user: nvidia
     ansible_python_interpreter: /usr/bin/python3

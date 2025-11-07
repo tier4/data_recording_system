@@ -22,4 +22,3 @@
   systemd:
     name: dnsmasq
     enabled: yes
-

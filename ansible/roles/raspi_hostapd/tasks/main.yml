@@ -18,13 +18,13 @@
   template:
     src: hostapd.conf.j2
     dest: /etc/hostapd/hostapd.conf
-    mode: '0600'
+    mode: "0600"
     backup: yes
 
 - name: Configure hostapd daemon
   lineinfile:
     path: /etc/default/hostapd
-    regexp: '^#?DAEMON_CONF='
+    regexp: "^#?DAEMON_CONF="
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
     create: yes
 

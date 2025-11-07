@@ -15,23 +15,23 @@ modules:
     address: "192.168.20.1:50051"
     enabled_services:
       - "system"
-      - "ptp" 
+      - "ptp"
       - "services"
       - "disk"
-    
+
   ecu1:
     address: "192.168.20.2:50051"
     enabled_services:
       - "system"
       - "ptp"
-      - "services" 
+      - "services"
       - "disk"
-    
+
   nas:
     address: "192.168.10.100:50051"
     enabled_services:
       - "system"
-      - "disk"  # NAS only enables system and disk monitoring
+      - "disk" # NAS only enables system and disk monitoring
 
   raspi:
     address: "192.168.20.10:50051"
@@ -47,12 +47,12 @@ grpc:
 ros2_bridge:
   address: "192.168.20.10:50052"
   enabled: true
-  
+
 # CORS settings for web dashboard
 cors:
   allowed_origins:
-    - "http://localhost:3000"  # React dev server
-    - "http://192.168.20.10:3000"  # Production dashboard without proxy
+    - "http://localhost:3000" # React dev server
+    - "http://192.168.20.10:3000" # Production dashboard without proxy
   allowed_methods:
     - "GET"
     - "POST"
@@ -61,4 +61,3 @@ cors:
   allowed_headers:
     - "Content-Type"
     - "Authorization"
-

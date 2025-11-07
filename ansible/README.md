@@ -14,6 +14,7 @@ This project is designed to be copied to each host and run locally.
 ```
 
 The script will:
+
 1. Install Ansible if not already installed (via pip3)
 2. Detect ECU ID from hostname (looks for 'ecu0' or 'ecu1' in hostname)
 3. Apply the appropriate ECU configuration
@@ -91,6 +92,7 @@ To see what changes would be made without applying them:
 ### Global Variables
 
 Edit `inventory/group_vars/all.yaml` to configure:
+
 - DRS IDs (ECU, sensing system, module)
 - ROS2 domain ID
 - CycloneDDS parameters
@@ -100,10 +102,12 @@ Edit `inventory/group_vars/all.yaml` to configure:
 ### ECU-specific Variables
 
 ECU-specific configurations are stored in:
+
 - `inventory/host_vars/ecu0.yaml` - ECU0 configuration
 - `inventory/host_vars/ecu1.yaml` - ECU1 configuration
 
 These files contain:
+
 - ECU ID
 - Network interface configurations
 - Netplan file selections
@@ -140,10 +144,12 @@ MODULE_ID=eeffgghh ./run_local.sh
 ## Prerequisites
 
 The script will automatically install required dependencies:
+
 - python3-pip (if not installed)
 - ansible (if not installed)
 
 You only need:
+
 - Python 3 (usually pre-installed)
 - sudo access for system configuration
 

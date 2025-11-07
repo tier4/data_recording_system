@@ -5,11 +5,11 @@ ptp:
   slave_ports:
     - eqos0
     - enP1p1s0
-  
+
   # ptp4l configuration values
-  clock_class: 248  # ptp4l default value
-  priority1: 128    # ptp4l default value
-  priority2: 128    # ptp4l default value
+  clock_class: 248 # ptp4l default value
+  priority1: 128 # ptp4l default value
+  priority2: 128 # ptp4l default value
 
 # Service files directory
 ptp_service_dir: /opt/drs/service/ptp

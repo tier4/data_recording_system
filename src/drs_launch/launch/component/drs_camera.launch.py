@@ -16,10 +16,10 @@ def launch_setup(context, *args, **kwargs):
     live_sensor = LaunchConfiguration('live_sensor').perform(context)
     set_readout_delay = LaunchConfiguration('set_readout_delay').perform(context)
     startup_delay = float(LaunchConfiguration('startup_delay').perform(context))
-    
+
     # Create the root container name
     root_container_name = f'camera{camera_id}_container'
-    
+
     # Create component container node
     component_container = ComposableNodeContainer(
         name=root_container_name,
@@ -29,7 +29,7 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(LaunchConfiguration('live_sensor')),
         output='screen'
     )
-    
+
     # Load v4l2_camera composable node
     v4l2_camera_node = ComposableNode(
         package='v4l2_camera',
@@ -54,14 +54,14 @@ def launch_setup(context, *args, **kwargs):
         ],
         extra_arguments=[{'use_intra_process_comms': True}]
     )
-    
+
     # Load v4l2_camera into the container
     load_v4l2_camera = LoadComposableNodes(
         composable_node_descriptions=[v4l2_camera_node],
         target_container=component_container,
         condition=IfCondition(LaunchConfiguration('live_sensor'))
     )
-    
+
     # Load accelerated_image_processor composable node
     accelerated_image_processor_node = ComposableNode(
         package='accelerated_image_processor',
@@ -78,14 +78,14 @@ def launch_setup(context, *args, **kwargs):
         ],
         extra_arguments=[{'use_intra_process_comms': True}]
     )
-    
+
     # Load accelerated_image_processor into the container
     load_accelerated_image_processor = LoadComposableNodes(
         composable_node_descriptions=[accelerated_image_processor_node],
         target_container=component_container,
         condition=IfCondition(LaunchConfiguration('live_sensor'))
     )
-    
+
     # Create readout setter node
     readout_setter_node = Node(
         package='c2_readout_delay_setter',
@@ -103,7 +103,7 @@ def launch_setup(context, *args, **kwargs):
         ])),
         output='screen'
     )
-    
+
     # Group all actions with explicit namespace
     camera_group = GroupAction([
         PushRosNamespace(f'/sensing/camera/camera{camera_id}'),
@@ -112,7 +112,7 @@ def launch_setup(context, *args, **kwargs):
         load_accelerated_image_processor,
         readout_setter_node
     ])
-    
+
     # If delay is specified, wrap in TimerAction
     if startup_delay > 0:
         return [TimerAction(
@@ -129,29 +129,29 @@ def generate_launch_description():
         'camera_id',
         description='Camera ID number'
     )
-    
+
     param_root_dir_arg = DeclareLaunchArgument(
         'param_root_dir',
         description='Root directory for parameter files'
     )
-    
+
     live_sensor_arg = DeclareLaunchArgument(
         'live_sensor',
         description='Whether to boot sensor drivers for online mode'
     )
-    
+
     set_readout_delay_arg = DeclareLaunchArgument(
         'set_readout_delay',
         default_value='True',
         description='Whether to set readout delay'
     )
-    
+
     startup_delay_arg = DeclareLaunchArgument(
         'startup_delay',
         default_value='0.0',
         description='Delay in seconds before starting the camera'
     )
-    
+
     # Return the launch description
     return LaunchDescription([
         camera_id_arg,

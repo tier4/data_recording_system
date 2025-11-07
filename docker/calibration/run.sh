@@ -4,7 +4,7 @@ set -e
 
 # Help message
 show_help() {
-    cat << EOF
+    cat <<EOF
 Usage: $(basename "$0") [--option DOCKER_OPTIONS] [--] COMMAND [ARGS...]
 
 Launch a Docker container with GPU and GUI support
@@ -17,10 +17,10 @@ Options:
 Examples:
     # Basic usage
     $(basename "$0") python test.py
-    
+
     # Add volume mount
     $(basename "$0") --option -v /home/user/data:/data -- python test.py
-    
+
     # Add multiple options
     $(basename "$0") --option -v /data:/data -e MY_VAR=value --privileged -- bash
 
@@ -28,7 +28,7 @@ EOF
 }
 
 # Check for help option
-if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+if [[ $1 == "--help" ]] || [[ $1 == "-h" ]]; then
     show_help
     exit 0
 fi
@@ -58,33 +58,33 @@ PARSING_MODE="command"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --option)
-            PARSING_MODE="docker"
-            shift
-            ;;
-        --)
-            shift
-            COMMAND_ARGS=("$@")
-            break
-            ;;
-        *)
-            if [[ "$PARSING_MODE" == "docker" ]]; then
-                if [[ "$1" == -* ]]; then
-                    EXTRA_DOCKER_OPTS+=("$1")
-                    shift
-                    if [[ $# -gt 0 && "$1" != -* && "$1" != "--" && "$1" != "--option" ]]; then
-                        EXTRA_DOCKER_OPTS+=("$1")
-                        shift
-                    fi
-                else
+    --option)
+        PARSING_MODE="docker"
+        shift
+        ;;
+    --)
+        shift
+        COMMAND_ARGS=("$@")
+        break
+        ;;
+    *)
+        if [[ $PARSING_MODE == "docker" ]]; then
+            if [[ $1 == -* ]]; then
+                EXTRA_DOCKER_OPTS+=("$1")
+                shift
+                if [[ $# -gt 0 && $1 != -* && $1 != "--" && $1 != "--option" ]]; then
                     EXTRA_DOCKER_OPTS+=("$1")
                     shift
                 fi
             else
-                COMMAND_ARGS+=("$1")
+                EXTRA_DOCKER_OPTS+=("$1")
                 shift
             fi
-            ;;
+        else
+            COMMAND_ARGS+=("$1")
+            shift
+        fi
+        ;;
     esac
 done
 

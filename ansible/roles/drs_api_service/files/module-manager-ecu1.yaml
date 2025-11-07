@@ -2,7 +2,7 @@ server:
   port: 50051
 
 disk:
-  enabled: true 
+  enabled: true
   monitor_path: "/mnt/ssd/data"
 
 services:

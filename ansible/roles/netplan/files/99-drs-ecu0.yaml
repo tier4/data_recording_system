@@ -4,11 +4,11 @@ network:
   ethernets:
     # NAS
     mgbe1:
-     addresses: [192.168.10.1/24]
-     dhcp4: false
-     dhcp6: false
-     mtu: 9000
-     optional: true
+      addresses: [192.168.10.1/24]
+      dhcp4: false
+      dhcp6: false
+      mtu: 9000
+      optional: true
     # INS
     mgbe0:
       addresses: [192.168.4.1/24]
@@ -17,10 +17,10 @@ network:
       optional: false
     # LiDAR
     eqos0:
-     addresses: [192.168.2.1/24]
-     dhcp4: false
-     dhcp6: false
-     optional: false
+      addresses: [192.168.2.1/24]
+      dhcp4: false
+      dhcp6: false
+      optional: false
     # ECU
     enP1p1s0:
       addresses: [192.168.20.1/24]
