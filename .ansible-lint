@@ -7,5 +7,7 @@ skip_list:
   - fqcn # Ignore all FQCN requirement errors.
   - no-changed-when # Ignore changed_when requirement for commands.
   - command-instead-of-module # Ignore requirement to use Ansible modules instead of commands.
+  - no-handler # Ignore requirement to use handlers for tasks that run when changed.
+  - ignore-errors # Ignore requirement to use failed_when instead of ignore_errors.
 
 warn_list: []
