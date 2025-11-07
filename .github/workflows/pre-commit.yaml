@@ -2,10 +2,10 @@ name: pre-commit
 
 on:
   pull_request:
+  push:
 
 jobs:
   pre-commit:
-    if: ${{ github.event.repository.private }} # Use pre-commit.ci for public repositories
     runs-on: ubuntu-latest
     steps:
       - name: Generate token
@@ -18,7 +18,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
       - name: Run pre-commit
         uses: autowarefoundation/autoware-github-actions/pre-commit@v1
