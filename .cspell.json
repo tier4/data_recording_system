@@ -24,7 +24,7 @@
     "comlops",
     "hostapd",
     "wlan",
-    "dnsmasq"
+    "dnsmasq",
     "mgbe",
     "eqos",
     "jbod"
