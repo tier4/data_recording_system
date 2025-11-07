@@ -75,7 +75,7 @@
     - name: Ensure localhost entry in /etc/hosts
       lineinfile:
         path: /etc/hosts
-        mode: '0644'
+        mode: "0644"
         regexp: ^127\.0\.0\.1\s+
         line: 127.0.0.1\tlocalhost
         create: true

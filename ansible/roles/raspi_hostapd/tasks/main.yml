@@ -26,7 +26,7 @@
     regexp: ^#?DAEMON_CONF=
     line: DAEMON_CONF=/etc/hostapd/hostapd.conf
     create: true
-    mode: '0644'
+    mode: "0644"
 
 - name: Unmask hostapd service
   systemd:
