@@ -1,0 +1,26 @@
+---
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Ensure systemd-resolved is enabled and running
+  systemd:
+    name: systemd-resolved
+    state: started
+    enabled: yes
+
+- name: Configure dnsmasq for DHCP only (disable DNS)
+  template:
+    src: 99-drs-dhcp.conf.j2
+    dest: /etc/dnsmasq.d/99-drs-dhcp.conf
+    backup: yes
+
+- name: Enable dnsmasq service
+  systemd:
+    name: dnsmasq
+    enabled: yes
+    state: restarted
+

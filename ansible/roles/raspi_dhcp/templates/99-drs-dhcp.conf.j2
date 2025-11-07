@@ -1,0 +1,33 @@
+# dnsmasq configuration for DHCP only
+# DNS functionality is disabled (port=0) to use systemd-resolved instead
+
+# Disable DNS functionality (DHCP only mode)
+port=0
+
+# Specify the interfaces on which this Raspberry Pi provides DHCP services
+interface=wlan0
+interface=eth0.10
+
+# Listen only on the specified interfaces (improves security)
+bind-interfaces
+
+# ---- wlan0 (Wi-Fi) configuration ----
+dhcp-range=interface:wlan0,{{ wlan0_dhcp_range_start }},{{ wlan0_dhcp_range_end }},{{ wlan0_netmask }},{{ dhcp_lease_time }}
+
+# Gateway address to distribute to wlan0 connected clients (Raspberry Pi itself)
+dhcp-option=interface:wlan0,option:router,{{ wlan0_gateway }}
+
+# DNS server address to distribute to wlan0 connected clients
+# Use systemd-resolved on the Raspberry Pi (127.0.0.53) or external DNS servers
+dhcp-option=interface:wlan0,option:dns-server,{{ wlan0_gateway }}
+
+# ---- eth0.10 (wired LAN) configuration ----
+dhcp-range=interface:eth0.10,{{ eth0_10_dhcp_range_start }},{{ eth0_10_dhcp_range_end }},{{ eth0_10_netmask }},{{ dhcp_lease_time }}
+
+# Gateway address to distribute to eth0.10 connected clients (Raspberry Pi itself)
+dhcp-option=interface:eth0.10,option:router,{{ eth0_10_gateway }}
+
+# DNS server address to distribute to eth0.10 connected clients
+# Use systemd-resolved on the Raspberry Pi (127.0.0.53) or external DNS servers
+dhcp-option=interface:eth0.10,option:dns-server,{{ eth0_10_gateway }}
+
