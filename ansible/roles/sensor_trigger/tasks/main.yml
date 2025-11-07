@@ -14,7 +14,7 @@
 
 - name: Add user to gpio group
   user:
-    name: {{ sensor_trigger_user }}
+    name: "{{ sensor_trigger_user }}"
     groups: gpio
     append: true
   become: true

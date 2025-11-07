@@ -1,6 +1,6 @@
 - name: Create sync_to_nas directory
   ansible.builtin.file:
-    path: {{ sync_to_nas_script_path | dirname }}
+    path: "{{ sync_to_nas_script_path | dirname }}"
     state: directory
     mode: 0755
   become: true
@@ -8,7 +8,7 @@
 - name: Create sync script from template
   template:
     src: sync_to_nas.sh.j2
-    dest: {{ sync_to_nas_script_path }}
+    dest: "{{ sync_to_nas_script_path }}"
     owner: root
     group: root
     mode: "0755"

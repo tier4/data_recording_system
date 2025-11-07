@@ -9,10 +9,10 @@
 
 - name: Create data recording directory
   ansible.builtin.file:
-    path: {{ drs_recorder_data_dir }}
+    path: "{{ drs_recorder_data_dir }}"
     state: directory
-    owner: {{ drs_user }}
-    group: {{ drs_group }}
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
     mode: "0755"
   become: true
 
@@ -28,8 +28,8 @@
 
 - name: Copy proto recorder config files
   ansible.builtin.copy:
-    src: {{ item }}
-    dest: /opt/drs/config/{{ item }}
+    src: "{{ item }}"
+    dest: "/opt/drs/config/{{ item }}"
     owner: root
     group: root
     mode: "0644"

@@ -8,7 +8,7 @@
 
 - name: Create service directory
   file:
-    path: {{ ptp_service_dir }}
+    path: "{{ ptp_service_dir }}"
     state: directory
     owner: root
     group: root

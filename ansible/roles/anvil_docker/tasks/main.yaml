@@ -45,7 +45,7 @@
 
 - name: Add user to docker group
   user:
-    name: {{ drs_user | default(ansible_user) | default('nvidia') }}
+    name: "{{ drs_user | default(ansible_user) | default('nvidia') }}"
     groups: docker
     append: true
   become: true

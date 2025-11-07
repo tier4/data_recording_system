@@ -1,2 +1,2 @@
 # User to add to docker group for docker command permissions
-drs_user: {{ ansible_user | default('nvidia') }}
+drs_user: "{{ ansible_user | default('nvidia') }}"

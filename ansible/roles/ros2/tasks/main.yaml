@@ -31,7 +31,7 @@
 
 - name: Extract ROS APT source version
   ansible.builtin.set_fact:
-    ros_apt_source_version: {{ ros_apt_source_release.json.tag_name }}
+    ros_apt_source_version: "{{ ros_apt_source_release.json.tag_name }}"
 
 - name: Download ROS2 APT source package
   ansible.builtin.get_url:

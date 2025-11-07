@@ -1,10 +1,10 @@
 - name: Create DRS installation directory
   file:
-    path: {{ drs_install_dir }}
+    path: "{{ drs_install_dir }}"
     state: directory
     mode: "0755"
-    owner: {{ drs_user }}
-    group: {{ drs_group }}
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
   become: true
 
 # todo: Inspect failed tasks and fix them
@@ -31,9 +31,9 @@
     rosdep update
   args:
     executable: /bin/bash
-  become_user: {{ drs_user }}
+  become_user: "{{ drs_user }}"
   environment:
-    HOME: /home/{{ drs_user }}
+    HOME: "/home/{{ drs_user }}"
 
 - name: Install ROS dependencies with rosdep
   shell: |
@@ -42,9 +42,9 @@
     rosdep install -y -r --from-paths src --ignore-src
   args:
     executable: /bin/bash
-  become_user: {{ drs_user }}
+  become_user: "{{ drs_user }}"
   environment:
-    HOME: /home/{{ drs_user }}
+    HOME: "/home/{{ drs_user }}"
 
 - name: Build DRS packages directly to installation directory
   shell: |
@@ -52,6 +52,6 @@
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
     colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-up-to {{ drs_packages | join(' ') }}
-    chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
+    chown -R "{{ drs_user }}:{{ drs_group }}" "{{ drs_install_dir }}"
   args:
     executable: /bin/bash
