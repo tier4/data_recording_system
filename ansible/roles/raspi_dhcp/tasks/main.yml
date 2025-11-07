@@ -9,15 +9,15 @@
   systemd:
     name: systemd-resolved
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Configure dnsmasq for DHCP only (disable DNS)
   template:
     src: 99-drs-dhcp.conf.j2
     dest: /etc/dnsmasq.d/99-drs-dhcp.conf
-    backup: yes
+    backup: true
 
 - name: Enable dnsmasq service
   systemd:
     name: dnsmasq
-    enabled: yes
+    enabled: true

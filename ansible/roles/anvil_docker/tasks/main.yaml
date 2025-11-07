@@ -4,15 +4,15 @@
       - nvidia-container-toolkit
       - curl
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
-  become: yes
+  become: true
 
 - name: Download and install Docker
   shell: curl https://get.docker.com | sh
   args:
     creates: /usr/bin/docker
-  become: yes
+  become: true
 
 # Temporary workaround: Downgrade Docker due to issues with v28
 - name: Downgrade Docker to specific version
@@ -21,8 +21,8 @@
       - docker-ce=5:27.5.1-1~ubuntu.22.04~jammy
       - docker-ce-cli=5:27.5.1-1~ubuntu.22.04~jammy
     state: present
-    allow_downgrades: yes
-  become: yes
+    allow_downgrades: true
+  become: true
 
 # Temporary workaround: Prevent Docker from being upgraded
 - name: Hold Docker packages to prevent upgrades
@@ -30,36 +30,36 @@
   loop:
     - docker-ce
     - docker-ce-cli
-  become: yes
+  become: true
 
 - name: Enable and start Docker service
   systemd:
     name: docker
-    enabled: yes
+    enabled: true
     state: started
-  become: yes
+  become: true
 
 - name: Configure NVIDIA runtime for Docker
   command: nvidia-ctk runtime configure --runtime=docker
-  become: yes
+  become: true
 
 - name: Add user to docker group
   user:
     name: "{{ drs_user | default(ansible_user) | default('nvidia') }}"
     groups: docker
-    append: yes
-  become: yes
+    append: true
+  become: true
 
 - name: Stop Docker service before data migration
   systemd:
     name: docker
     state: stopped
-  become: yes
+  become: true
 
 - name: Check Docker data directory size
   shell: du -csh /var/lib/docker/
   register: docker_size_before
-  become: yes
+  become: true
   changed_when: false
 
 - name: Create new Docker data directory
@@ -67,16 +67,16 @@
     path: /mnt/ssd/docker
     state: directory
     mode: "0755"
-  become: yes
+  become: true
 
 - name: Migrate Docker data to new location
   command: rsync -axPS /var/lib/docker/ /mnt/ssd/docker/
-  become: yes
+  become: true
 
 - name: Check new Docker data directory size
   shell: du -csh /mnt/ssd/docker/
   register: docker_size_after
-  become: yes
+  become: true
   changed_when: false
 
 - name: Update Docker daemon configuration
@@ -93,12 +93,12 @@
           "data-root": "/mnt/ssd/docker"
       }
     dest: /etc/docker/daemon.json
-    backup: yes
-  become: yes
+    backup: true
+  become: true
 
 - name: Restart Docker service
   systemd:
     name: docker
     state: restarted
-    daemon_reload: yes
-  become: yes
+    daemon_reload: true
+  become: true

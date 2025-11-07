@@ -2,9 +2,9 @@
   apt:
     name: iptables
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
-  become: yes
+  become: true
 
 - name: Create iptables service directory
   file:
@@ -13,7 +13,7 @@
     mode: "0755"
     owner: root
     group: root
-  become: yes
+  become: true
 
 - name: Deploy iptables rules script
   template:
@@ -22,7 +22,7 @@
     mode: "0755"
     owner: root
     group: root
-  become: yes
+  become: true
 
 - name: Deploy iptables systemd service
   template:
@@ -32,11 +32,11 @@
     owner: root
     group: root
   notify: reload systemd
-  become: yes
+  become: true
 
 - name: Enable iptables service
   systemd:
     name: iptables
-    enabled: yes
-    daemon_reload: yes
-  become: yes
+    enabled: true
+    daemon_reload: true
+  become: true

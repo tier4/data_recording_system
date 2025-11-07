@@ -17,7 +17,7 @@
     owner: root
     group: root
     mode: "0755"
-  become: yes
+  become: true
 
 - name: Copy api-gateway configuration file
   copy:
@@ -26,7 +26,7 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Copy docker-compose.yml file
   copy:
@@ -35,7 +35,7 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Copy drs-dashboard systemd service file
   copy:
@@ -44,16 +44,16 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Reload systemd daemon
   systemd:
-    daemon_reload: yes
-  become: yes
+    daemon_reload: true
+  become: true
 
 - name: Enable and start unified drs-dashboard service
   systemd:
     name: drs-dashboard
-    enabled: yes
+    enabled: true
     state: started
-  become: yes
+  become: true

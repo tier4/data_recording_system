@@ -5,7 +5,7 @@
     curl -fsSL https://tailscale.com/install.sh | sh
   args:
     creates: /usr/bin/tailscale
-  become: yes
+  become: true
 
 - name: Check Tailscale status
   command: tailscale status
@@ -38,7 +38,7 @@
     name: "{{ item }}"
     value: "1"
     state: present
-    reload: yes
+    reload: true
   loop:
     - net.ipv4.ip_forward
     - net.ipv6.conf.all.forwarding

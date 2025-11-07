@@ -2,9 +2,9 @@
   ansible.builtin.apt:
     name: chrony
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
-  become: yes
+  become: true
 
 - name: Check if chrony.conf exists
   ansible.builtin.stat:
@@ -15,9 +15,9 @@
   ansible.builtin.copy:
     src: /etc/chrony/chrony.conf
     dest: "/etc/chrony/chrony.conf.{{ ansible_date_time.epoch }}.bak"
-    remote_src: yes
+    remote_src: true
     mode: "0644"
-  become: yes
+  become: true
   when: chrony_conf_stat.stat.exists
 
 - name: Deploy chrony.conf
@@ -27,12 +27,12 @@
     owner: root
     group: root
     mode: "0644"
-  become: yes
+  become: true
 
 - name: Restart and enable chrony service
   ansible.builtin.systemd:
     name: chrony
     state: restarted
-    enabled: yes
-    daemon_reload: yes
-  become: yes
+    enabled: true
+    daemon_reload: true
+  become: true

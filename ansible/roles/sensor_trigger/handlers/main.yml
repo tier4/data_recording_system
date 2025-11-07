@@ -2,7 +2,7 @@
   systemd:
     name: udev
     state: reloaded
-  become: yes
+  become: true
 
 - name: user logout required
   debug:
