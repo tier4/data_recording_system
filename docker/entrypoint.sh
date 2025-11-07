@@ -8,7 +8,9 @@ GROUP_NAME=${LOCAL_GROUP}
 
 # Check if any of the variables are empty
 if [[ -z $USER_ID || -z $USER_NAME || -z $GROUP_ID || -z $GROUP_NAME ]]; then
+    # shellcheck disable=SC1090
     source "/opt/ros/$ROS_DISTRO/setup.bash"
+    # shellcheck disable=SC1091
     source /opt/drs/install/setup.bash
     exec "$@"
 else
@@ -29,7 +31,9 @@ else
     chown "$USER_NAME:$GROUP_NAME" "$HOME/.bashrc"
 
     # Source ROS2
+    # shellcheck disable=SC1090
     source "/opt/ros/$ROS_DISTRO/setup.bash"
+    # shellcheck disable=SC1091
     source /opt/drs/install/setup.bash
 
     # Set working directory

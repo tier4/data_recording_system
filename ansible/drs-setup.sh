@@ -66,8 +66,7 @@ fi
 # Install Ansible Galaxy requirements
 echo "Installing Ansible Galaxy requirements..."
 if [[ -f requirements.yml ]]; then
-    ansible-galaxy collection install -r requirements.yml --force
-    if [[ $? -eq 0 ]]; then
+    if ansible-galaxy collection install -r requirements.yml --force; then
         echo "Ansible Galaxy requirements installed successfully."
     else
         echo "WARNING: Failed to install some Ansible Galaxy requirements."

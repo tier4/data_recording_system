@@ -6,6 +6,7 @@ logger -t drs-api "Starting DRS API Service"
 
 # Source environment files
 if [ -f /opt/drs/config/drs.env ]; then
+    # shellcheck disable=SC1091
     source /opt/drs/config/drs.env
 fi
 
