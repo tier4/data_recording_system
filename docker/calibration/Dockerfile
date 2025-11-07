@@ -51,7 +51,7 @@ RUN rosdep init && \
 # Install ROS dependencies
 RUN apt-get update && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    rosdep install -y -r --from-paths `colcon list --packages-up-to sensor_calibration_tools -p` --ignore-src --rosdistro ${ROS_DISTRO} && \
+    rosdep install -y -r --from-paths $(colcon list --packages-up-to sensor_calibration_tools -p) --ignore-src --rosdistro ${ROS_DISTRO} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
