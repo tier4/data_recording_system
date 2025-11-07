@@ -17,6 +17,7 @@
   template:
     src: rules.v4.j2
     dest: /etc/iptables/rules.v4
+    mode: '0644'
     backup: true
   notify: restore iptables
 

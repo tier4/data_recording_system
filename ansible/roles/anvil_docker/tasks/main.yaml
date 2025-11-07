@@ -95,6 +95,7 @@
           "data-root": "/mnt/ssd/docker"
       }
     dest: /etc/docker/daemon.json
+    mode: '0644'
     backup: true
   become: true
 

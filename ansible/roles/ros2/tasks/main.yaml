@@ -88,6 +88,7 @@
     line: export ROS_DOMAIN_ID={{ ros_domain_id }}
     state: present
     create: true
+    mode: '0644'
   become: true
 
 - name: Set ROS_DISTRO in drs.env
@@ -97,6 +98,7 @@
     line: export ROS_DISTRO=humble
     state: present
     create: true
+    mode: '0644'
   become: true
 
 - name: Set ROS_LOG_DIR in drs.env
@@ -104,6 +106,7 @@
     path: /opt/drs/config/drs.env
     regexp: ^export ROS_LOG_DIR=
     line: export ROS_LOG_DIR=/tmp/drs/log
+    mode: '0644'
     state: present
     create: true
   become: true

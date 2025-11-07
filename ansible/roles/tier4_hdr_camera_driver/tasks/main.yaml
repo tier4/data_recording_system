@@ -63,6 +63,7 @@
         src: /boot/extlinux/extlinux.conf
         dest: /boot/extlinux/extlinux.conf.backup
         remote_src: true
+        mode: '0644'
         backup: true
       become: true
 
