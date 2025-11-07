@@ -33,7 +33,7 @@
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Install ROS dependencies with rosdep
   shell: |
@@ -44,7 +44,7 @@
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Build DRS packages directly to installation directory
   shell: |
@@ -52,6 +52,6 @@
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
     colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-up-to {{ drs_packages | join(' ') }}
-    chown -R "{{ drs_user }}:{{ drs_group }}" "{{ drs_install_dir }}"
+    chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
   args:
     executable: /bin/bash
