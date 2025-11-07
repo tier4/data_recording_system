@@ -13,6 +13,7 @@
   <exec_depend>image_proc</exec_depend>
   <exec_depend>image_transport</exec_depend>
   <exec_depend>nebula_ros</exec_depend>
+  <exec_depend>seyond</exec_depend>
   <exec_depend>oxts</exec_depend>
   <exec_depend>sensor_trigger</exec_depend>
   <exec_depend>v4l2_camera</exec_depend>

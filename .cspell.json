@@ -25,6 +25,9 @@
     "hostapd",
     "wlan",
     "dnsmasq"
+    "mgbe",
+    "eqos",
+    "jbod"
   ],
   "import": [
     "https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"
