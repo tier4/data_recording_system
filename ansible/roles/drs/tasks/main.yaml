@@ -1,10 +1,10 @@
 - name: Create DRS installation directory
   file:
-    path: { { drs_install_dir } }
+    path: {{ drs_install_dir }}
     state: directory
     mode: "0755"
-    owner: { { drs_user } }
-    group: { { drs_group } }
+    owner: {{ drs_user }}
+    group: {{ drs_group }}
   become: true
 
 # todo: Inspect failed tasks and fix them
@@ -31,7 +31,7 @@
     rosdep update
   args:
     executable: /bin/bash
-  become_user: { { drs_user } }
+  become_user: {{ drs_user }}
   environment:
     HOME: /home/{{ drs_user }}
 
@@ -42,7 +42,7 @@
     rosdep install -y -r --from-paths src --ignore-src
   args:
     executable: /bin/bash
-  become_user: { { drs_user } }
+  become_user: {{ drs_user }}
   environment:
     HOME: /home/{{ drs_user }}
 

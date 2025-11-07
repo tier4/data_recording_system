@@ -6,7 +6,7 @@
 
 - name: Create mount point directory
   ansible.builtin.file:
-    path: { { nas_mount_point } }
+    path: {{ nas_mount_point }}
     state: directory
     mode: "0755"
   become: true

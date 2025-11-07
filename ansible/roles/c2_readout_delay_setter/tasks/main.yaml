@@ -8,7 +8,7 @@
 
 - name: Add user to i2c group
   user:
-    name: { { drs_user } }
+    name: {{ drs_user }}
     groups: i2c
     append: true
   become: true

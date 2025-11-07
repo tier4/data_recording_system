@@ -7,7 +7,7 @@
 
 - name: Copy network config file
   ansible.builtin.copy:
-    src: { { item } }
+    src: {{ item }}
     dest: /etc/netplan/{{ item }}
     mode: 0644
   with_items: "{{ netplan_files }}"

@@ -5,8 +5,8 @@
 drs_ecu_id: 0
 sensing_system_id: aabbccdd
 module_id: eeffgghh
-drs_user: { { ansible_user } }
-drs_group: { { ansible_user } }
+drs_user: {{ ansible_user }}
+drs_group: {{ ansible_user }}
 drs_install_dir: /opt/drs/install
 drs_build_type: RelWithDebInfo
 
