@@ -49,4 +49,19 @@ repos:
     hooks:
       - id: hadolint
 
+  - repo: https://github.com/tcort/markdown-link-check
+    rev: v3.11.2
+    hooks:
+      - id: markdown-link-check
+        args: [--quiet, --config=.markdown-link-check.json]
+
+  - repo: https://github.com/ansible/ansible-lint.git
+    rev: v6.17.2
+    hooks:
+      - id: ansible-lint
+        files: ^ansible/
+        additional_dependencies:
+          - ansible-core==2.17.14
+          - ansible==10.7.0
+
 exclude: .svg
