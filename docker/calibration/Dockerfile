@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-RUN apt update && apt install -y tzdata locales gosu && \
+RUN apt-get update && apt-get install -y tzdata locales gosu && \
     ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
     locale-gen en_US.UTF-8 && \
@@ -20,20 +20,20 @@ RUN apt update && apt install -y tzdata locales gosu && \
 ENV LANG=en_US.UTF-8
 
 # Install basic tools and setup ROS2 repository
-RUN apt update && \
-    apt install -y software-properties-common curl git python3 python3-pip && \
+RUN apt-get update && \
+    apt-get install -y software-properties-common curl git python3 python3-pip && \
     add-apt-repository -y universe && \
     curl -sSL https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -Po '"tag_name": "\K.*?(?=")' > /tmp/ros_apt_version && \
     curl -sSL "https://github.com/ros-infrastructure/ros-apt-source/releases/download/$(cat /tmp/ros_apt_version)/ros2-apt-source_$(cat /tmp/ros_apt_version).jammy_all.deb" -o /tmp/ros2-apt-source.deb && \
-    apt install -y /tmp/ros2-apt-source.deb && \
+    apt-get install -y /tmp/ros2-apt-source.deb && \
     rm /tmp/ros2-apt-source.deb /tmp/ros_apt_version && \
-    apt update && \
+    apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install ROS2 Humble and required packages
-RUN apt update && \
-    apt install -y ros-${ROS_DISTRO}-desktop ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2 && \
+RUN apt-get update && \
+    apt-get install -y ros-${ROS_DISTRO}-desktop ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -49,7 +49,7 @@ RUN rosdep init && \
     rosdep update
 
 # Install ROS dependencies
-RUN apt update && \
+RUN apt-get update && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
     rosdep install -y -r --from-paths `colcon list --packages-up-to sensor_calibration_tools -p` --ignore-src --rosdistro ${ROS_DISTRO} && \
     apt-get clean && \
