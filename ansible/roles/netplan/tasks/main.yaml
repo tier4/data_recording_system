@@ -18,6 +18,7 @@
   ansible.builtin.command: netplan generate
   become: true
   when: netplan_config_changed.changed
+  changed_when: true
 
 - name: Schedule netplan apply for later
   ansible.builtin.debug:

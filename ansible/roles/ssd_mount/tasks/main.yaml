@@ -19,6 +19,7 @@
   when: item.rc != 0
   loop: "{{ pv_check.results }}"
   become: true
+  changed_when: true
 
 - name: Check if VG exists
   ansible.builtin.command: vgdisplay ssd_vg
@@ -31,6 +32,7 @@
   ansible.builtin.command: vgcreate ssd_vg /dev/nvme0n1 /dev/nvme1n1
   when: vg_check.rc != 0
   become: true
+  changed_when: true
 
 - name: Check if LV exists
   ansible.builtin.command: lvdisplay ssd_vg/ssd_lv
@@ -44,6 +46,7 @@
     lvcreate -i2 -I256 -l 100%FREE -n ssd_lv ssd_vg
   when: lv_check.rc != 0
   become: true
+  changed_when: true
 
 - name: Make ext4 filesystem
   community.general.filesystem:

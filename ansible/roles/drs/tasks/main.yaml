@@ -25,6 +25,7 @@
     executable: /bin/bash
   become: true
   ignore_errors: true
+  changed_when: true
 
 - name: Update rosdep for user
   ansible.builtin.shell: |
@@ -34,6 +35,7 @@
   become_user: "{{ drs_user }}"
   environment:
     HOME: /home/{{ drs_user }}
+  changed_when: true
 
 - name: Install ROS dependencies with rosdep
   ansible.builtin.shell: |
@@ -45,6 +47,7 @@
   become_user: "{{ drs_user }}"
   environment:
     HOME: /home/{{ drs_user }}
+  changed_when: true
 
 - name: Build DRS packages directly to installation directory
   ansible.builtin.shell: |
@@ -55,3 +58,4 @@
     chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
   args:
     executable: /bin/bash
+  changed_when: true

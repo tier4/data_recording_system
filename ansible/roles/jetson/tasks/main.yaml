@@ -31,6 +31,7 @@
     - "'Reboot required' not in nvpmodel_result.stdout"
     - "'rebooting' not in nvpmodel_result.stdout"
   notify: reboot_required
+  changed_when: true
 
 - name: Check if reboot is required for power mode change
   ansible.builtin.debug:

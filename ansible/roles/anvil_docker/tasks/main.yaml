@@ -31,6 +31,7 @@
     - docker-ce
     - docker-ce-cli
   become: true
+  changed_when: true
 
 - name: Enable and start Docker service
   ansible.builtin.systemd:
@@ -42,6 +43,7 @@
 - name: Configure NVIDIA runtime for Docker
   ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
   become: true
+  changed_when: true
 
 - name: Add user to docker group
   ansible.builtin.user:
@@ -72,6 +74,7 @@
 - name: Migrate Docker data to new location
   ansible.builtin.command: rsync -axPS /var/lib/docker/ /mnt/ssd/docker/
   become: true
+  changed_when: true
 
 - name: Check new Docker data directory size
   ansible.builtin.shell: du -csh /mnt/ssd/docker/

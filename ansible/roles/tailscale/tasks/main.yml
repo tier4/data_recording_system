@@ -19,6 +19,7 @@
     - tailscale_authkey is defined
     - tailscale_authkey != ""
     - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+  changed_when: true
 
 - name: Display manual authentication instructions
   ansible.builtin.debug:
