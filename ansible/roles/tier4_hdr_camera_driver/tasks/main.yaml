@@ -64,6 +64,7 @@
         dest: /boot/extlinux/extlinux.conf.backup
         remote_src: true
         backup: true
+        mode: preserve
       become: true
 
     - name: Create new extlinux.conf with t4_primary entry

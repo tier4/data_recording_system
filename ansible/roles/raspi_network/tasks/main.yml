@@ -17,6 +17,7 @@
     path: /etc/modules
     line: 8021q
     create: true
+    mode: "0644"
 
 - name: Configure udev rules for LTE dongle
   ansible.builtin.copy:
@@ -32,3 +33,4 @@
     src: 99-drs.yaml.j2
     dest: /etc/netplan/10-drs.yaml
     backup: true
+    mode: "0644"

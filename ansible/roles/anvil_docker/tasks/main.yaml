@@ -97,6 +97,7 @@
       }
     dest: /etc/docker/daemon.json
     backup: true
+    mode: "0644"
   become: true
 
 - name: Restart Docker service

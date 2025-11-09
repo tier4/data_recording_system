@@ -16,6 +16,7 @@
     src: /etc/fstab
     dest: /etc/fstab.{{ ansible_date_time.epoch }}.bak
     remote_src: true
+    mode: preserve
   become: true
   when: create_fstab_backup | bool
 

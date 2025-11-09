@@ -79,6 +79,7 @@
         regexp: '^127\.0\.0\.1\s+'
         line: "127.0.0.1\tlocalhost"
         create: true
+        mode: "0644"
 
     - name: Update /etc/hosts with new hostname
       ansible.builtin.lineinfile:

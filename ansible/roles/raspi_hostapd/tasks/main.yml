@@ -27,6 +27,7 @@
     regexp: "^#?DAEMON_CONF="
     line: DAEMON_CONF="/etc/hostapd/hostapd.conf"
     create: true
+    mode: "0644"
 
 - name: Unmask hostapd service
   ansible.builtin.systemd:

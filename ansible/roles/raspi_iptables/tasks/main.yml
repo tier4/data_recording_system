@@ -18,6 +18,7 @@
     src: rules.v4.j2
     dest: /etc/iptables/rules.v4
     backup: true
+    mode: "0644"
   notify: restore iptables
 
 - name: Ensure iptables-persistent is enabled
