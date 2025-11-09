@@ -1,18 +1,18 @@
-- name: Install Tier4 camera driver
+- name: Install TierIV camera driver
   block:
-    - name: Download Tier4 camera driver package
+    - name: Download TierIV camera driver package
       ansible.builtin.get_url:
         url: https://github.com/tier4/tier4_automotive_hdr_camera/releases/download/v2.0.0/tier4-camera-gmsl_2.0.0_arm64.deb
         dest: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
         mode: "0644"
 
-    - name: Install Tier4 camera driver package
+    - name: Install TierIV camera driver package
       ansible.builtin.apt:
         deb: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
         state: present
       become: true
 
-    - name: Clone Tier4 automotive HDR camera repository
+    - name: Clone TierIV automotive HDR camera repository
       ansible.builtin.git:
         repo: https://github.com/tier4/tier4_automotive_hdr_camera.git
         dest: /tmp/tier4_automotive_hdr_camera
