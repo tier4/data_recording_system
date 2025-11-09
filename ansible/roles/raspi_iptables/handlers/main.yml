@@ -1,2 +1,2 @@
 - name: Restore iptables
-  shell: iptables-restore < /etc/iptables/rules.v4
+  ansible.builtin.shell: iptables-restore < /etc/iptables/rules.v4

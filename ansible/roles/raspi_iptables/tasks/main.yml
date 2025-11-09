@@ -1,12 +1,12 @@
 - name: Install iptables-persistent
-  apt:
+  ansible.builtin.apt:
     name: iptables-persistent
     state: present
     update_cache: true
     cache_valid_time: 3600
 
 - name: Enable IPv4 forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     sysctl_set: true
@@ -14,14 +14,14 @@
     reload: true
 
 - name: Configure iptables rules
-  template:
+  ansible.builtin.template:
     src: rules.v4.j2
     dest: /etc/iptables/rules.v4
     backup: true
   notify: restore iptables
 
 - name: Ensure iptables-persistent is enabled
-  systemd:
+  ansible.builtin.systemd:
     name: netfilter-persistent
     enabled: true
     state: started

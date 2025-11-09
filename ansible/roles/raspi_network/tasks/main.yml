@@ -1,5 +1,5 @@
 - name: Install network packages
-  apt:
+  ansible.builtin.apt:
     name:
       - vlan
       - netplan.io
@@ -8,18 +8,18 @@
     cache_valid_time: 3600
 
 - name: Load 8021q module
-  modprobe:
+  community.general.modprobe:
     name: 8021q
     state: present
 
 - name: Ensure 8021q module loads on boot
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/modules
     line: 8021q
     create: true
 
 - name: Configure udev rules for LTE dongle
-  copy:
+  ansible.builtin.copy:
     src: 10-persistent-lte.rules
     dest: /etc/udev/rules.d/10-persistent-lte.rules
     owner: root
@@ -28,7 +28,7 @@
   notify: reload udev
 
 - name: Configure netplan
-  template:
+  ansible.builtin.template:
     src: 99-drs.yaml.j2
     dest: /etc/netplan/10-drs.yaml
     backup: true

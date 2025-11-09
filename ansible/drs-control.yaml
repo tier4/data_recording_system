@@ -14,7 +14,7 @@
 
   pre_tasks:
     - name: Disable cloud-init permanently
-      copy:
+      ansible.builtin.copy:
         dest: /etc/cloud/cloud-init.disabled
         content: "disabled\n"
         owner: root
@@ -22,12 +22,12 @@
         mode: "0644"
 
     - name: Remove cloud-init netplan
-      file:
+      ansible.builtin.file:
         path: /etc/netplan/50-cloud-init.yaml
         state: absent
 
     - name: Ask for custom hostname if not specified
-      pause:
+      ansible.builtin.pause:
         prompt: |
 
           Current hostname: {{ ansible_hostname }}
@@ -39,14 +39,14 @@
         - custom_hostname is not defined or custom_hostname == ""
 
     - name: Set custom_hostname from user input
-      set_fact:
+      ansible.builtin.set_fact:
         custom_hostname: "{{ hostname_input.user_input }}"
       when:
         - hostname_input.user_input is defined
         - hostname_input.user_input != ""
 
     - name: Ask for WiFi AP password
-      pause:
+      ansible.builtin.pause:
         prompt: |
 
           Enter WiFi Access Point password (8-63 characters required):
@@ -55,7 +55,7 @@
         - ap_wpa_passphrase is not defined or ap_wpa_passphrase == "" or ap_wpa_passphrase == "comlops1"
 
     - name: Validate and set WiFi password
-      set_fact:
+      ansible.builtin.set_fact:
         ap_wpa_passphrase: "{{ wifi_password_input.user_input }}"
       when:
         - wifi_password_input is defined
@@ -63,7 +63,7 @@
         - wifi_password_input.user_input | length < 8 or wifi_password_input.user_input | length > 63
 
     - name: Apply hostname change
-      hostname:
+      ansible.builtin.hostname:
         name: "{{ custom_hostname }}"
         use: systemd
       when:
@@ -73,7 +73,7 @@
       register: hostname_changed
 
     - name: Ensure localhost entry in /etc/hosts
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/hosts
         # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.0\.1\s+'
@@ -81,7 +81,7 @@
         create: true
 
     - name: Update /etc/hosts with new hostname
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/hosts
         # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.1\.1\s+'
@@ -91,16 +91,16 @@
         - custom_hostname != ""
 
     - name: Refresh ansible facts after hostname change
-      setup:
+      ansible.builtin.setup:
       when: hostname_changed is changed
 
     - name: Set dynamic AP SSID based on hostname
-      set_fact:
+      ansible.builtin.set_fact:
         ap_ssid: "{{ custom_hostname | default(ansible_hostname) }}-ap"
       when: ap_ssid is not defined
 
     - name: Display configuration summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Configuration Summary:
           =====================
@@ -113,7 +113,7 @@
           WiFi Password: [configured]
 
     - name: Update apt cache
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
@@ -165,7 +165,7 @@
 
   post_tasks:
     - name: Display installation summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Raspberry Pi Control Module configuration complete!
 
@@ -187,12 +187,12 @@
           - systemctl status drs-ros2-bridge.service
 
     - name: Reboot notification
-      debug:
+      ansible.builtin.debug:
         msg: A system reboot may be required to apply all configurations.
       changed_when: true
       notify: reboot_required
 
   handlers:
     - name: Reboot required
-      debug:
+      ansible.builtin.debug:
         msg: Please reboot the system to ensure all changes take effect.

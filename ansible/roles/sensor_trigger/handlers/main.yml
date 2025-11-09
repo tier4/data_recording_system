@@ -1,9 +1,9 @@
 - name: Reload udev
-  systemd:
+  ansible.builtin.systemd:
     name: udev
     state: reloaded
   become: true
 
 - name: User logout required
-  debug:
+  ansible.builtin.debug:
     msg: User {{ sensor_trigger_user }} needs to logout and login again for group changes to take effect

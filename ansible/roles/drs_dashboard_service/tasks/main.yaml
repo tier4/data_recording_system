@@ -1,17 +1,17 @@
 - name: Check if Docker build script exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ playbook_dir }}/../src/drs-api/docker/build.sh"
   register: docker_build_script
 
 - name: Build Docker images
-  shell: |
+  ansible.builtin.shell: |
     {{ playbook_dir }}/../src/drs-api/docker/build.sh
   when: docker_build_script.stat.exists
   register: build_result
   changed_when: true
 
 - name: Create DRS service directory
-  file:
+  ansible.builtin.file:
     path: /opt/drs/service/drs_dashboard
     state: directory
     owner: root
@@ -20,7 +20,7 @@
   become: true
 
 - name: Copy api-gateway configuration file
-  copy:
+  ansible.builtin.copy:
     src: api-gateway.yaml
     dest: /opt/drs/service/drs_dashboard/api-gateway.yaml
     owner: root
@@ -29,7 +29,7 @@
   become: true
 
 - name: Copy docker-compose.yml file
-  copy:
+  ansible.builtin.copy:
     src: docker-compose.yml
     dest: /opt/drs/service/drs_dashboard/docker-compose.yml
     owner: root
@@ -38,7 +38,7 @@
   become: true
 
 - name: Copy drs-dashboard systemd service file
-  copy:
+  ansible.builtin.copy:
     src: drs-dashboard.service
     dest: /etc/systemd/system/drs-dashboard.service
     owner: root
@@ -47,12 +47,12 @@
   become: true
 
 - name: Reload systemd daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
   become: true
 
 - name: Enable and start unified drs-dashboard service
-  systemd:
+  ansible.builtin.systemd:
     name: drs-dashboard
     enabled: true
     state: started

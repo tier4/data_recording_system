@@ -1,5 +1,5 @@
 - name: Install iptables
-  apt:
+  ansible.builtin.apt:
     name: iptables
     state: present
     update_cache: true
@@ -7,7 +7,7 @@
   become: true
 
 - name: Create iptables service directory
-  file:
+  ansible.builtin.file:
     path: /opt/drs/service/iptables
     state: directory
     mode: "0755"
@@ -16,7 +16,7 @@
   become: true
 
 - name: Deploy iptables rules script
-  template:
+  ansible.builtin.template:
     src: add_iptables_rules.sh.j2
     dest: /opt/drs/service/iptables/add_iptables_rules.sh
     mode: "0755"
@@ -25,7 +25,7 @@
   become: true
 
 - name: Deploy iptables systemd service
-  template:
+  ansible.builtin.template:
     src: iptables.service.j2
     dest: /etc/systemd/system/iptables.service
     mode: "0644"
@@ -35,7 +35,7 @@
   become: true
 
 - name: Enable iptables service
-  systemd:
+  ansible.builtin.systemd:
     name: iptables
     enabled: true
     daemon_reload: true

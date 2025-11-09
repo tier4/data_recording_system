@@ -4,7 +4,5 @@ exclude_paths:
 skip_list:
   - meta-no-info # We don't publish to Ansible Galaxy.
   - package-latest # Since this is a development environment, we allow the latest versions.
-  - fqcn[action-core] # Ignore FQCN requirement for builtin module actions
-  - fqcn[action] # Ignore FQCN requirement for module actions
 
 warn_list: []

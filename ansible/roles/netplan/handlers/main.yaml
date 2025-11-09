@@ -1,5 +1,5 @@
 - name: Netplan apply required
-  debug:
+  ansible.builtin.debug:
     msg: |
       ============================================
       IMPORTANT: Network configuration has changed!

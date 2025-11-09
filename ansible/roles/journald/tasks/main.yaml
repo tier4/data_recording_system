@@ -1,11 +1,11 @@
 - name: Create journald.conf.d directory
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/journald.conf.d
     state: directory
     mode: "0755"
 
 - name: Configure journald
-  template:
+  ansible.builtin.template:
     src: journald.conf.j2
     dest: /etc/systemd/journald.conf.d/drs.conf
     mode: "0644"

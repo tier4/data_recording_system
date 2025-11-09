@@ -13,7 +13,7 @@
   become: true
 
 - name: Add universe repository
-  shell: add-apt-repository -y universe
+  ansible.builtin.shell: add-apt-repository -y universe
   become: true
 
 - name: Install curl

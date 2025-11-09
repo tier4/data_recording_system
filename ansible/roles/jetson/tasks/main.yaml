@@ -1,5 +1,5 @@
 - name: Copy jetson-clocks systemd service file
-  copy:
+  ansible.builtin.copy:
     src: jetson-clocks.service
     dest: /etc/systemd/system/jetson-clocks.service
     owner: root
@@ -8,7 +8,7 @@
   become: true
 
 - name: Enable and start jetson-clocks service
-  systemd:
+  ansible.builtin.systemd:
     name: jetson-clocks
     enabled: true
     state: started
@@ -16,13 +16,13 @@
   become: true
 
 - name: Check current Jetson power mode
-  command: nvpmodel -q
+  ansible.builtin.command: nvpmodel -q
   register: current_power_mode
   changed_when: false
   become: true
 
 - name: Set Jetson to maximum performance mode (nvpmodel -m 0)
-  shell: echo "YES" | nvpmodel -m 0
+  ansible.builtin.shell: echo "YES" | nvpmodel -m 0
   when: "'NV Power Mode: MAXN' not in current_power_mode.stdout"
   become: true
   register: nvpmodel_result
@@ -33,7 +33,7 @@
   notify: reboot_required
 
 - name: Check if reboot is required for power mode change
-  debug:
+  ansible.builtin.debug:
     msg: Reboot required to apply Jetson power mode change
   when:
     - nvpmodel_result is defined
@@ -41,7 +41,7 @@
     - "'Reboot required' in nvpmodel_result.stdout"
 
 - name: Install jtop
-  pip:
+  ansible.builtin.pip:
     name: jetson-stats
     executable: pip3
   become: true

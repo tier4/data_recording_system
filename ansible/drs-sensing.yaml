@@ -14,7 +14,7 @@
 
   pre_tasks:
     - name: Update apt cache
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
@@ -89,7 +89,7 @@
 
   post_tasks:
     - name: Display installation summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Data Recording System installation completed!
 
@@ -104,12 +104,12 @@
           - systemctl status jetson-clocks.service
 
     - name: Reboot notification
-      debug:
+      ansible.builtin.debug:
         msg: A system reboot may be required to apply all configurations.
       changed_when: true
       notify: reboot_required
 
   handlers:
     - name: Reboot required
-      debug:
+      ansible.builtin.debug:
         msg: Please reboot the system to ensure all changes take effect.

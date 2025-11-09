@@ -1,5 +1,5 @@
 - name: Install NVIDIA container toolkit and curl
-  apt:
+  ansible.builtin.apt:
     name:
       - nvidia-container-toolkit
       - curl
@@ -9,14 +9,14 @@
   become: true
 
 - name: Download and install Docker
-  shell: curl https://get.docker.com | sh
+  ansible.builtin.shell: curl https://get.docker.com | sh
   args:
     creates: /usr/bin/docker
   become: true
 
 # Temporary workaround: Downgrade Docker due to issues with v28
 - name: Downgrade Docker to specific version
-  apt:
+  ansible.builtin.apt:
     name:
       - docker-ce=5:27.5.1-1~ubuntu.22.04~jammy
       - docker-ce-cli=5:27.5.1-1~ubuntu.22.04~jammy
@@ -26,61 +26,61 @@
 
 # Temporary workaround: Prevent Docker from being upgraded
 - name: Hold Docker packages to prevent upgrades
-  command: apt-mark hold {{ item }}
+  ansible.builtin.command: apt-mark hold {{ item }}
   loop:
     - docker-ce
     - docker-ce-cli
   become: true
 
 - name: Enable and start Docker service
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     enabled: true
     state: started
   become: true
 
 - name: Configure NVIDIA runtime for Docker
-  command: nvidia-ctk runtime configure --runtime=docker
+  ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
   become: true
 
 - name: Add user to docker group
-  user:
+  ansible.builtin.user:
     name: "{{ drs_user | default(ansible_user) | default('nvidia') }}"
     groups: docker
     append: true
   become: true
 
 - name: Stop Docker service before data migration
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     state: stopped
   become: true
 
 - name: Check Docker data directory size
-  shell: du -csh /var/lib/docker/
+  ansible.builtin.shell: du -csh /var/lib/docker/
   register: docker_size_before
   become: true
   changed_when: false
 
 - name: Create new Docker data directory
-  file:
+  ansible.builtin.file:
     path: /mnt/ssd/docker
     state: directory
     mode: "0755"
   become: true
 
 - name: Migrate Docker data to new location
-  command: rsync -axPS /var/lib/docker/ /mnt/ssd/docker/
+  ansible.builtin.command: rsync -axPS /var/lib/docker/ /mnt/ssd/docker/
   become: true
 
 - name: Check new Docker data directory size
-  shell: du -csh /mnt/ssd/docker/
+  ansible.builtin.shell: du -csh /mnt/ssd/docker/
   register: docker_size_after
   become: true
   changed_when: false
 
 - name: Update Docker daemon configuration
-  copy:
+  ansible.builtin.copy:
     content: |
       {
           "runtimes": {
@@ -97,7 +97,7 @@
   become: true
 
 - name: Restart Docker service
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     state: restarted
     daemon_reload: true

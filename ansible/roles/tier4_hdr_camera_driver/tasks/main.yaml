@@ -1,50 +1,50 @@
 - name: Install Tier4 camera driver
   block:
     - name: Download Tier4 camera driver package
-      get_url:
+      ansible.builtin.get_url:
         url: https://github.com/tier4/tier4_automotive_hdr_camera/releases/download/v2.0.0/tier4-camera-gmsl_2.0.0_arm64.deb
         dest: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
         mode: "0644"
 
     - name: Install Tier4 camera driver package
-      apt:
+      ansible.builtin.apt:
         deb: /tmp/tier4-camera-gmsl_2.0.0_arm64.deb
         state: present
       become: true
 
     - name: Clone Tier4 automotive HDR camera repository
-      git:
+      ansible.builtin.git:
         repo: https://github.com/tier4/tier4_automotive_hdr_camera.git
         dest: /tmp/tier4_automotive_hdr_camera
         version: v2.0.0
         force: true
 
     - name: Ensure python3 is installed
-      apt:
+      ansible.builtin.apt:
         name: python3
         state: present
       become: true
 
     - name: Ensure device-tree-compiler is installed
-      apt:
+      ansible.builtin.apt:
         name: device-tree-compiler
         state: present
       become: true
 
     - name: Generate overlay DTS file
-      command: python3 make_overlay_dts_anvil.py {{ make_overlay_dts_anvil_option }} R36 -o tier4-camera-device-tree-overlay-anvil.dts
+      ansible.builtin.command: python3 make_overlay_dts_anvil.py {{ make_overlay_dts_anvil_option }} R36 -o tier4-camera-device-tree-overlay-anvil.dts
       args:
         chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
         creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dts
 
     - name: Compile DTS to DTB
-      command: dtc -O dtb -o tier4-camera-device-tree-overlay-anvil.dtbo -@ tier4-camera-device-tree-overlay-anvil.dts
+      ansible.builtin.command: dtc -O dtb -o tier4-camera-device-tree-overlay-anvil.dtbo -@ tier4-camera-device-tree-overlay-anvil.dts
       args:
         chdir: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/
         creates: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dtbo
 
     - name: Copy DTBO file to /boot
-      copy:
+      ansible.builtin.copy:
         src: /tmp/tier4_automotive_hdr_camera/tools/dts_generator/tier4-camera-device-tree-overlay-anvil.dtbo
         dest: /boot/tier4-camera-device-tree-overlay-anvil.dtbo
         remote_src: true
@@ -52,14 +52,14 @@
       become: true
 
     - name: Apply device tree overlay
-      command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-camera-device-tree-overlay-anvil.dtbo
+      ansible.builtin.command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-camera-device-tree-overlay-anvil.dtbo
       args:
         chdir: /boot/
         creates: /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb
       become: true
 
     - name: Backup extlinux.conf
-      copy:
+      ansible.builtin.copy:
         src: /boot/extlinux/extlinux.conf
         dest: /boot/extlinux/extlinux.conf.backup
         remote_src: true
@@ -67,7 +67,7 @@
       become: true
 
     - name: Create new extlinux.conf with t4_primary entry
-      copy:
+      ansible.builtin.copy:
         content: |
           TIMEOUT 30
           DEFAULT t4_primary
@@ -93,7 +93,7 @@
       become: true
 
     - name: Configure tier4_imx490 modprobe options
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/modprobe.d/tier4-imx490.conf
         # yamllint disable-line rule:quoted-strings
         regexp: "^options tier4_imx490"
@@ -105,7 +105,7 @@
       become: true
 
     - name: Configure tier4_imx728 modprobe options
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/modprobe.d/tier4-imx728.conf
         # yamllint disable-line rule:quoted-strings
         regexp: "^options tier4_imx728"
@@ -117,7 +117,7 @@
       become: true
 
     - name: Clean up temporary files
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       loop:

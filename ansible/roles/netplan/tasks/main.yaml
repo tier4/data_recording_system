@@ -15,12 +15,12 @@
   register: netplan_config_changed
 
 - name: Validate netplan configuration
-  command: netplan generate
+  ansible.builtin.command: netplan generate
   become: true
   when: netplan_config_changed.changed
 
 - name: Schedule netplan apply for later
-  debug:
+  ansible.builtin.debug:
     msg: Netplan configuration has been updated. Run 'sudo netplan apply' after Ansible completes to apply network changes.
   when: netplan_config_changed.changed
   changed_when: netplan_config_changed.changed

@@ -1,5 +1,5 @@
 - name: Install GPIO dependencies
-  package:
+  ansible.builtin.package:
     name:
       - libgpiod-dev
       - gpiod
@@ -7,13 +7,13 @@
   become: true
 
 - name: Create gpio group
-  group:
+  ansible.builtin.group:
     name: gpio
     state: present
   become: true
 
 - name: Add user to gpio group
-  user:
+  ansible.builtin.user:
     name: "{{ sensor_trigger_user }}"
     groups: gpio
     append: true
@@ -21,12 +21,12 @@
   notify: user logout required
 
 - name: Set GPIO device permissions
-  shell: chmod 666 /dev/gpiochip*
+  ansible.builtin.shell: chmod 666 /dev/gpiochip*
   become: true
   ignore_errors: true
 
 - name: Create udev rule for GPIO permissions
-  copy:
+  ansible.builtin.copy:
     dest: /etc/udev/rules.d/99-gpio-permissions.rules
     content: |
       KERNEL=="gpiochip*", GROUP="gpio", MODE="0660"
@@ -37,7 +37,7 @@
   notify: reload udev
 
 - name: Set realtime scheduling limits
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/security/limits.conf
     line: "{{ sensor_trigger_user }}    -   rtprio   {{ sensor_trigger_rtprio }}"
     state: present
@@ -46,7 +46,7 @@
   notify: user logout required
 
 - name: Set memlock limits for realtime scheduling
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/security/limits.conf
     line: "{{ sensor_trigger_user }}    -   memlock  {{ sensor_trigger_memlock }}"
     state: present

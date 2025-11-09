@@ -1,5 +1,5 @@
 - name: Ensure required packages are installed
-  apt:
+  ansible.builtin.apt:
     name:
       - linuxptp
     state: present
@@ -7,7 +7,7 @@
   become: true
 
 - name: Create service directory
-  file:
+  ansible.builtin.file:
     path: "{{ ptp_service_dir }}"
     state: directory
     owner: root
@@ -16,7 +16,7 @@
   become: true
 
 - name: Deploy ptp4l configuration file
-  template:
+  ansible.builtin.template:
     src: ptp4l.conf.j2
     dest: "{{ ptp_service_dir }}/ptp4l.conf"
     owner: root
@@ -25,7 +25,7 @@
   become: true
 
 - name: Deploy phc2sys startup script
-  template:
+  ansible.builtin.template:
     src: phc2sys.sh.j2
     dest: "{{ ptp_service_dir }}/phc2sys.sh"
     owner: root
@@ -34,7 +34,7 @@
   become: true
 
 - name: Deploy ptp4l systemd service file
-  template:
+  ansible.builtin.template:
     src: ptp4l.service.j2
     dest: /etc/systemd/system/ptp4l.service
     owner: root
@@ -43,7 +43,7 @@
   become: true
 
 - name: Deploy phc2sys systemd service file
-  template:
+  ansible.builtin.template:
     src: phc2sys.service.j2
     dest: /etc/systemd/system/phc2sys.service
     owner: root
@@ -52,26 +52,26 @@
   become: true
 
 - name: Reload systemd daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
   become: true
 
 - name: Enable and start ptp4l service
-  systemd:
+  ansible.builtin.systemd:
     name: ptp4l
     enabled: true
     state: started
   become: true
 
 - name: Enable and start phc2sys service
-  systemd:
+  ansible.builtin.systemd:
     name: phc2sys
     enabled: true
     state: started
   become: true
 
 - name: Disable and stop systemd-timesyncd
-  systemd:
+  ansible.builtin.systemd:
     name: systemd-timesyncd
     state: stopped
     enabled: false
