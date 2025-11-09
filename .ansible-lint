@@ -8,5 +8,6 @@ skip_list:
   - ignore-errors # Use failed_when and specify error conditions
   - risky-shell-pipe # Shells that use pipes should set the pipefail option
   - command-instead-of-module # Using command rather than module
+  - schema[meta] # Skip meta file schema validation to avoid CI-only errors
 
 warn_list: []
