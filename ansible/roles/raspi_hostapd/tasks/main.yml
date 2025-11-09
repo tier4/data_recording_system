@@ -23,6 +23,7 @@
 - name: Configure hostapd daemon
   lineinfile:
     path: /etc/default/hostapd
+    # yamllint disable-line rule:quoted-strings
     regexp: "^#?DAEMON_CONF="
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
     create: true

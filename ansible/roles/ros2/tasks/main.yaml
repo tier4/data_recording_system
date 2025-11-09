@@ -84,6 +84,7 @@
 - name: Set ROS_DOMAIN_ID in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DOMAIN_ID="
     line: "export ROS_DOMAIN_ID={{ ros_domain_id }}"
     state: present
@@ -93,6 +94,7 @@
 - name: Set ROS_DISTRO in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DISTRO="
     line: "export ROS_DISTRO=humble"
     state: present
@@ -102,6 +104,7 @@
 - name: Set ROS_LOG_DIR in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_LOG_DIR="
     line: "export ROS_LOG_DIR=/tmp/drs/log"
     state: present

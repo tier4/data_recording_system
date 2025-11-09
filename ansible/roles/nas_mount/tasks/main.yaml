@@ -23,6 +23,7 @@
   ansible.builtin.lineinfile:
     path: /etc/fstab
     line: "{{ nas_address }}:{{ nas_export_path }} {{ nas_mount_point }} nfs4 {{ nfs_options }} 1 0"
+    # yamllint disable-line rule:quoted-strings
     regexp: "^{{ nas_address | regex_escape() }}:{{ nas_export_path | regex_escape() }}\\s+{{ nas_mount_point | regex_escape() }}\\s+"
     state: present
     backup: false

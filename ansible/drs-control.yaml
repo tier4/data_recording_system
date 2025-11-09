@@ -75,6 +75,7 @@
     - name: Ensure localhost entry in /etc/hosts
       lineinfile:
         path: /etc/hosts
+        # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.0\.1\s+'
         line: "127.0.0.1\tlocalhost"
         create: true
@@ -82,6 +83,7 @@
     - name: Update /etc/hosts with new hostname
       lineinfile:
         path: /etc/hosts
+        # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.1\.1\s+'
         line: "127.0.1.1\t{{ custom_hostname | default(ansible_hostname) }}"
       when:
