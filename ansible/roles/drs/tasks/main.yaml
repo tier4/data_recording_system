@@ -33,7 +33,7 @@
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Install ROS dependencies with rosdep
   shell: |
@@ -44,7 +44,7 @@
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
 
 - name: Build DRS packages directly to installation directory
   shell: |

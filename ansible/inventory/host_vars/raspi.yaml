@@ -18,9 +18,9 @@ ap_hw_mode: g
 ap_country_code: JP
 
 # DHCP configuration
-dhcp_range_start: "192.168.4.2"
-dhcp_range_end: "192.168.4.100"
-dhcp_lease_time: "12h"
+dhcp_range_start: 192.168.4.2
+dhcp_range_end: 192.168.4.100
+dhcp_lease_time: 12h
 
 # Network interfaces
 wifi_interface: wlan0
@@ -42,7 +42,7 @@ module_manager_config: module-manager-raspi.yaml
 
 # CycloneDDS configuration for Raspberry Pi
 cyclonedds:
-  network_interface: ["eth0.10"] # loopback and VLAN 10 interface
+  network_interface: [eth0.10] # loopback and VLAN 10 interface
   minimum_socket_receive_buffer_size: 20MB
   ipfrag_time: 3
   ipfrag_high_thresh: 134217728

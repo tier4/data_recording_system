@@ -6,4 +6,4 @@
 
 - name: User logout required
   debug:
-    msg: "User {{ sensor_trigger_user }} needs to logout and login again for group changes to take effect"
+    msg: User {{ sensor_trigger_user }} needs to logout and login again for group changes to take effect

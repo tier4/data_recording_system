@@ -121,47 +121,47 @@
   roles:
     # Phase 1: Time synchronization setup
     - role: raspi_time_sync
-      tags: ["raspi", "raspi_time_sync"]
+      tags: [raspi, raspi_time_sync]
 
     # Phase 2: Network configuration (VLAN, interfaces)
     - role: raspi_network
-      tags: ["raspi", "network"]
+      tags: [raspi, network]
 
     # Phase 2: WiFi Access Point setup
     - role: raspi_hostapd
-      tags: ["raspi", "hostapd"]
+      tags: [raspi, hostapd]
 
     # Phase 3: DHCP services (DNS is handled by systemd-resolved)
     - role: raspi_dhcp
-      tags: ["raspi", "dhcp"]
+      tags: [raspi, dhcp]
 
     # Phase 4: Firewall and NAT configuration
     - role: raspi_iptables
-      tags: ["raspi", "iptables"]
+      tags: [raspi, iptables]
 
     # Phase 5: Container runtime
     - role: docker
-      tags: ["docker"]
+      tags: [docker]
 
     # Phase 6: VPN connectivity (optional)
     - role: tailscale
-      tags: ["tailscale"]
+      tags: [tailscale]
 
     # Phase 7: DRS services
     - role: journald
-      tags: ["journald"]
+      tags: [journald]
 
     - role: cyclonedds
-      tags: ["cyclonedds"]
+      tags: [cyclonedds]
 
     - role: drs_api_service
-      tags: ["drs", "service", "drs_api_service"]
+      tags: [drs, service, drs_api_service]
 
     - role: drs_ros2_bridge_service
-      tags: ["drs", "service", "drs_ros2_bridge_service"]
+      tags: [drs, service, drs_ros2_bridge_service]
 
     - role: drs_dashboard_service
-      tags: ["drs", "service", "drs_dashboard_service"]
+      tags: [drs, service, drs_dashboard_service]
 
   post_tasks:
     - name: Display installation summary
@@ -188,11 +188,11 @@
 
     - name: Reboot notification
       debug:
-        msg: "A system reboot may be required to apply all configurations."
+        msg: A system reboot may be required to apply all configurations.
       changed_when: true
       notify: reboot_required
 
   handlers:
     - name: Reboot required
       debug:
-        msg: "Please reboot the system to ensure all changes take effect."
+        msg: Please reboot the system to ensure all changes take effect.

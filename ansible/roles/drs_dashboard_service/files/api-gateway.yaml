@@ -1,42 +1,42 @@
 # API Gateway Configuration
 
 server:
-  host: "0.0.0.0"
+  host: 0.0.0.0
   port: 8080
   read_timeout: 30s
   write_timeout: 30s
 
 # API Gateway host module (will be restarted last)
-api_gateway_host: "raspi"
+api_gateway_host: raspi
 
 # Module service definitions
 modules:
   ecu0:
-    address: "192.168.20.1:50051"
+    address: 192.168.20.1:50051
     enabled_services:
-      - "system"
-      - "ptp"
-      - "services"
-      - "disk"
+      - system
+      - ptp
+      - services
+      - disk
 
   ecu1:
-    address: "192.168.20.2:50051"
+    address: 192.168.20.2:50051
     enabled_services:
-      - "system"
-      - "ptp"
-      - "services"
-      - "disk"
+      - system
+      - ptp
+      - services
+      - disk
 
   nas:
-    address: "192.168.10.100:50051"
+    address: 192.168.10.100:50051
     enabled_services:
-      - "system"
-      - "disk" # NAS only enables system and disk monitoring
+      - system
+      - disk # NAS only enables system and disk monitoring
 
   raspi:
-    address: "192.168.20.10:50051"
+    address: 192.168.20.10:50051
     enabled_services:
-      - "system"
+      - system
 
 # gRPC client settings
 grpc:
@@ -45,19 +45,19 @@ grpc:
 
 # ROS2 Bridge settings (single bridge for all modules)
 ros2_bridge:
-  address: "192.168.20.10:50052"
+  address: 192.168.20.10:50052
   enabled: true
 
 # CORS settings for web dashboard
 cors:
   allowed_origins:
-    - "http://localhost:3000" # React dev server
-    - "http://192.168.20.10:3000" # Production dashboard without proxy
+    - http://localhost:3000 # React dev server
+    - http://192.168.20.10:3000 # Production dashboard without proxy
   allowed_methods:
-    - "GET"
-    - "POST"
-    - "PUT"
-    - "DELETE"
+    - GET
+    - POST
+    - PUT
+    - DELETE
   allowed_headers:
-    - "Content-Type"
-    - "Authorization"
+    - Content-Type
+    - Authorization

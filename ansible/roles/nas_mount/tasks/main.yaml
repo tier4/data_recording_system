@@ -14,7 +14,7 @@
 - name: Backup fstab file
   ansible.builtin.copy:
     src: /etc/fstab
-    dest: "/etc/fstab.{{ ansible_date_time.epoch }}.bak"
+    dest: /etc/fstab.{{ ansible_date_time.epoch }}.bak
     remote_src: true
   become: true
   when: create_fstab_backup | bool

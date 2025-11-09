@@ -3,8 +3,8 @@
 
 # DRS Configuration
 drs_ecu_id: 0
-sensing_system_id: "aabbccdd"
-module_id: "eeffgghh"
+sensing_system_id: aabbccdd
+module_id: eeffgghh
 drs_user: "{{ ansible_user }}"
 drs_group: "{{ ansible_user }}"
 drs_install_dir: /opt/drs/install
@@ -15,7 +15,7 @@ ros_domain_id: 1
 
 # CycloneDDS Configuration
 cyclonedds:
-  network_interface: ["lo", "enP1p1s0"]
+  network_interface: [lo, enP1p1s0]
   minimum_socket_receive_buffer_size: 20MB
   ipfrag_time: 3
   ipfrag_high_thresh: 134217728

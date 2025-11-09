@@ -29,7 +29,7 @@
 - name: Copy proto recorder config files
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "/opt/drs/config/{{ item }}"
+    dest: /opt/drs/config/{{ item }}
     owner: root
     group: root
     mode: "0644"

@@ -49,6 +49,7 @@
   filesystem:
     fstype: ext4
     dev: /dev/ssd_vg/ssd_lv
+    # yamllint disable-line rule:quoted-strings
     opts: "-E lazy_itable_init=0,lazy_journal_init=0,stride=64,stripe-width=128"
   become: true
 

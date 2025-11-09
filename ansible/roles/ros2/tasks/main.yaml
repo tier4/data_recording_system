@@ -35,7 +35,7 @@
 
 - name: Download ROS2 APT source package
   ansible.builtin.get_url:
-    url: "https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb"
+    url: https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb
     dest: /tmp/ros2-apt-source.deb
     mode: 0644
 
@@ -86,7 +86,7 @@
     path: /opt/drs/config/drs.env
     # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DOMAIN_ID="
-    line: "export ROS_DOMAIN_ID={{ ros_domain_id }}"
+    line: export ROS_DOMAIN_ID={{ ros_domain_id }}
     state: present
     create: true
   become: true
@@ -96,7 +96,7 @@
     path: /opt/drs/config/drs.env
     # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DISTRO="
-    line: "export ROS_DISTRO=humble"
+    line: export ROS_DISTRO=humble
     state: present
     create: true
   become: true
@@ -106,7 +106,7 @@
     path: /opt/drs/config/drs.env
     # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_LOG_DIR="
-    line: "export ROS_LOG_DIR=/tmp/drs/log"
+    line: export ROS_LOG_DIR=/tmp/drs/log
     state: present
     create: true
   become: true
