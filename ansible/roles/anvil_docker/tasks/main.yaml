@@ -59,7 +59,7 @@
   become: true
 
 - name: Check Docker data directory size
-  ansible.builtin.shell: du -csh /var/lib/docker/
+  ansible.builtin.command: du -csh /var/lib/docker/
   register: docker_size_before
   become: true
   changed_when: false
@@ -77,7 +77,7 @@
   changed_when: true
 
 - name: Check new Docker data directory size
-  ansible.builtin.shell: du -csh /mnt/ssd/docker/
+  ansible.builtin.command: du -csh /mnt/ssd/docker/
   register: docker_size_after
   become: true
   changed_when: false

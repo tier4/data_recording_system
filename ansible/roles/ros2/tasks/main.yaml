@@ -13,7 +13,7 @@
   become: true
 
 - name: Add universe repository
-  ansible.builtin.shell: add-apt-repository -y universe
+  ansible.builtin.command: add-apt-repository -y universe
   become: true
   changed_when: true
 
