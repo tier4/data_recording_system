@@ -10,7 +10,7 @@ drs_group: "{{ ansible_user }}"
 drs_install_dir: /opt/drs/install
 drs_build_type: RelWithDebInfo
 
-# ROS2 Configuration
+# ROS 2 Configuration
 ros_domain_id: 1
 
 # CycloneDDS Configuration

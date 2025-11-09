@@ -17,7 +17,7 @@ The Data Recording System (DRS) is a high-performance sensor data recording syst
 
 - cuda >= 11.8
 - gcc <= 11.x
-- ros2 distro == humble
+- ros 2 distro == humble
 
 For detailed dependency libraries, please refer to [`docker/runtime/Dockerfile`](docker/runtime/Dockerfile).
 

@@ -9,7 +9,7 @@
   <arg name="camera_info_url" default="" />
   <!-- container naem that this ROS node to be loaded -->
   <arg name="container_name" default="" />
-  <!-- flag to use ROS2 intra process -->
+  <!-- flag to use ROS 2 intra process -->
   <arg name="use_intra_process" default="True" />
   <!-- flag to use sensor data QoS -->
   <arg name="use_sensor_data_qos" default="True" />

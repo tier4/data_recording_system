@@ -53,7 +53,7 @@ ansible-playbook -i inventory/localhost.yaml -e @inventory/host_vars/ecu1.yaml s
 - `system`: System-level configurations (Jetpack, journald)
 - `network`: Network configuration (netplan)
 - `time`: Time synchronization (NTP, PTP)
-- `ros2`: ROS2 installation
+- `ros2`: ROS 2 installation
 - `docker`: Docker installation and configuration
 - `drs`: DRS core components
 - `environment`: DRS environment setup
@@ -94,7 +94,7 @@ To see what changes would be made without applying them:
 Edit `inventory/group_vars/all.yaml` to configure:
 
 - DRS IDs (ECU, sensing system, module)
-- ROS2 domain ID
+- ROS 2 domain ID
 - CycloneDDS parameters
 - NAS mount settings
 - Time synchronization settings

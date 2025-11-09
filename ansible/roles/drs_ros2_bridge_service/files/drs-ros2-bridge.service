@@ -1,5 +1,5 @@
 [Unit]
-Description=DRS ROS2 Bridge Service
+Description=DRS ROS 2 Bridge Service
 After=docker.service
 Requires=docker.service
 PartOf=docker.service

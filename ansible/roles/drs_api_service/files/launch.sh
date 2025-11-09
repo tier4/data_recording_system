@@ -9,5 +9,5 @@ if [ -f /opt/drs/config/drs.env ]; then
     source /opt/drs/config/drs.env
 fi
 
-# Launch ROS2 application
+# Launch ROS 2 application
 exec /usr/local/bin/module-manager -config=/opt/drs/config/module-manager.yaml

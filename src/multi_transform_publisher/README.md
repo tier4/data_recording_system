@@ -1,6 +1,6 @@
 # Multi Transform Publisher
 
-A ROS2 node (`multi_transform_publisher`) that publishes multiple static transforms from a single YAML configuration file.
+A ROS 2 node (`multi_transform_publisher`) that publishes multiple static transforms from a single YAML configuration file.
 
 ## Overview
 

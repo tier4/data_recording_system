@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends tzdata locales 
 
 ENV LANG=en_US.UTF-8
 
-# Install basic tools and setup ROS2 repository
+# Install basic tools and setup ROS 2 repository
 RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common curl git python3 python3-pip && \
     add-apt-repository -y universe && \
@@ -31,7 +31,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ROS2 Humble and required packages
+# Install ROS 2 Humble and required packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2 && \
     apt-get clean && \

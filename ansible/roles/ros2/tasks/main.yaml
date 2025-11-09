@@ -1,4 +1,4 @@
-# ROS2 Humble Installation Role for Ubuntu 22.04 (Jammy)
+# ROS 2 Humble Installation Role for Ubuntu 22.04 (Jammy)
 # Setup Sources
 - name: Update apt cache
   ansible.builtin.apt:
@@ -34,13 +34,13 @@
   ansible.builtin.set_fact:
     ros_apt_source_version: "{{ ros_apt_source_release.json.tag_name }}"
 
-- name: Download ROS2 APT source package
+- name: Download ROS 2 APT source package
   ansible.builtin.get_url:
     url: https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb
     dest: /tmp/ros2-apt-source.deb
     mode: 0644
 
-- name: Install ROS2 APT source package
+- name: Install ROS 2 APT source package
   ansible.builtin.apt:
     deb: /tmp/ros2-apt-source.deb
     state: present
@@ -52,7 +52,7 @@
     state: absent
 
 # Install ROS 2 packages
-- name: Update apt cache after adding ROS2 repository
+- name: Update apt cache after adding ROS 2 repository
   ansible.builtin.apt:
     update_cache: true
   become: true
@@ -63,7 +63,7 @@
     update_cache: true
   become: true
 
-- name: Install ROS2 Humble Desktop
+- name: Install ROS 2 Humble Desktop
   ansible.builtin.apt:
     name: ros-humble-desktop
     state: present
@@ -81,7 +81,7 @@
     state: present
   become: true
 
-# ROS2 Environment Configuration
+# ROS 2 Environment Configuration
 - name: Set ROS_DOMAIN_ID in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env

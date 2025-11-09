@@ -43,7 +43,7 @@ grpc:
   timeout: 2s
   max_retry: 1
 
-# ROS2 Bridge settings (single bridge for all modules)
+# ROS 2 Bridge settings (single bridge for all modules)
 ros2_bridge:
   address: 192.168.20.10:50052
   enabled: true

@@ -3,7 +3,7 @@
     path: "{{ playbook_dir }}/../docker/ros2_bridge/build.sh"
   register: docker_build_script
 
-- name: Build DRS ROS2 Bridge Docker image
+- name: Build DRS ROS 2 Bridge Docker image
   ansible.builtin.shell: |
     cd {{ playbook_dir }}/..
     bash docker/ros2_bridge/build.sh

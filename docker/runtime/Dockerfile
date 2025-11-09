@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 ENV LANG=en_US.UTF-8
 
-# Install basic tools and setup ROS2 repository
+# Install basic tools and setup ROS 2 repository
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm /tmp/ros2-apt-source.deb /tmp/ros_apt_version && \
     apt-get update
 
-# Install ROS2 Humble and required packages
+# Install ROS 2 Humble and required packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
@@ -104,7 +104,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     locale-gen en_US.UTF-8 && \
     update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-# Install ROS2 repository and runtime packages
+# Install ROS 2 repository and runtime packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     curl -sSL https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -Po '"tag_name": "\K.*?(?=")' > /tmp/ros_apt_version && \

@@ -1,10 +1,10 @@
 # DRS Launch Service Role
 
-This Ansible role configures a systemd service to launch the DRS (Data Recording System) ROS2 nodes.
+This Ansible role configures a systemd service to launch the DRS (Data Recording System) ROS 2 nodes.
 
 ## Features
 
-- Systemd service management for ROS2 launch files
+- Systemd service management for ROS 2 launch files
 - Full journald integration for centralized logging
 - Resource limits and security hardening
 - Automatic restart on failure
