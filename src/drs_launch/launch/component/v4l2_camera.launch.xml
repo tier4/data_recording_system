@@ -5,9 +5,9 @@
   <arg name="camera_frame_id" default="camera_frame_id" />
   <!-- path to the yaml file that contains parameters for v4l2_camera node -->
   <arg name="v4l2_camera_param_path" default="$(find-pkg-share edge_auto_jetson_launch)/config/v4l2_camera.param.yaml" />
-  <!-- url to the yaml file that contains cameras intrinsic paramters -->
+  <!-- url to the yaml file that contains cameras intrinsic parameters -->
   <arg name="camera_info_url" default="" />
-  <!-- container naem that this ROS node to be loaded -->
+  <!-- container name that this ROS node to be loaded -->
   <arg name="container_name" default="" />
   <!-- flag to use ROS 2 intra process -->
   <arg name="use_intra_process" default="True" />
