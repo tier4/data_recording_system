@@ -25,3 +25,6 @@ src/proto_recorder
 
 # Ansible temporary directories
 .ansible/
+
+# cache
+.cache/
