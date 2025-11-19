@@ -88,6 +88,9 @@
       tags: ['nas', 'sync_to_nas']
       when: nas_address is defined
       
+    - role: extra_apps
+      tags: ['extra_apps']
+      
   post_tasks:
     - name: Display installation summary
       debug:

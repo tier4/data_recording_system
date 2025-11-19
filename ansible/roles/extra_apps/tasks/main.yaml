@@ -1,0 +1,16 @@
+---
+# Extra Apps Installation Role
+# Installs additional applications like FTP client and Firefox
+
+- name: Install FTP client
+  ansible.builtin.apt:
+    name: ftp
+    state: present
+  become: true
+
+- name: Install Firefox
+  ansible.builtin.apt:
+    name: firefox
+    state: present
+  become: true
+
