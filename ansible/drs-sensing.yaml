@@ -1,119 +1,119 @@
----
 # Data Recording System - Local Installation Playbook
 # This playbook installs and configures all components for the DRS on the local host
 
 - name: Setup Data Recording System | Sensing Module
   hosts: "{{ target_host | default('localhost') }}"
-  become: yes
-  gather_facts: yes
-  
+  become: true
+  gather_facts: true
+
   vars:
     # Determine ECU ID from hostname or environment variable
     drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
     sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
     module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
-    
+
   pre_tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
-      
+
   roles:
     - role: ssd_mount
-      tags: ['anvil', 'ssd_mount']
-      
+      tags: [anvil, ssd_mount]
+
     - role: jetpack
-      tags: ['anvil', 'nvidia', 'jetpack']
-      
+      tags: [anvil, nvidia, jetpack]
+
     - role: jetson
-      tags: ['anvil', 'nvidia', 'jetson']
-      
+      tags: [anvil, nvidia, jetson]
+
     - role: journald
-      tags: ['journald']
+      tags: [journald]
 
     - role: netplan
-      tags: ['netplan']
+      tags: [netplan]
       when: netplan_files is defined and netplan_files | length > 0
 
     - role: can_interface
-      tags: ['can']
+      tags: [can]
       when: drs_ecu_id == 0 or drs_ecu_id == '0'
 
     - role: iptables
-      tags: ['iptables']
+      tags: [iptables]
 
     - role: ptp
-      tags: ['ptp']
-      
+      tags: [ptp]
+
     - role: ros2
-      tags: ['ros2']
-      
+      tags: [ros2]
+
     - role: anvil_docker
-      tags: ['anvil', 'docker']
-      
+      tags: [anvil, docker]
+
     - role: drs_env
-      tags: ['drs', 'environment']
-      
+      tags: [drs, environment]
+
     - role: cyclonedds
-      tags: ['cyclonedds']
-      
+      tags: [cyclonedds]
+
     - role: drs
-      tags: ['drs']
-      
+      tags: [drs]
+
     - role: drs_recorder_service
-      tags: ['drs', 'service', 'drs_recorder_service']
-      
+      tags: [drs, service, drs_recorder_service]
+
     - role: drs_sensor_service
-      tags: ['drs', 'service', 'drs_sensor_service']
-      
+      tags: [drs, service, drs_sensor_service]
+
     - role: drs_api_service
-      tags: ['drs', 'service', 'drs_api_service']
-      
+      tags: [drs, service, drs_api_service]
+
     - role: tier4_hdr_camera_driver
-      tags: ['anvil', 'driver', 'tier4_hdr_camera_driver']
-      
+      tags: [anvil, driver, tier4_hdr_camera_driver]
+
     - role: c2_readout_delay_setter
-      tags: ['anvil', 'driver', 'c2_readout_delay_setter']
-      
+      tags: [anvil, driver, c2_readout_delay_setter]
+
     - role: sensor_trigger
-      tags: ['anvil', 'driver', 'sensor_trigger']
-      
+      tags: [anvil, driver, sensor_trigger]
+
     - role: nas_mount
-      tags: ['nas', 'nas_mount']
+      tags: [nas, nas_mount]
       when: nas_address is defined
-      
+
     - role: sync_to_nas
-      tags: ['nas', 'sync_to_nas']
+      tags: [nas, sync_to_nas]
       when: nas_address is defined
-      
+
     - role: extra_apps
-      tags: ['extra_apps']
-      
+      tags: [extra_apps]
+
   post_tasks:
     - name: Display installation summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Data Recording System installation completed!
-          
+
           ECU ID: {{ drs_ecu_id }}
           Sensing System ID: {{ sensing_system_id }}
           Module ID: {{ module_id }}
-          
+
           Services status can be checked with:
           - systemctl status drs-recorder.service
           - systemctl status drs-sensor.service
           - systemctl status drs-api.service
           - systemctl status jetson-clocks.service
-          
+
     - name: Reboot notification
-      debug:
-        msg: "A system reboot may be required to apply all configurations."
+      ansible.builtin.debug:
+        msg: A system reboot may be required to apply all configurations.
       changed_when: true
       notify: reboot_required
-      
+
   handlers:
-    - name: reboot_required
-      debug:
-        msg: "Please reboot the system to ensure all changes take effect."
+    - name: Reboot required
+      ansible.builtin.debug:
+        msg: Please reboot the system to ensure all changes take effect.
+      listen: reboot_required

@@ -1,12 +1,11 @@
----
 - name: Install lvm2
-  apt:
+  ansible.builtin.apt:
     name: lvm2
     state: present
   become: true
 
 - name: Check if PVs exist
-  command: pvdisplay {{ item }}
+  ansible.builtin.command: pvdisplay {{ item }}
   register: pv_check
   failed_when: false
   changed_when: false
@@ -16,52 +15,56 @@
   become: true
 
 - name: Create PVs
-  command: pvcreate {{ item.item }}
+  ansible.builtin.command: pvcreate {{ item.item }}
   when: item.rc != 0
   loop: "{{ pv_check.results }}"
   become: true
+  changed_when: true
 
 - name: Check if VG exists
-  command: vgdisplay ssd_vg
+  ansible.builtin.command: vgdisplay ssd_vg
   register: vg_check
   failed_when: false
   changed_when: false
   become: true
 
 - name: Create VG
-  command: vgcreate ssd_vg /dev/nvme0n1 /dev/nvme1n1
+  ansible.builtin.command: vgcreate ssd_vg /dev/nvme0n1 /dev/nvme1n1
   when: vg_check.rc != 0
   become: true
+  changed_when: true
 
 - name: Check if LV exists
-  command: lvdisplay ssd_vg/ssd_lv
+  ansible.builtin.command: lvdisplay ssd_vg/ssd_lv
   register: lv_check
   failed_when: false
   changed_when: false
   become: true
 
 - name: Create striped LV
-  command: >
+  ansible.builtin.command: >
     lvcreate -i2 -I256 -l 100%FREE -n ssd_lv ssd_vg
   when: lv_check.rc != 0
   become: true
+  changed_when: true
 
 - name: Make ext4 filesystem
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/ssd_vg/ssd_lv
+    # yamllint disable-line rule:quoted-strings
     opts: "-E lazy_itable_init=0,lazy_journal_init=0,stride=64,stripe-width=128"
   become: true
 
 - name: Ensure mountpoint exists
-  file:
+  ansible.builtin.file:
     path: /mnt/ssd
     state: directory
     mode: "0755"
   become: true
 
 - name: Mount and add to fstab
-  mount:
+  ansible.posix.mount:
     path: /mnt/ssd
     src: /dev/ssd_vg/ssd_lv
     fstype: ext4

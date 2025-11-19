@@ -1,11 +1,10 @@
----
 - name: Check if Docker build script exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ playbook_dir }}/../docker/ros2_bridge/build.sh"
   register: docker_build_script
 
-- name: Build DRS ROS2 Bridge Docker image
-  shell: |
+- name: Build DRS ROS 2 Bridge Docker image
+  ansible.builtin.shell: |
     cd {{ playbook_dir }}/..
     bash docker/ros2_bridge/build.sh
   when: docker_build_script.stat.exists
@@ -13,40 +12,40 @@
   changed_when: true
 
 - name: Create DRS service directory for ros2_bridge
-  file:
+  ansible.builtin.file:
     path: /opt/drs/service/drs_ros2_bridge
     state: directory
     owner: root
     group: root
-    mode: '0755'
-  become: yes
+    mode: "0755"
+  become: true
 
 - name: Copy docker-compose.yml file
-  copy:
+  ansible.builtin.copy:
     src: docker-compose.yml
     dest: /opt/drs/service/drs_ros2_bridge/docker-compose.yml
     owner: root
     group: root
-    mode: '0644'
-  become: yes
+    mode: "0644"
+  become: true
 
 - name: Copy drs-ros2-bridge systemd service file
-  copy:
+  ansible.builtin.copy:
     src: drs-ros2-bridge.service
     dest: /etc/systemd/system/drs-ros2-bridge.service
     owner: root
     group: root
-    mode: '0644'
-  become: yes
+    mode: "0644"
+  become: true
 
 - name: Reload systemd daemon
-  systemd:
-    daemon_reload: yes
-  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
 
 - name: Enable and start drs-ros2-bridge service
-  systemd:
+  ansible.builtin.systemd:
     name: drs-ros2-bridge
-    enabled: yes
+    enabled: true
     state: started
-  become: yes
+  become: true

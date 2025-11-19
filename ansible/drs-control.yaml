@@ -1,34 +1,33 @@
----
 # Data Recording System - Local Installation Playbook
 # This playbook installs and configures all components for the DRS on the local host
 
 - name: Setup Data Recording System | Control Module
   hosts: "{{ target_host | default('localhost') }}"
-  become: yes
-  gather_facts: yes
-  
+  become: true
+  gather_facts: true
+
   vars:
     # Determine ECU ID from hostname or environment variable
     drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
     sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
     module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
-    
+
   pre_tasks:
     - name: Disable cloud-init permanently
-      copy:
+      ansible.builtin.copy:
         dest: /etc/cloud/cloud-init.disabled
         content: "disabled\n"
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
     - name: Remove cloud-init netplan
-      file:
+      ansible.builtin.file:
         path: /etc/netplan/50-cloud-init.yaml
         state: absent
 
     - name: Ask for custom hostname if not specified
-      pause:
+      ansible.builtin.pause:
         prompt: |
 
           Current hostname: {{ ansible_hostname }}
@@ -40,14 +39,14 @@
         - custom_hostname is not defined or custom_hostname == ""
 
     - name: Set custom_hostname from user input
-      set_fact:
+      ansible.builtin.set_fact:
         custom_hostname: "{{ hostname_input.user_input }}"
       when:
         - hostname_input.user_input is defined
         - hostname_input.user_input != ""
 
     - name: Ask for WiFi AP password
-      pause:
+      ansible.builtin.pause:
         prompt: |
 
           Enter WiFi Access Point password (8-63 characters required):
@@ -56,7 +55,7 @@
         - ap_wpa_passphrase is not defined or ap_wpa_passphrase == "" or ap_wpa_passphrase == "comlops1"
 
     - name: Validate and set WiFi password
-      set_fact:
+      ansible.builtin.set_fact:
         ap_wpa_passphrase: "{{ wifi_password_input.user_input }}"
       when:
         - wifi_password_input is defined
@@ -64,7 +63,7 @@
         - wifi_password_input.user_input | length < 8 or wifi_password_input.user_input | length > 63
 
     - name: Apply hostname change
-      hostname:
+      ansible.builtin.hostname:
         name: "{{ custom_hostname }}"
         use: systemd
       when:
@@ -74,15 +73,18 @@
       register: hostname_changed
 
     - name: Ensure localhost entry in /etc/hosts
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/hosts
+        # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.0\.1\s+'
         line: "127.0.0.1\tlocalhost"
-        create: yes
+        create: true
+        mode: "0644"
 
     - name: Update /etc/hosts with new hostname
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/hosts
+        # yamllint disable-line rule:quoted-strings
         regexp: '^127\.0\.1\.1\s+'
         line: "127.0.1.1\t{{ custom_hostname | default(ansible_hostname) }}"
       when:
@@ -90,16 +92,16 @@
         - custom_hostname != ""
 
     - name: Refresh ansible facts after hostname change
-      setup:
+      ansible.builtin.setup:
       when: hostname_changed is changed
 
     - name: Set dynamic AP SSID based on hostname
-      set_fact:
+      ansible.builtin.set_fact:
         ap_ssid: "{{ custom_hostname | default(ansible_hostname) }}-ap"
       when: ap_ssid is not defined
 
     - name: Display configuration summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Configuration Summary:
           =====================
@@ -112,59 +114,59 @@
           WiFi Password: [configured]
 
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
 
   roles:
     # Phase 1: Time synchronization setup
     - role: raspi_time_sync
-      tags: ['raspi', 'raspi_time_sync']
+      tags: [raspi, raspi_time_sync]
 
     # Phase 2: Network configuration (VLAN, interfaces)
     - role: raspi_network
-      tags: ['raspi', 'network']
+      tags: [raspi, network]
 
     # Phase 2: WiFi Access Point setup
     - role: raspi_hostapd
-      tags: ['raspi', 'hostapd']
+      tags: [raspi, hostapd]
 
     # Phase 3: DHCP services (DNS is handled by systemd-resolved)
     - role: raspi_dhcp
-      tags: ['raspi', 'dhcp']
+      tags: [raspi, dhcp]
 
     # Phase 4: Firewall and NAT configuration
     - role: raspi_iptables
-      tags: ['raspi', 'iptables']
+      tags: [raspi, iptables]
 
     # Phase 5: Container runtime
     - role: docker
-      tags: ['docker']
+      tags: [docker]
 
     # Phase 6: VPN connectivity (optional)
     - role: tailscale
-      tags: ['tailscale']
+      tags: [tailscale]
 
     # Phase 7: DRS services
     - role: journald
-      tags: ['journald']
+      tags: [journald]
 
     - role: cyclonedds
-      tags: ['cyclonedds']
+      tags: [cyclonedds]
 
     - role: drs_api_service
-      tags: ['drs', 'service', 'drs_api_service']
+      tags: [drs, service, drs_api_service]
 
     - role: drs_ros2_bridge_service
-      tags: ['drs', 'service', 'drs_ros2_bridge_service']
+      tags: [drs, service, drs_ros2_bridge_service]
 
     - role: drs_dashboard_service
-      tags: ['drs', 'service', 'drs_dashboard_service']
+      tags: [drs, service, drs_dashboard_service]
 
   post_tasks:
     - name: Display installation summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Raspberry Pi Control Module configuration complete!
 
@@ -184,14 +186,15 @@
           - systemctl status drs-api.service
           - systemctl status drs-dashboard.service
           - systemctl status drs-ros2-bridge.service
-          
+
     - name: Reboot notification
-      debug:
-        msg: "A system reboot may be required to apply all configurations."
+      ansible.builtin.debug:
+        msg: A system reboot may be required to apply all configurations.
       changed_when: true
       notify: reboot_required
-      
+
   handlers:
-    - name: reboot_required
-      debug:
-        msg: "Please reboot the system to ensure all changes take effect."
+    - name: Reboot required
+      ansible.builtin.debug:
+        msg: Please reboot the system to ensure all changes take effect.
+      listen: reboot_required

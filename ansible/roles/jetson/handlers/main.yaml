@@ -1,4 +1,4 @@
----
-- name: reboot_required
-  debug:
-    msg: "System reboot is required to apply Jetson power mode changes. Please reboot at your convenience."
+- name: Reboot required
+  ansible.builtin.debug:
+    msg: System reboot is required to apply Jetson power mode changes. Please reboot at your convenience.
+  listen: reboot_required

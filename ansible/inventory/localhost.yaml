@@ -1,4 +1,3 @@
----
 # Local inventory file for running ansible on the same host
 
 all:

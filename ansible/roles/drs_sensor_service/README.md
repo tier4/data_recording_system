@@ -1,10 +1,10 @@
 # DRS Launch Service Role
 
-This Ansible role configures a systemd service to launch the DRS (Data Recording System) ROS2 nodes.
+This Ansible role configures a systemd service to launch the DRS (Data Recording System) ROS 2 nodes.
 
 ## Features
 
-- Systemd service management for ROS2 launch files
+- Systemd service management for ROS 2 launch files
 - Full journald integration for centralized logging
 - Resource limits and security hardening
 - Automatic restart on failure
@@ -13,10 +13,12 @@ This Ansible role configures a systemd service to launch the DRS (Data Recording
 ## Role Variables
 
 ### Required Variables
+
 - `drs_user`: User to run the service (default: ansible_user or 'nvidia')
 - `drs_group`: Group for the service (default: ansible_user or 'nvidia')
 
 ### Optional Variables
+
 - `drs_install_dir`: DRS installation directory (default: /opt/drs/install)
 - `ros_domain_id`: ROS domain ID (default: 0)
 - `ros_localhost_only`: Restrict ROS to localhost (default: 0)
@@ -26,6 +28,7 @@ This Ansible role configures a systemd service to launch the DRS (Data Recording
 - `drs_extra_env`: Dictionary of extra environment variables (default: {})
 
 ### Logging Configuration
+
 - `drs_log_priority`: Log priority level (default: info)
 - `drs_log_rate_limit_interval`: Rate limit interval (default: 30s)
 - `drs_log_rate_limit_burst`: Rate limit burst (default: 1000)
@@ -57,6 +60,7 @@ This Ansible role configures a systemd service to launch the DRS (Data Recording
 ## Service Management
 
 ### View logs
+
 ```bash
 # Real-time logs
 journalctl -u drs-launch -f
@@ -69,6 +73,7 @@ journalctl -u drs-launch -p err
 ```
 
 ### Service control
+
 ```bash
 # Check status
 systemctl status drs-launch

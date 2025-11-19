@@ -4,7 +4,7 @@
       - ros-humble-rmw-cyclonedds-cpp
     state: present
   become: true
-  failed_when: false  # Allow failure if ROS2 is not installed
+  failed_when: false # Allow failure if ROS 2 is not installed
 
 - name: Create cyclonedds directory
   ansible.builtin.file:

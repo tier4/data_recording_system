@@ -14,3 +14,5 @@ jobs:
         uses: autowarefoundation/autoware-github-actions/pre-commit@v1
         with:
           pre-commit-config: .pre-commit-config-ansible.yaml
+        env:
+          ANSIBLE_LINT_CONFIG: .ansible-lint

@@ -1,4 +1,3 @@
----
 - name: Create sync_to_nas directory
   ansible.builtin.file:
     path: "{{ sync_to_nas_script_path | dirname }}"
@@ -7,44 +6,44 @@
   become: true
 
 - name: Create sync script from template
-  template:
+  ansible.builtin.template:
     src: sync_to_nas.sh.j2
     dest: "{{ sync_to_nas_script_path }}"
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   register: sync_script
   become: true
 
 - name: Create systemd service file
-  template:
+  ansible.builtin.template:
     src: sync-to-nas.service.j2
     dest: /etc/systemd/system/sync-to-nas.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: systemd_service
   become: true
 
 - name: Create systemd timer file
-  template:
+  ansible.builtin.template:
     src: sync-to-nas.timer.j2
     dest: /etc/systemd/system/sync-to-nas.timer
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: systemd_timer
   become: true
 
 - name: Reload systemd if service files changed
-  systemd:
-    daemon_reload: yes
+  ansible.builtin.systemd:
+    daemon_reload: true
   when: systemd_service.changed or systemd_timer.changed
   become: true
 
 - name: Enable and start sync-to-nas timer
-  systemd:
+  ansible.builtin.systemd:
     name: sync-to-nas.timer
     state: started
-    enabled: yes
+    enabled: true
   become: true

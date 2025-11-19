@@ -1,4 +1,3 @@
----
 drs_user: "{{ ansible_user | default('nvidia') }}"
 drs_group: "{{ ansible_user | default('nvidia') }}"
 

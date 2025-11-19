@@ -27,7 +27,7 @@ else
     CONFIG_FILE="record_topics_ecu0.yaml"
 fi
 
-# Launch ROS2 application
+# Launch ROS 2 application
 exec ros2 launch proto_recorder proto_recorder.launch.xml \
     uri:={{ drs_recorder_data_dir }}/${SENSING_SYSTEM_ID}_${MODULE_ID} \
     topics_file:=/opt/drs/config/${CONFIG_FILE} \

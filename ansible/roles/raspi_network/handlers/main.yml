@@ -1,5 +1,4 @@
----
-- name: reload udev
-  systemd:
+- name: Reload udev
+  ansible.builtin.systemd:
     name: systemd-udevd
     state: reloaded

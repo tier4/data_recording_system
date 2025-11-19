@@ -1,28 +1,28 @@
----
 # Simplified Tailscale installation using official script
 
 - name: Download and run Tailscale official installer
-  shell: |
+  ansible.builtin.shell: |
     curl -fsSL https://tailscale.com/install.sh | sh
   args:
     creates: /usr/bin/tailscale
-  become: yes
+  become: true
 
 - name: Check Tailscale status
-  command: tailscale status
+  ansible.builtin.command: tailscale status
   register: tailscale_status
   changed_when: false
   failed_when: false
 
 - name: Authenticate with Tailscale (if authkey provided)
-  command: tailscale up --authkey={{ tailscale_authkey }}
+  ansible.builtin.command: tailscale up --authkey={{ tailscale_authkey }}
   when:
     - tailscale_authkey is defined
     - tailscale_authkey != ""
     - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+  changed_when: true
 
 - name: Display manual authentication instructions
-  debug:
+  ansible.builtin.debug:
     msg: |
       Tailscale installed successfully!
 
@@ -35,11 +35,11 @@
     - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
 
 - name: Enable IP forwarding for subnet routing (optional)
-  sysctl:
+  ansible.posix.sysctl:
     name: "{{ item }}"
-    value: '1'
+    value: "1"
     state: present
-    reload: yes
+    reload: true
   loop:
     - net.ipv4.ip_forward
     - net.ipv6.conf.all.forwarding

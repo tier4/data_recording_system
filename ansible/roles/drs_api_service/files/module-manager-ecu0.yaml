@@ -3,17 +3,17 @@ server:
 
 disk:
   enabled: true
-  monitor_path: "/mnt/ssd/data"
+  monitor_path: /mnt/ssd/data
 
 services:
   enabled: true
   services:
     drs_sensor:
-      systemd_name: "drs-sensor.service"
-      description: "Sensor service"
+      systemd_name: drs-sensor.service
+      description: Sensor service
     drs_recorder:
-      systemd_name: "drs-recorder.service"
-      description: "Data recording service"
+      systemd_name: drs-recorder.service
+      description: Data recording service
 
 system:
   enable_reboot: true
@@ -22,7 +22,7 @@ system:
 ptp:
   enabled: true
   remote_devices:
-    - name: "front_lidar"
-      ip_address: "192.168.2.201"
-    - name: "right_lidar"
-      ip_address: "192.168.2.203"
+    - name: front_lidar
+      ip_address: 192.168.2.201
+    - name: right_lidar
+      ip_address: 192.168.2.203

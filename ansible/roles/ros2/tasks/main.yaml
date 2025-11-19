@@ -1,9 +1,8 @@
----
-# ROS2 Humble Installation Role for Ubuntu 22.04 (Jammy)
+# ROS 2 Humble Installation Role for Ubuntu 22.04 (Jammy)
 # Setup Sources
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   become: true
 
@@ -14,8 +13,9 @@
   become: true
 
 - name: Add universe repository
-  shell: add-apt-repository -y universe
-  become: yes
+  ansible.builtin.command: add-apt-repository -y universe
+  become: true
+  changed_when: true
 
 - name: Install curl
   ansible.builtin.apt:
@@ -27,20 +27,20 @@
   ansible.builtin.uri:
     url: https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest
     method: GET
-    return_content: yes
+    return_content: true
   register: ros_apt_source_release
 
 - name: Extract ROS APT source version
   ansible.builtin.set_fact:
     ros_apt_source_version: "{{ ros_apt_source_release.json.tag_name }}"
 
-- name: Download ROS2 APT source package
+- name: Download ROS 2 APT source package
   ansible.builtin.get_url:
-    url: "https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb"
+    url: https://github.com/ros-infrastructure/ros-apt-source/releases/download/{{ ros_apt_source_version }}/ros2-apt-source_{{ ros_apt_source_version }}.{{ ansible_distribution_release }}_all.deb
     dest: /tmp/ros2-apt-source.deb
     mode: 0644
 
-- name: Install ROS2 APT source package
+- name: Install ROS 2 APT source package
   ansible.builtin.apt:
     deb: /tmp/ros2-apt-source.deb
     state: present
@@ -52,18 +52,18 @@
     state: absent
 
 # Install ROS 2 packages
-- name: Update apt cache after adding ROS2 repository
+- name: Update apt cache after adding ROS 2 repository
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
   become: true
 
 - name: Upgrade system packages (important for Ubuntu 22.04)
   ansible.builtin.apt:
-    upgrade: yes
-    update_cache: yes
+    upgrade: true
+    update_cache: true
   become: true
 
-- name: Install ROS2 Humble Desktop
+- name: Install ROS 2 Humble Desktop
   ansible.builtin.apt:
     name: ros-humble-desktop
     state: present
@@ -81,30 +81,36 @@
     state: present
   become: true
 
-# ROS2 Environment Configuration
+# ROS 2 Environment Configuration
 - name: Set ROS_DOMAIN_ID in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DOMAIN_ID="
-    line: "export ROS_DOMAIN_ID={{ ros_domain_id }}"
+    line: export ROS_DOMAIN_ID={{ ros_domain_id }}
     state: present
-    create: yes
+    create: true
+    mode: "0644"
   become: true
 
 - name: Set ROS_DISTRO in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_DISTRO="
-    line: "export ROS_DISTRO=humble"
+    line: export ROS_DISTRO=humble
     state: present
-    create: yes
+    create: true
+    mode: "0644"
   become: true
 
 - name: Set ROS_LOG_DIR in drs.env
   ansible.builtin.lineinfile:
     path: /opt/drs/config/drs.env
+    # yamllint disable-line rule:quoted-strings
     regexp: "^export ROS_LOG_DIR="
-    line: "export ROS_LOG_DIR=/tmp/drs/log"
+    line: export ROS_LOG_DIR=/tmp/drs/log
     state: present
-    create: yes
+    create: true
+    mode: "0644"
   become: true
