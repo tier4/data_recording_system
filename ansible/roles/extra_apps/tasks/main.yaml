@@ -13,4 +13,3 @@
     name: firefox
     state: present
   become: true
-
