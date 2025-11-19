@@ -1,9 +1,8 @@
----
 - name: Create DRS installation directory
-  file:
+  ansible.builtin.file:
     path: "{{ drs_install_dir }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
   become: true
@@ -20,24 +19,26 @@
 #     HOME: "/home/{{ drs_user }}"
 
 - name: Initialize rosdep system-wide
-  shell: |
+  ansible.builtin.shell: |
     rosdep init
   args:
     executable: /bin/bash
   become: true
   ignore_errors: true
+  changed_when: true
 
 - name: Update rosdep for user
-  shell: |
+  ansible.builtin.shell: |
     rosdep update
   args:
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
+  changed_when: true
 
 - name: Install ROS dependencies with rosdep
-  shell: |
+  ansible.builtin.shell: |
     cd {{ drs_src_dir }}
     source /opt/ros/humble/setup.bash
     rosdep install -y -r --from-paths src --ignore-src
@@ -45,10 +46,11 @@
     executable: /bin/bash
   become_user: "{{ drs_user }}"
   environment:
-    HOME: "/home/{{ drs_user }}"
+    HOME: /home/{{ drs_user }}
+  changed_when: true
 
 - name: Build DRS packages directly to installation directory
-  shell: |
+  ansible.builtin.shell: |
     cd {{ drs_src_dir }}
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
@@ -56,3 +58,4 @@
     chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
   args:
     executable: /bin/bash
+  changed_when: true

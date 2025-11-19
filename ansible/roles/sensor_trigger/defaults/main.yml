@@ -1,4 +1,3 @@
----
 sensor_trigger_user: "{{ ansible_user | default(ansible_env.USER) }}"
 sensor_trigger_rtprio: 85
 sensor_trigger_memlock: infinity

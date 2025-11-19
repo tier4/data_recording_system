@@ -1,6 +1,5 @@
----
 - name: Install hostapd and related packages
-  apt:
+  ansible.builtin.apt:
     name:
       - hostapd
       - wireless-tools
@@ -10,30 +9,32 @@
     cache_valid_time: 3600
 
 - name: Stop hostapd service temporarily
-  systemd:
+  ansible.builtin.systemd:
     name: hostapd
     state: stopped
 
 - name: Configure hostapd
-  template:
+  ansible.builtin.template:
     src: hostapd.conf.j2
     dest: /etc/hostapd/hostapd.conf
-    mode: '0600'
-    backup: yes
+    mode: "0600"
+    backup: true
 
 - name: Configure hostapd daemon
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/hostapd
-    regexp: '^#?DAEMON_CONF='
-    line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
-    create: yes
+    # yamllint disable-line rule:quoted-strings
+    regexp: "^#?DAEMON_CONF="
+    line: DAEMON_CONF="/etc/hostapd/hostapd.conf"
+    create: true
+    mode: "0644"
 
 - name: Unmask hostapd service
-  systemd:
+  ansible.builtin.systemd:
     name: hostapd
-    masked: no
+    masked: false
 
 - name: Enable hostapd
-  systemd:
+  ansible.builtin.systemd:
     name: hostapd
-    enabled: yes
+    enabled: true

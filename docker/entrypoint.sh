@@ -28,13 +28,13 @@ else
     cp /etc/bash.bashrc "$HOME/.bashrc"
     chown "$USER_NAME:$GROUP_NAME" "$HOME/.bashrc"
 
-    # Source ROS2
+    # Source ROS 2
     source "/opt/ros/$ROS_DISTRO/setup.bash"
     source /opt/drs/install/setup.bash
 
     # Set working directory
     cd "$HOME"
-    
+
     # Prepare runtime directory
     mkdir -m 700 /run/user/$USER_ID
     chown "$USER_NAME":"$GROUP_NAME" /run/user/$USER_ID

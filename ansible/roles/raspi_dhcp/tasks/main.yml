@@ -1,25 +1,24 @@
----
 - name: Install dnsmasq
-  apt:
+  ansible.builtin.apt:
     name: dnsmasq
     state: present
     update_cache: true
     cache_valid_time: 3600
 
 - name: Ensure systemd-resolved is enabled and running
-  systemd:
+  ansible.builtin.systemd:
     name: systemd-resolved
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Configure dnsmasq for DHCP only (disable DNS)
-  template:
+  ansible.builtin.template:
     src: 99-drs-dhcp.conf.j2
     dest: /etc/dnsmasq.d/99-drs-dhcp.conf
-    backup: yes
+    backup: true
+    mode: "0644"
 
 - name: Enable dnsmasq service
-  systemd:
+  ansible.builtin.systemd:
     name: dnsmasq
-    enabled: yes
-
+    enabled: true

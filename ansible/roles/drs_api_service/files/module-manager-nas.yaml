@@ -2,8 +2,8 @@ server:
   port: 50051
 
 disk:
-  enabled: true 
-  monitor_path: "/share/data"
+  enabled: true
+  monitor_path: /share/data
 
 services:
   enabled: false
