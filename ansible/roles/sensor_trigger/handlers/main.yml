@@ -3,7 +3,9 @@
     name: udev
     state: reloaded
   become: true
+  listen: reload udev
 
 - name: User logout required
   ansible.builtin.debug:
     msg: User {{ sensor_trigger_user }} needs to logout and login again for group changes to take effect
+  listen: user logout required

@@ -2,3 +2,4 @@
   ansible.builtin.systemd:
     name: chrony
     state: restarted
+  listen: restart chrony

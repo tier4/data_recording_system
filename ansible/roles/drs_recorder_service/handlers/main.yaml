@@ -2,9 +2,11 @@
   ansible.builtin.systemd:
     daemon_reload: true
   become: true
+  listen: reload systemd
 
 - name: Restart drs-recorder
   ansible.builtin.systemd:
     name: drs-recorder.service
     state: restarted
   become: true
+  listen: restart drs-recorder

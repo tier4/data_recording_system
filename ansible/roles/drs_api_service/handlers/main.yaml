@@ -2,9 +2,11 @@
   become: true
   ansible.builtin.systemd:
     daemon_reload: true
+  listen: reload systemd
 
 - name: Restart drs-api
   become: true
   ansible.builtin.systemd:
     name: drs-api
     state: restarted
+  listen: restart drs-api

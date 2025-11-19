@@ -113,3 +113,4 @@
     - name: Reboot required
       ansible.builtin.debug:
         msg: Please reboot the system to ensure all changes take effect.
+      listen: reboot_required
