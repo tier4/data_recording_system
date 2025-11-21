@@ -59,6 +59,7 @@
     "mgmt",
     "mmcblk",
     "mminit",
+    "navsat",
     "ncom",
     "nebula",
     "netfilter",
@@ -95,6 +96,8 @@
     "wsize",
     "zoneinfo"
   ],
-  "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],
+  "import": [
+    "https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"
+  ],
   "useGitignore": true
 }
