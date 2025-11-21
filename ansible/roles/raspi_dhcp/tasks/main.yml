@@ -11,6 +11,19 @@
     state: started
     enabled: true
 
+- name: Create dnsmasq service override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/dnsmasq.service.d
+    state: directory
+    mode: "0755"
+
+- name: Configure dnsmasq service override
+  ansible.builtin.template:
+    src: override.conf.j2
+    dest: /etc/systemd/system/dnsmasq.service.d/override.conf
+    mode: "0644"
+  register: dnsmasq_override
+
 - name: Configure dnsmasq for DHCP only (disable DNS)
   ansible.builtin.template:
     src: 99-drs-dhcp.conf.j2
@@ -18,7 +31,13 @@
     backup: true
     mode: "0644"
 
-- name: Enable dnsmasq service
+- name: Force systemd reload if override changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: dnsmasq_override.changed
+
+- name: Enable and start dnsmasq service
   ansible.builtin.systemd:
     name: dnsmasq
     enabled: true
+    state: started
