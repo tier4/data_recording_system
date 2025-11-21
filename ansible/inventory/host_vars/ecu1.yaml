@@ -11,6 +11,8 @@ netplan_files:
 
 # PTP Configuration
 ptp:
+  time_sync_type: GNSS # Always use GNSS (Standard PTP) for ECU1 as it is a slave
+  ntp_server: ntp.nict.jp # Placeholder, not used in GNSS mode
   master_port: enP1p1s0
   slave_ports:
     - eqos0

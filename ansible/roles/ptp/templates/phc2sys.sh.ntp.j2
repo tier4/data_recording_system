@@ -1,0 +1,22 @@
+#!/bin/bash
+# PHC synchronization script
+
+# Exit on error
+set -e
+
+# Synchronize system time with NTP once at startup
+chronyd -q -t 15 -n 'server {{ ptp.ntp_server }} iburst'
+
+# Initialize PHCs
+{% for port in ptp.slave_ports %}
+/usr/sbin/phc_ctl {{ port }} set
+{% endfor %}
+
+# Synchronize PHCs with system clock (NTP-synchronized system time)
+# System time (CLOCK_REALTIME) is the source, PHCs are the targets
+{% for port in ptp.slave_ports %}
+/usr/sbin/phc2sys -s CLOCK_REALTIME -c {{ port }} -w -m --step_threshold=1 &
+{% endfor %}
+
+# Wait for all background processes
+wait
