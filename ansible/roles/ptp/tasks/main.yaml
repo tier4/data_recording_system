@@ -6,6 +6,47 @@
     update_cache: false
   become: true
 
+- name: Install chrony for NTP time synchronization
+  ansible.builtin.apt:
+    name:
+      - chrony
+    state: present
+    update_cache: false
+  become: true
+  when: ptp.time_sync_type == 'NTP'
+
+- name: Ensure chrony configuration directory exists
+  ansible.builtin.file:
+    path: /etc/chrony/chrony.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  when: ptp.time_sync_type == 'NTP'
+
+- name: Configure chrony for NTP synchronization
+  ansible.builtin.copy:
+    content: |
+      # NTP server configuration for PTP time sync type
+      server {{ ptp.ntp_server }} iburst
+      makestep 1.0 3
+    dest: /etc/chrony/chrony.conf.d/drs-ntp.conf
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: ptp.time_sync_type == 'NTP'
+
+- name: Disable chrony service (used only for one-time sync in phc2sys.sh)
+  ansible.builtin.systemd:
+    name: chrony
+    enabled: false
+    state: stopped
+  become: true
+  when: ptp.time_sync_type == 'NTP'
+  ignore_errors: true
+
 - name: Create service directory
   ansible.builtin.file:
     path: "{{ ptp_service_dir }}"
@@ -15,7 +56,7 @@
     mode: "0755"
   become: true
 
-- name: Deploy ptp4l configuration file
+- name: Deploy ptp4l configuration file (GNSS mode)
   ansible.builtin.template:
     src: ptp4l.conf.j2
     dest: "{{ ptp_service_dir }}/ptp4l.conf"
@@ -23,8 +64,19 @@
     group: root
     mode: "0644"
   become: true
+  when: ptp.time_sync_type == 'GNSS'
 
-- name: Deploy phc2sys startup script
+- name: Deploy ptp4l configuration file (NTP mode)
+  ansible.builtin.template:
+    src: ptp4l.conf.ntp.j2
+    dest: "{{ ptp_service_dir }}/ptp4l.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: ptp.time_sync_type == 'NTP'
+
+- name: Deploy phc2sys startup script (GNSS mode)
   ansible.builtin.template:
     src: phc2sys.sh.j2
     dest: "{{ ptp_service_dir }}/phc2sys.sh"
@@ -32,6 +84,17 @@
     group: root
     mode: "0755"
   become: true
+  when: ptp.time_sync_type == 'GNSS'
+
+- name: Deploy phc2sys startup script (NTP mode)
+  ansible.builtin.template:
+    src: phc2sys.sh.ntp.j2
+    dest: "{{ ptp_service_dir }}/phc2sys.sh"
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  when: ptp.time_sync_type == 'NTP'
 
 - name: Deploy ptp4l systemd service file
   ansible.builtin.template:

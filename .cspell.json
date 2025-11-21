@@ -93,7 +93,8 @@
     "wlan",
     "wpasupplicant",
     "wsize",
-    "zoneinfo"
+    "zoneinfo",
+    "chronyd"
   ],
   "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],
   "useGitignore": true

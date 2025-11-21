@@ -1,4 +1,12 @@
 ptp:
+  # Time synchronization type: 'GNSS' or 'NTP'
+  # GNSS: Use GNSS/INS as Grandmaster (GM) for PTP
+  # NTP: Sync system time with NTP once at startup, then use PTP for device synchronization
+  time_sync_type: GNSS
+
+  # NTP Server (used when time_sync_type is NTP)
+  ntp_server: ntp.nict.jp
+
   # Port configuration
   master_port: mgbe0
   slave_ports:
