@@ -42,3 +42,7 @@ topics:
   - name: /sensing/ins/oxts/velocity
     min_rate: 12.5
     max_rate: 55.0
+{% if drs_enable_vehicle_can %}
+  - name: /vehicle/from_can_bus
+{% endif %}
+

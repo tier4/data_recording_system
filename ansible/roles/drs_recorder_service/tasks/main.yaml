@@ -26,9 +26,9 @@
   become: true
   notify: restart drs-recorder
 
-- name: Copy proto recorder config files
-  ansible.builtin.copy:
-    src: "{{ item }}"
+- name: Create topic recording config files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
     dest: /opt/drs/config/{{ item }}
     owner: root
     group: root
@@ -37,7 +37,16 @@
   loop:
     - record_topics_ecu0.yaml
     - record_topics_ecu1.yaml
-    - mcap_options.yaml
+  notify: restart drs-recorder
+
+- name: Copy mcap options
+  ansible.builtin.copy:
+    src: mcap_options.yaml
+    dest: /opt/drs/config/mcap_options.yaml
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
   notify: restart drs-recorder
 
 - name: Create systemd service file

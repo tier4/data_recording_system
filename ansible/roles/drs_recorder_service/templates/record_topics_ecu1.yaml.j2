@@ -29,3 +29,30 @@ topics:
   - name: /sensing/lidar/left/nebula_packets
     min_rate: 9.0
     max_rate: 15.0
+{% if drs_enable_fisheye %}
+  - name: /sensing/camera/camera8/image_raw/compressed
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera9/image_raw/compressed
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera10/image_raw/compressed
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera11/image_raw/compressed
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera8/camera_info
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera9/camera_info
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera10/camera_info
+    min_rate: 18.0
+    max_rate: 21.0
+  - name: /sensing/camera/camera11/camera_info
+    min_rate: 18.0
+    max_rate: 21.0
+{% endif %}
+

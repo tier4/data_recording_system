@@ -52,3 +52,8 @@ journald_system_max_use: 500M
 # Sensor Trigger Configuration
 sensor_trigger_rtprio: 85
 sensor_trigger_memlock: infinity
+
+# DRS Feature Flags (can be overridden in host_vars)
+drs_enable_vehicle_can: false
+drs_enable_fisheye: false
+drs_lidar_driver_type: nebula  # nebula or seyond

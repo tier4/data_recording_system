@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="param_root_dir"/>
+  <group>
+    <include file="$(find-pkg-share rtp_image_processor)/launch/rtp_image_processor.launch.xml">
+      <arg name="name" value="camera8"/>
+      <arg name="udp_port" value="5004"/>
+      <arg name="frame_id" value="camera8/camera_optical_link"/>
+      <arg name="width" value="1920"/>
+      <arg name="height" value="1280"/>
+      <arg name="jpeg_quality" value="80"/>
+      <arg name="publish_raw" value="false"/>
+      <arg name="publish_compressed" value="true"/>
+      <arg name="camera_info_url" value="file://$(var param_root_dir)/camera8/camera_info.yaml"/>
+    </include>
+
+    <include file="$(find-pkg-share rtp_image_processor)/launch/rtp_image_processor.launch.xml">
+      <arg name="name" value="camera9"/>
+      <arg name="udp_port" value="5005"/>
+      <arg name="frame_id" value="camera9/camera_optical_link"/>
+      <arg name="width" value="1920"/>
+      <arg name="height" value="1280"/>
+      <arg name="jpeg_quality" value="80"/>
+      <arg name="publish_raw" value="false"/>
+      <arg name="publish_compressed" value="true"/>
+      <arg name="camera_info_url" value="file://$(var param_root_dir)/camera9/camera_info.yaml"/>
+    </include>
+
+    <include file="$(find-pkg-share rtp_image_processor)/launch/rtp_image_processor.launch.xml">
+      <arg name="name" value="camera10"/>
+      <arg name="udp_port" value="5006"/>
+      <arg name="frame_id" value="camera10/camera_optical_link"/>
+      <arg name="width" value="1920"/>
+      <arg name="height" value="1280"/>
+      <arg name="jpeg_quality" value="80"/>
+      <arg name="publish_raw" value="false"/>
+      <arg name="publish_compressed" value="true"/>
+      <arg name="camera_info_url" value="file://$(var param_root_dir)/camera10/camera_info.yaml"/>
+    </include>
+
+    <include file="$(find-pkg-share rtp_image_processor)/launch/rtp_image_processor.launch.xml">
+      <arg name="name" value="camera11"/>
+      <arg name="udp_port" value="5007"/>
+      <arg name="frame_id" value="camera11/camera_optical_link"/>
+      <arg name="width" value="1920"/>
+      <arg name="height" value="1280"/>
+      <arg name="jpeg_quality" value="80"/>
+      <arg name="publish_raw" value="false"/>
+      <arg name="publish_compressed" value="true"/>
+      <arg name="camera_info_url" value="file://$(var param_root_dir)/camera11/camera_info.yaml"/>
+    </include>
+  </group>
+</launch>

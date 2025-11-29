@@ -12,10 +12,12 @@
        description="Should be False when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>
-  <arg name="lidar_driver_type" default="nebula"
+  <arg name="lidar_driver_type" default="$(env DRS_LIDAR_DRIVER_TYPE nebula)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
-  <arg name="has_vehicle_can" default="False"
+  <arg name="has_vehicle_can" default="$(env DRS_ENABLE_VEHICLE_CAN False)"
        description="Should be True when vehicle CAN is available"/>
+  <arg name="has_fisheye" default="$(env DRS_ENABLE_FISHEYE False)"
+       description="Should be True when a fisheye camera is present"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
@@ -26,6 +28,7 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="lidar_driver_type" value="$(var lidar_driver_type)"/>
     <arg name="has_vehicle_can" value="$(var has_vehicle_can)"/>
+    <arg name="has_fisheye" value="$(var has_fisheye)"/>
   </include>
 
 </launch>

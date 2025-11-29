@@ -19,6 +19,9 @@
       export DRS_ECU_ID={{ drs_ecu_id }}
       export SENSING_SYSTEM_ID={{ sensing_system_id }}
       export MODULE_ID={{ module_id }}
+      export DRS_ENABLE_FISHEYE={{ 'True' if drs_enable_fisheye | bool else 'False' }}
+      export DRS_ENABLE_VEHICLE_CAN={{ 'True' if drs_enable_vehicle_can | bool else 'False' }}
+      export DRS_LIDAR_DRIVER_TYPE={{ drs_lidar_driver_type }}
   become: true
 
 - name: Ensure drs.env and setup.bash are sourced in /etc/profile.d/drs.sh
