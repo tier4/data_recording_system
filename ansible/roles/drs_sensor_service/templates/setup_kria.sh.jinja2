@@ -1,0 +1,48 @@
+#!/bin/bash
+# Setup script for Kria GMSL camera board with retry logic
+# This script retries each command until it succeeds, waiting 30 seconds between retries
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RETRY_DELAY=30
+MAX_RETRIES=1000  # Effectively infinite retries
+
+# Function to retry a command until it succeeds
+retry_command() {
+    local cmd="$1"
+    local description="$2"
+    local attempt=1
+
+    while true; do
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attempting: $description (attempt $attempt)"
+
+        if eval "$cmd"; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Success: $description"
+            return 0
+        else
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed: $description, retrying in ${RETRY_DELAY} seconds..."
+            sleep $RETRY_DELAY
+            attempt=$((attempt + 1))
+        fi
+    done
+}
+
+# Setup camera 1
+retry_command "curl -f -X POST http://kria-gmsl.local:3000/setup-cam1" "Setup camera 1"
+# curl -X POST http://kria-gmsl.local:3000/setup-cam2-20
+
+# Apply timestamp configuration
+retry_command "curl -f -d '{\"timestamp\":\"1\",\"frame\":\"1\", \"timestamp_capture\":\"1\"}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/apply-timestamp" "Apply timestamp configuration"
+
+# Apply trigger configuration
+retry_command "curl -f -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/command -d @${SCRIPT_DIR}/trigger.json" "Apply trigger configuration"
+
+# Setup exposure
+retry_command "curl -f -d '{\"index\": 0, \"exposure\": 10000}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-exposure" "Setup exposure"
+retry_command "curl -f -d '{\"index\": 0, \"auto_exposure\": 1}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-auto-exposure" "Setup auto exposure"
+retry_command "curl -f -d '{\"index\": 0, \"distortion_corr\": 0}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-dist-corr" "Setup distortion correction"
+
+# Start streaming
+retry_command "curl -f -X POST http://kria-gmsl.local:3000/streaming-cam1-des1" "Start streaming camera 1"
+# curl -X POST http://kria-gmsl.local:3000/streaming-cam2-des1
+
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] All Kria GMSL setup commands completed successfully"

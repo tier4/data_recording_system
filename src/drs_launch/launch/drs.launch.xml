@@ -14,6 +14,8 @@
        description="Type of LiDAR driver to use: nebula or seyond"/>
   <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
        description="Should be true when vehicle CAN is available"/>
+  <arg name="has_fisheye" default="$(env HAS_FISHEYE False)"
+       description="Should be True when a fisheye camera is present"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
@@ -23,6 +25,7 @@
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="lidar_driver_type" value="$(var lidar_driver_type)"/>
     <arg name="has_vehicle_can" value="$(var has_vehicle_can)"/>
+    <arg name="has_fisheye" value="$(var has_fisheye)"/>
   </include>
 
 </launch>

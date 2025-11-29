@@ -1,0 +1,20 @@
+image_width: 1920
+image_height: 1280
+camera_name: camera11
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [578.92330236, 0., 952.59517045, 0., 578.20727239, 640.18793566, 0., 0., 1.]
+distortion_model: equidistant
+distortion_coefficients:
+  rows: 1
+  cols: 4
+  data: [0.00538378, -0.01017407, 0.00216116, -0.00022264]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [315.93090267, 0., 985.67609844, 0., 0., 315.54014971, 639.52538014, 0., 0., 0., 1., 0.]

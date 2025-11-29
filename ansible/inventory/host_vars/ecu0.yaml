@@ -34,6 +34,8 @@ ptp:
 # NAS Configuration
 nas_address: 192.168.10.100
 
+has_fisheye: false
+
 # ECU0 specific network interfaces for CycloneDDS
 cyclonedds:
   network_interface: [lo, enP1p1s0]
