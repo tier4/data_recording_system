@@ -10,7 +10,7 @@ oxts_ins:
     ### Overall topic names take the form "~/{x_topic}"
     ### where topic prefix is defined in the oxts_driver yaml
     ### Configure NCom (do not exceed output rate of ncom)
-    ncom_rate               : 100
+    ncom_rate               : 0
     ncom_topic              : "ncom"
     ### Publish string message
     pub_string_rate         : 0
@@ -36,18 +36,18 @@ oxts_ins:
     pub_ecef_pos_rate       : 0
     ecef_pos_topic          : "ecef_pos"
     ### Publish OxTS NavSatRef message
-    pub_nav_sat_ref_rate    : 10
+    pub_nav_sat_ref_rate    : 0
     nav_sat_ref_topic       : "nav_sat_ref"
     ### Publish OxTS Lever Arm message
-    pub_lever_arm_rate      : 5
+    pub_lever_arm_rate      : 0
     lever_arm_topic         : "lever_arm"
     ### Publish OxTS IMU Bias message
-    pub_imu_bias_rate       : 5
+    pub_imu_bias_rate       : 0
     imu_bias_topic          : "imu_bias"
     ### Publish Imu message
     pub_imu_flag            : true
     imu_topic               : "imu"
-    ### Broadcast TF messages for rviz visualisation
+    ### Broadcast TF messages for rviz visualization
     pub_tf_flag             : false
     ### Source of the local reference frame
     #### 0 - NCom LRF

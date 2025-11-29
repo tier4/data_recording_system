@@ -31,11 +31,14 @@ topics:
     max_rate: 15.0
   - name: /tf_static # tf
   - name: /sensing/ins/oxts/imu
-  - name: /sensing/ins/oxts/imu_bias
-  - name: /sensing/ins/oxts/lever_arm
+    min_rate: 25.0
+    max_rate: 110.0
   - name: /sensing/ins/oxts/nav_sat_fix
-  - name: /sensing/ins/oxts/nav_sat_ref
-  - name: /sensing/ins/oxts/ncom
+    min_rate: 2.5
+    max_rate: 11.0
   - name: /sensing/ins/oxts/odometry
+    min_rate: 12.5
+    max_rate: 55.0
   - name: /sensing/ins/oxts/velocity
-#  - name: /vehicle/from_can_bus
+    min_rate: 12.5
+    max_rate: 55.0
