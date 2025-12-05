@@ -20,6 +20,7 @@ ptp:
   master_port: enP1p1s0
   slave_ports:
     - eqos0
+    - mgbe0
   clock_class: 248
   priority1: 128
   priority2: 128

@@ -72,7 +72,6 @@
     name: setup-kria.service
     daemon_reload: true
     enabled: true
-    state: started
   become: true
   when: has_fisheye | bool
 

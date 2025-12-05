@@ -35,3 +35,5 @@ ptp:
       ip_address: 192.168.2.202
     - name: left_lidar
       ip_address: 192.168.2.204
+    - name: adi_board
+      ip_address: 192.168.4.3
