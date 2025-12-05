@@ -49,7 +49,6 @@
           <arg name="param_root_dir" value="$(var param_root_dir)"/>
         </include>
       </group>
-  </group>
     </group>
 
     <group>

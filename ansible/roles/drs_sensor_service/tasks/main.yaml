@@ -64,7 +64,6 @@
     name: setup-kria.service
     daemon_reload: true
     enabled: true
-    state: started
   become: true
   when: drs_enable_fisheye | bool
 

@@ -23,12 +23,21 @@ topics:
   - name: /sensing/camera/camera3/camera_info
     min_rate: 18.0
     max_rate: 21.0
+{% if drs_lidar_driver_type == 'nebula' %}
   - name: /sensing/lidar/front/nebula_packets
     min_rate: 9.0
     max_rate: 15.0
   - name: /sensing/lidar/right/nebula_packets
     min_rate: 9.0
     max_rate: 15.0
+{% elif drs_lidar_driver_type == 'seyond' %}
+  - name: /sensing/lidar/front/seyond_packets
+    min_rate: 9.0
+    max_rate: 15.0
+  - name: /sensing/lidar/right/seyond_packets
+    min_rate: 9.0
+    max_rate: 15.0
+{% endif %}
   - name: /tf_static # tf
   - name: /sensing/ins/oxts/imu
     min_rate: 25.0

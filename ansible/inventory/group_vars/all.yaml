@@ -56,4 +56,4 @@ sensor_trigger_memlock: infinity
 # DRS Feature Flags (can be overridden in host_vars)
 drs_enable_vehicle_can: false
 drs_enable_fisheye: false
-drs_lidar_driver_type: nebula  # nebula or seyond
+drs_lidar_driver_type: seyond  # nebula or seyond
