@@ -15,3 +15,6 @@ sync_to_nas_lock_file: /var/run/sync_to_nas.lock
 # Service resource limits
 sync_to_nas_cpu_quota: 50%
 sync_to_nas_io_weight: 10
+
+# chmod settings
+sync_to_nas_chmod_mode: "644"

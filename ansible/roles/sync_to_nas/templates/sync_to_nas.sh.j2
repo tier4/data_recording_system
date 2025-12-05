@@ -73,6 +73,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d'
         --bwlimit="$RSYNC_BW_LIMIT" \
         --checksum \
         --no-progress \
+        --chmod={{ sync_to_nas_chmod_mode }} \
         "$mcap_file" \
         "$dest_file"; then
 
