@@ -10,6 +10,7 @@ drs_group: "{{ ansible_user }}"
 drs_install_dir: /opt/drs/install
 drs_build_type: RelWithDebInfo
 
+has_raspi_controller: false
 has_vehicle_can: false
 has_dashboard_service: false
 lidar_driver_type: nebula
