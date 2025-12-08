@@ -1,3 +1,3 @@
 dependencies:
-  - role: drs_env
+  - role: drs_config
   - role: drs
