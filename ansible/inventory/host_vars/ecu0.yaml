@@ -1,6 +1,7 @@
 # ECU0 specific configuration
 
 drs_ecu_id: 0
+module_id: eeffgghh
 
 has_vehicle_can: false
 has_dashboard_service: false
