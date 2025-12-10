@@ -11,10 +11,10 @@ retry_command() {
     local cmd="$1"
     local description="$2"
     local attempt=1
-    
+
     while true; do
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attempting: $description (attempt $attempt)"
-        
+
         if eval "$cmd"; then
             echo "[$(date '+%Y-%m-%d %H:%M:%S')] Success: $description"
             return 0
@@ -37,13 +37,14 @@ retry_command "curl -f -d '{\"timestamp\":\"1\",\"frame\":\"1\", \"timestamp_cap
 retry_command "curl -f -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/command -d @${SCRIPT_DIR}/trigger.json" "Apply trigger configuration"
 
 # Setup exposure
-retry_command "curl -f -d '{\"index\": 0, \"exposure\": 10000}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-exposure" "Setup exposure"
-retry_command "curl -f -d '{\"index\": 0, \"auto_exposure\": 1}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-auto-exposure" "Setup auto exposure"
-retry_command "curl -f -d '{\"index\": 0, \"distortion_corr\": 0}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-dist-corr" "Setup distortion correction"
+for index in 0 1 2 3; do
+    retry_command "curl -f -d '{\"index\": $index, \"exposure\": \"11000\"}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-exposure" "Setup exposure for index $index"
+    retry_command "curl -f -d '{\"index\": $index, \"auto_exposure\": 0}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-auto-exposure" "Setup auto exposure for index $index"
+    retry_command "curl -f -d '{\"index\": $index, \"distortion_corr\": 0}' -H \"Content-Type: application/json\" -X POST http://kria-gmsl.local:3000/setup-dist-corr" "Setup distortion correction for index $index"
+done
 
 # Start streaming
 retry_command "curl -f -X POST http://kria-gmsl.local:3000/streaming-cam1-des1" "Start streaming camera 1"
 # curl -X POST http://kria-gmsl.local:3000/streaming-cam2-des1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] All Kria GMSL setup commands completed successfully"
-
