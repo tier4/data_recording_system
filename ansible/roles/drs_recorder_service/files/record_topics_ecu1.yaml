@@ -1,4 +1,7 @@
 topics:
+  # For camera topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 105% of the expected rate
   - name: /sensing/camera/camera4/image_raw/compressed
     min_rate: 18.0
     max_rate: 21.0
@@ -23,6 +26,9 @@ topics:
   - name: /sensing/camera/camera7/camera_info
     min_rate: 1.0
     max_rate: 50.0
+  # For lidar topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 150% of the expected rate
   - name: /sensing/lidar/rear/nebula_packets
     min_rate: 9.0
     max_rate: 15.0
