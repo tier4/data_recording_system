@@ -1,6 +1,10 @@
 # ECU0 specific configuration
 
 drs_ecu_id: 0
+module_id: eeffgghh
+
+has_vehicle_can: false
+has_dashboard_service: false
 
 # Module manager configuration
 module_manager_config: module-manager-ecu0.yaml

@@ -36,7 +36,7 @@ This Ansible role configures a systemd service to launch the DRS (Data Recording
 ## Dependencies
 
 - drs
-- drs_env
+- drs_config
 - ros2
 - cyclonedds
 

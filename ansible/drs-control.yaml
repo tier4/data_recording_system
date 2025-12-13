@@ -149,6 +149,9 @@
       tags: [tailscale]
 
     # Phase 7: DRS services
+    - role: drs_config
+      tags: [drs, config]
+
     - role: journald
       tags: [journald]
 

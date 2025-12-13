@@ -20,8 +20,8 @@
   become: true
 
 - name: Copy api-gateway configuration file
-  ansible.builtin.copy:
-    src: api-gateway.yaml
+  ansible.builtin.template:
+    src: api-gateway.yaml.j2
     dest: /opt/drs/service/drs_dashboard/api-gateway.yaml
     owner: root
     group: root
