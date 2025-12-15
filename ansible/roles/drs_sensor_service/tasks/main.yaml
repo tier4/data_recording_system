@@ -36,7 +36,7 @@
     group: root
     mode: "0755"
   become: true
-  when: drs_enable_fisheye | bool
+  when: has_fisheye | bool
 
 - name: Deploy trigger.json configuration
   ansible.builtin.template:
@@ -46,7 +46,7 @@
     group: root
     mode: "0644"
   become: true
-  when: drs_enable_fisheye | bool
+  when: has_fisheye | bool
 
 - name: Deploy setup-kria systemd service file
   ansible.builtin.template:
@@ -56,7 +56,7 @@
     group: root
     mode: "0644"
   become: true
-  when: drs_enable_fisheye | bool
+  when: has_fisheye | bool
   notify: reload systemd
 
 - name: Enable and start setup-kria service
@@ -65,7 +65,7 @@
     daemon_reload: true
     enabled: true
   become: true
-  when: drs_enable_fisheye | bool
+  when: has_fisheye | bool
 
 - name: Disable and stop setup-kria service
   ansible.builtin.systemd:
@@ -74,7 +74,7 @@
     enabled: false
     state: stopped
   become: true
-  when: not (drs_enable_fisheye | bool)
+  when: not (has_fisheye | bool)
   ignore_errors: true
 
 - name: Create systemd service file

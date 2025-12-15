@@ -1,4 +1,7 @@
 topics:
+  # For camera topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 105% of the expected rate
   - name: /sensing/camera/camera0/image_raw/compressed
     min_rate: 18.0
     max_rate: 21.0
@@ -23,35 +26,43 @@ topics:
   - name: /sensing/camera/camera3/camera_info
     min_rate: 18.0
     max_rate: 21.0
-{% if drs_lidar_driver_type == 'nebula' %}
-  - name: /sensing/lidar/front/nebula_packets
+  # For lidar topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 150% of the expected rate
+  - name: /sensing/lidar/front/{{ lidar_driver_type }}_packets
     min_rate: 9.0
     max_rate: 15.0
-  - name: /sensing/lidar/right/nebula_packets
+  - name: /sensing/lidar/right/{{ lidar_driver_type }}_packets
     min_rate: 9.0
     max_rate: 15.0
-{% elif drs_lidar_driver_type == 'seyond' %}
-  - name: /sensing/lidar/front/seyond_packets
-    min_rate: 9.0
-    max_rate: 15.0
-  - name: /sensing/lidar/right/seyond_packets
-    min_rate: 9.0
-    max_rate: 15.0
-{% endif %}
   - name: /tf_static # tf
+  # For INS topics,
+  # min_rate is set to 60% of the expected rate
+  # max_rate is set to 110% of the expected rate
   - name: /sensing/ins/oxts/imu
-    min_rate: 25.0
+    min_rate: 60.0
     max_rate: 110.0
+  - name: /sensing/ins/oxts/imu_bias
+    min_rate: 3.0
+    max_rate: 6.0
+  - name: /sensing/ins/oxts/lever_arm
+    min_rate: 3.0
+    max_rate: 6.0
   - name: /sensing/ins/oxts/nav_sat_fix
-    min_rate: 2.5
+    min_rate: 3.0
     max_rate: 11.0
+  - name: /sensing/ins/oxts/nav_sat_ref
+    min_rate: 3.0
+    max_rate: 11.0
+  - name: /sensing/ins/oxts/ncom
+    min_rate: 60.0
+    max_rate: 110.0
   - name: /sensing/ins/oxts/odometry
-    min_rate: 12.5
+    min_rate: 30.0
     max_rate: 55.0
   - name: /sensing/ins/oxts/velocity
-    min_rate: 12.5
+    min_rate: 30.0
     max_rate: 55.0
-{% if drs_enable_vehicle_can %}
+{% if has_vehicle_can %}
   - name: /vehicle/from_can_bus
 {% endif %}
-

@@ -1,6 +1,11 @@
 # ECU1 specific configuration
 
 drs_ecu_id: 1
+module_id: eeffgghh
+
+has_vehicle_can: false
+has_fisheye: false
+has_dashboard_service: false
 
 # Module manager configuration
 module_manager_config: module-manager-ecu1.yaml
@@ -23,10 +28,6 @@ ptp:
 
 # NAS Configuration
 nas_address: 192.168.10.101
-
-# DRS Configuration
-drs_enable_vehicle_can: false
-drs_enable_fisheye: false
 
 # ECU1 specific network interfaces for CycloneDDS
 cyclonedds:

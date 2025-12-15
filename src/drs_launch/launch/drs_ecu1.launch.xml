@@ -1,8 +1,10 @@
 <launch>
   <arg name="vehicle_id" default="default"/>
+  <arg name="sensing_system_id" default="unknown"/>
+  <arg name="module_id" default="unknown"/>
   <arg name="live_sensor" default="True"/>
   <arg name="publish_pointcloud" default="False"/>
-  <arg name="has_front4d" default="False"/>
+  <arg name="has_vehicle_can" default="False"/>
   <arg name="publish_tf" default="True"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="has_fisheye" default="False"/>

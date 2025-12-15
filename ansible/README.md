@@ -119,7 +119,7 @@ The playbook executes roles in this order based on dependencies:
 1. **Storage Setup**: `ssd_mount`
 2. **System Configuration**: `jetpack`, `journald`, `netplan`, `ntp`, `ptp`
 3. **Core Software**: `ros2`, `docker`
-4. **DRS Environment**: `drs_env`
+4. **DRS Environment**: `drs_config`
 5. **Middleware**: `cyclonedds`
 6. **DRS Build**: `drs`
 7. **Services**: `drs_recorder_service`, `drs_sensor_service`

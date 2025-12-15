@@ -2,6 +2,8 @@
   <!-- Entry point of DRS launcher -->
   <arg name="vehicle_id" default="default"/>
   <arg name="drs_ecu_id" default="$(env DRS_ECU_ID)"/>
+  <arg name="sensing_system_id" default="$(env SENSING_SYSTEM_ID)"/>
+  <arg name="module_id" default="$(env MODULE_ID)"/>
   <arg name="live_sensor" default="True"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="False"
@@ -12,15 +14,17 @@
        description="Should be False when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>
-  <arg name="lidar_driver_type" default="$(env DRS_LIDAR_DRIVER_TYPE nebula)"
+  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
-  <arg name="has_vehicle_can" default="$(env DRS_ENABLE_VEHICLE_CAN False)"
+  <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
        description="Should be True when vehicle CAN is available"/>
-  <arg name="has_fisheye" default="$(env DRS_ENABLE_FISHEYE False)"
+  <arg name="has_fisheye" default="$(env HAS_FISHEYE)"
        description="Should be True when a fisheye camera is present"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
+    <arg name="sensing_system_id" value="$(var sensing_system_id)"/>
+    <arg name="module_id" value="$(var module_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
     <arg name="has_front4d" value="$(var has_front4d)"/>

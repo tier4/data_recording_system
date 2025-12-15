@@ -1,0 +1,24 @@
+- name: Create Configuration Directory
+  ansible.builtin.file:
+    path: /opt/drs/config
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Deploy Environment Variables (drs.env)
+  ansible.builtin.template:
+    src: drs.env.j2
+    dest: /opt/drs/config/drs.env
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: Setup User Profile Load Script
+  ansible.builtin.copy:
+    src: drs.sh
+    dest: /etc/profile.d/drs.sh
+    owner: root
+    group: root
+    mode: 0644
+  become: true

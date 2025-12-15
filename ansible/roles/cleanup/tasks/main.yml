@@ -1,0 +1,17 @@
+- name: Stop and disable drs-dashboard.service if disabled
+  ansible.builtin.systemd:
+    name: drs-dashboard.service
+    state: stopped
+    enabled: false
+  become: true
+  ignore_errors: true
+  when: not (has_dashboard_service | bool)
+
+- name: Stop and disable drs-ros2-bridge.service if disabled
+  ansible.builtin.systemd:
+    name: drs-ros2-bridge.service
+    state: stopped
+    enabled: false
+  become: true
+  ignore_errors: true
+  when: not (has_dashboard_service | bool)

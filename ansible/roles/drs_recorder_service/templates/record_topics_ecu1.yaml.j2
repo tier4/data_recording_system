@@ -1,4 +1,7 @@
 topics:
+  # For camera topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 105% of the expected rate
   - name: /sensing/camera/camera4/image_raw/compressed
     min_rate: 18.0
     max_rate: 21.0
@@ -23,22 +26,16 @@ topics:
   - name: /sensing/camera/camera7/camera_info
     min_rate: 1.0
     max_rate: 50.0
-{% if drs_lidar_driver_type == 'nebula' %}
-  - name: /sensing/lidar/rear/nebula_packets
+  # For lidar topics,
+  # min_rate is set to 90% of the expected rate
+  # max_rate is set to 150% of the expected rate
+  - name: /sensing/lidar/rear/{{ lidar_driver_type }}_packets
     min_rate: 9.0
     max_rate: 15.0
-  - name: /sensing/lidar/left/nebula_packets
+  - name: /sensing/lidar/left/{{ lidar_driver_type }}_packets
     min_rate: 9.0
     max_rate: 15.0
-{% elif drs_lidar_driver_type == 'seyond' %}
-  - name: /sensing/lidar/rear/seyond_packets
-    min_rate: 9.0
-    max_rate: 15.0
-  - name: /sensing/lidar/left/seyond_packets
-    min_rate: 9.0
-    max_rate: 15.0
-{% endif %}
-{% if drs_enable_fisheye %}
+{% if has_fisheye %}
   - name: /sensing/camera/camera8/image_raw/compressed
     min_rate: 18.0
     max_rate: 21.0
@@ -64,4 +61,3 @@ topics:
     min_rate: 18.0
     max_rate: 21.0
 {% endif %}
-
