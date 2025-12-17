@@ -68,7 +68,7 @@
     group: "{{ drs_group }}"
     mode: "0644"
   when: module_manager_config == "module-manager-ecu1.yaml"
-  register: deploy_module_manager_template
+  notify: restart drs-api
 
 - name: Deploy module-manager configuration (static)
   become: true
@@ -79,6 +79,7 @@
     group: "{{ drs_group }}"
     mode: "0644"
   when: module_manager_config != "module-manager-ecu1.yaml"
+  notify: restart drs-api
 
 - name: Deploy systemd service file
   become: true
