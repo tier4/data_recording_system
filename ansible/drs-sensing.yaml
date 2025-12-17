@@ -19,6 +19,15 @@
         cache_valid_time: 3600
       when: ansible_os_family == "Debian"
 
+    - name: Render host_vars template for ecu1
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/inventory/host_vars/ecu1.yaml.j2"
+        dest: "{{ playbook_dir }}/inventory/host_vars/ecu1.yaml"
+        mode: "0644"
+      when: target_host == "ecu1" or ansible_hostname == "ecu1"
+      delegate_to: localhost
+      run_once: true
+
   roles:
     - role: cleanup
       tags: [drs, cleanup]

@@ -29,5 +29,7 @@ ptp:
       ip_address: 192.168.2.202
     - name: left_lidar
       ip_address: 192.168.2.204
+{% if has_fisheye %}
     - name: "adi_board"
       ip_address: "192.168.4.3"
+{% endif %}
