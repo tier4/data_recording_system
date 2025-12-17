@@ -15,7 +15,7 @@ netplan_files:
 
 # PTP Configuration
 ptp:
-  time_sync_type: NTP # GNSS or NTP
+  time_sync_type: GNSS # GNSS or NTP
   ntp_server: ntp.nict.jp
   master_port: mgbe0
   slave_ports:

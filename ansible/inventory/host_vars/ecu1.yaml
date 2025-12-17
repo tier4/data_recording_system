@@ -4,6 +4,7 @@ drs_ecu_id: 1
 module_id: eeffgghh
 
 has_vehicle_can: false
+has_fisheye: false # false: ptp.slave_ports: [eqos0], true: ptp.slave_ports: [eqos0, mgbe0]
 has_dashboard_service: false
 
 # Module manager configuration
@@ -20,7 +21,7 @@ ptp:
   master_port: enP1p1s0
   slave_ports:
     - eqos0
-    - mgbe0
+    # - mgbe0 enabled when has_fisheye is true
   clock_class: 248
   priority1: 128
   priority2: 128
@@ -33,8 +34,6 @@ ptp:
 
 # NAS Configuration
 nas_address: 192.168.10.101
-
-has_fisheye: false
 
 # ECU1 specific network interfaces for CycloneDDS
 cyclonedds:

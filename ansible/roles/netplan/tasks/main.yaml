@@ -5,11 +5,22 @@
     cache_valid_time: 3600
   become: true
 
-- name: Copy network config file
+- name: Deploy network config file (template)
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /etc/netplan/{{ item }}
+    mode: 0644
+  with_items: "{{ netplan_files }}"
+  when: item == "99-drs-ecu1.yaml"
+  become: true
+  register: netplan_config_changed_template
+
+- name: Copy network config file (static)
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: /etc/netplan/{{ item }}
     mode: 0644
   with_items: "{{ netplan_files }}"
+  when: item != "99-drs-ecu1.yaml"
   become: true
   notify: Netplan config changed
