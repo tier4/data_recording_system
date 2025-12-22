@@ -52,7 +52,7 @@ repositories:
     type: git
     url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
     version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
-  dependencies/rtp_image_processor:
+  dependencies/gst_rtp_image_receiver:
     type: git
-    url: https://github.com/0x126/rtp_image_processor.git  # should be replaced to https://github.com/tier4/gst_rtp_image_receiver.git
-    version: aae606405947c9f877831437a4bda8e3eab83272  # main
+    url: https://github.com/tier4/gst_rtp_image_receiver.git
+    version: 84e5afc7bc9d61d41f1f2efe8a4697b1b3d62650  # main
