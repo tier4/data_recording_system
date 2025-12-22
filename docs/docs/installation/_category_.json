@@ -1,0 +1,9 @@
+{
+  "label": "Installation",
+  "position": 3,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "installation/index"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "label": "Operation",
+  "position": 5,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "operation/index"
+  }
+}
