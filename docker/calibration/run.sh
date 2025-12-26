@@ -56,7 +56,7 @@ BASE_DOCKER_OPTS=(
 )
 
 # Mount XAUTHORITY if it is set
-if [[ -n "${XAUTHORITY}" ]]; then
+if [[ -n ${XAUTHORITY} ]]; then
     BASE_DOCKER_OPTS+=(-v "${XAUTHORITY}:${XAUTHORITY}")
 fi
 
@@ -107,7 +107,7 @@ done
 # echo "Command args: ${COMMAND_ARGS[@]}"
 
 # Select Docker image based on --local flag
-if [[ "$USE_LOCAL_IMAGE" == true ]]; then
+if [[ $USE_LOCAL_IMAGE == true ]]; then
     DOCKER_IMAGE="tier4/pkg-drs-calibration:latest"
 else
     DOCKER_IMAGE="ghcr.io/tier4/pkg-drs-calibration:latest"
