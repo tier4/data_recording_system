@@ -36,7 +36,8 @@ else
     cd "$HOME"
 
     # Prepare runtime directory
-    mkdir -m 700 /run/user/$USER_ID
+    mkdir -p /run/user/$USER_ID
+    chmod 700 /run/user/$USER_ID
     chown "$USER_NAME":"$GROUP_NAME" /run/user/$USER_ID
 
     # Execute the command as the user

@@ -5,18 +5,22 @@ set -e
 # Help message
 show_help() {
     cat <<EOF
-Usage: $(basename "$0") [--option DOCKER_OPTIONS] [--] COMMAND [ARGS...]
+Usage: $(basename "$0") [--local] [--option DOCKER_OPTIONS] [--] COMMAND [ARGS...]
 
 Launch a Docker container with GPU and GUI support
 
 Options:
-    --option    Treat following arguments as additional Docker options
-    --          Treat following arguments as commands to run inside the container
-    --help, -h  Show this help message
+    --local      Use local Docker image (tier4/pkg-drs-runtime:latest)
+    --option     Treat following arguments as additional Docker options
+    --           Treat following arguments as commands to run inside the container
+    --help, -h   Show this help message
 
 Examples:
     # Basic usage
     $(basename "$0") python test.py
+
+    # Use local image
+    $(basename "$0") --local python test.py
 
     # Add volume mount
     $(basename "$0") --option -v /home/user/data:/data -- python test.py
@@ -51,13 +55,23 @@ BASE_DOCKER_OPTS=(
     -v "/etc/localtime:/etc/localtime:ro"
 )
 
+# Mount XAUTHORITY if it is set
+if [[ -n "${XAUTHORITY}" ]]; then
+    BASE_DOCKER_OPTS+=(-v "${XAUTHORITY}:${XAUTHORITY}")
+fi
+
 # Additional Docker options and command arguments
+USE_LOCAL_IMAGE=false
 EXTRA_DOCKER_OPTS=()
 COMMAND_ARGS=()
 PARSING_MODE="command"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+    --local)
+        USE_LOCAL_IMAGE=true
+        shift
+        ;;
     --option)
         PARSING_MODE="docker"
         shift
@@ -72,7 +86,7 @@ while [[ $# -gt 0 ]]; do
             if [[ $1 == -* ]]; then
                 EXTRA_DOCKER_OPTS+=("$1")
                 shift
-                if [[ $# -gt 0 && $1 != -* && $1 != "--" && $1 != "--option" ]]; then
+                if [[ $# -gt 0 && $1 != -* && $1 != "--" && $1 != "--option" && $1 != "--local" ]]; then
                     EXTRA_DOCKER_OPTS+=("$1")
                     shift
                 fi
@@ -92,5 +106,12 @@ done
 # echo "Extra Docker opts: ${EXTRA_DOCKER_OPTS[@]}"
 # echo "Command args: ${COMMAND_ARGS[@]}"
 
+# Select Docker image based on --local flag
+if [[ "$USE_LOCAL_IMAGE" == true ]]; then
+    DOCKER_IMAGE="tier4/pkg-drs-runtime:latest"
+else
+    DOCKER_IMAGE="ghcr.io/tier4/pkg-drs-runtime:latest"
+fi
+
 # Execute Docker command
-docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" ghcr.io/tier4/pkg-drs-runtime:latest "${COMMAND_ARGS[@]}"
+docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" "$DOCKER_IMAGE" "${COMMAND_ARGS[@]}"
