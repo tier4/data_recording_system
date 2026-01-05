@@ -10,15 +10,15 @@
     # Determine ECU ID from hostname or environment variable
     drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
     # Default values - will be resolved in pre_tasks with priority: inventory > env > default
-    sensing_system_id_default: "aabbccdd"
-    module_id_default: "eeffgghh"
+    sensing_system_id_default: aabbccdd
+    module_id_default: eeffgghh
 
   pre_tasks:
     # Resolve sensing_system_id with priority: inventory > env > default
     - name: Get sensing_system_id from inventory or environment
       ansible.builtin.set_fact:
         sensing_system_id: "{{ sensing_system_id | default(lookup('env', 'SENSING_SYSTEM_ID') | default(sensing_system_id_default)) }}"
-    
+
     # If inventory value is default, use env var if available
     - name: Use environment variable if inventory has default value
       ansible.builtin.set_fact:
@@ -29,7 +29,7 @@
     - name: Get module_id from inventory or environment
       ansible.builtin.set_fact:
         module_id: "{{ module_id | default(lookup('env', 'MODULE_ID') | default(module_id_default)) }}"
-    
+
     # If inventory value is default, use env var if available
     - name: Use environment variable if inventory has default value
       ansible.builtin.set_fact:
@@ -41,7 +41,7 @@
       ansible.builtin.pause:
         prompt: |
           Current sensing_system_id: {{ sensing_system_id }}
-          
+
           This appears to be the default value. Please enter a custom sensing_system_id
           (or press Enter to keep current value):
       register: sensing_system_id_input
@@ -60,7 +60,7 @@
       ansible.builtin.pause:
         prompt: |
           Current module_id: {{ module_id }}
-          
+
           This appears to be the default value. Please enter a custom module_id
           (or press Enter to keep current value):
       register: module_id_input
