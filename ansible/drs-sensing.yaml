@@ -9,10 +9,71 @@
   vars:
     # Determine ECU ID from hostname or environment variable
     drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
-    sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
-    module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
+    # Default values - will be resolved in pre_tasks with priority: inventory > env > default
+    sensing_system_id_default: "aabbccdd"
+    module_id_default: "eeffgghh"
 
   pre_tasks:
+    # Resolve sensing_system_id with priority: inventory > env > default
+    - name: Get sensing_system_id from inventory or environment
+      ansible.builtin.set_fact:
+        sensing_system_id: "{{ sensing_system_id | default(lookup('env', 'SENSING_SYSTEM_ID') | default(sensing_system_id_default)) }}"
+    
+    # If inventory value is default, use env var if available
+    - name: Use environment variable if inventory has default value
+      ansible.builtin.set_fact:
+        sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default(sensing_system_id_default) }}"
+      when: sensing_system_id == sensing_system_id_default
+
+    # Resolve module_id with priority: inventory > env > default
+    - name: Get module_id from inventory or environment
+      ansible.builtin.set_fact:
+        module_id: "{{ module_id | default(lookup('env', 'MODULE_ID') | default(module_id_default)) }}"
+    
+    # If inventory value is default, use env var if available
+    - name: Use environment variable if inventory has default value
+      ansible.builtin.set_fact:
+        module_id: "{{ lookup('env', 'MODULE_ID') | default(module_id_default) }}"
+      when: module_id == module_id_default
+
+    # Prompt for sensing_system_id if it's still default value
+    - name: Ask for sensing_system_id if default value
+      ansible.builtin.pause:
+        prompt: |
+          Current sensing_system_id: {{ sensing_system_id }}
+          
+          This appears to be the default value. Please enter a custom sensing_system_id
+          (or press Enter to keep current value):
+      register: sensing_system_id_input
+      when: sensing_system_id == sensing_system_id_default
+
+    - name: Set sensing_system_id from user input
+      ansible.builtin.set_fact:
+        sensing_system_id: "{{ sensing_system_id_input.user_input }}"
+      when:
+        - sensing_system_id_input is defined
+        - sensing_system_id_input.user_input is defined
+        - sensing_system_id_input.user_input != ""
+
+    # Prompt for module_id if it's still default value
+    - name: Ask for module_id if default value
+      ansible.builtin.pause:
+        prompt: |
+          Current module_id: {{ module_id }}
+          
+          This appears to be the default value. Please enter a custom module_id
+          (or press Enter to keep current value):
+      register: module_id_input
+      when: module_id == module_id_default
+
+    - name: Set module_id from user input
+      ansible.builtin.set_fact:
+        module_id: "{{ module_id_input.user_input }}"
+      when:
+        - module_id_input is defined
+        - module_id_input.user_input is defined
+        - module_id_input.user_input != ""
+
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
