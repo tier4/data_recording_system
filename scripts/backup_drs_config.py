@@ -2,7 +2,7 @@
 """
 DRS configuration file backup script
 
-Retrieves files from specified folders on ecu0 and ecu1, then compresses and saves them.
+Retrieves files from specified folders on ecu0 and ecu1, then saves them.
 """
 
 import argparse
@@ -11,7 +11,6 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from zipfile import ZipFile
 import shutil
 
 
@@ -19,8 +18,8 @@ class DRSBackup:
     """DRS configuration file backup class"""
 
     # ECU information
-    ECU0_HOST = "192.168.20.1"
-    ECU1_HOST = "192.168.20.2"
+    ECU0_HOST = "nvidia@192.168.20.1"
+    ECU1_HOST = "nvidia@192.168.20.2"
 
     # Backup target directories
     BACKUP_DIRS = [
@@ -204,36 +203,6 @@ class DRSBackup:
             logging.error("scp command not found. Please install openssh-client.")
             return False
 
-    def compress_backup(self) -> bool:
-        """
-        Compress backup folder to ZIP
-
-        Returns:
-            True on success
-        """
-        zip_path = Path(f"{self.backup_dir}.zip")
-        logging.info(f"Compressing backup to {zip_path}...")
-
-        try:
-            with ZipFile(zip_path, 'w') as zipf:
-                for file_path in self.backup_dir.rglob('*'):
-                    if file_path.is_file():
-                        # Archive path is relative to backup directory parent
-                        arcname = file_path.relative_to(self.backup_dir.parent)
-                        zipf.write(file_path, arcname)
-
-            logging.info(f"Successfully created {zip_path}")
-
-            # Remove original directory
-            logging.info(f"Removing original directory {self.backup_dir}...")
-            shutil.rmtree(self.backup_dir)
-            logging.info("Original directory removed")
-
-            return True
-        except Exception as e:
-            logging.error(f"Failed to compress backup: {e}")
-            return False
-
     def run(self, ecu_list: list = None) -> bool:
         """
         Execute backup process
@@ -263,11 +232,6 @@ class DRSBackup:
 
         if not success:
             logging.error("Some backup operations failed")
-            return False
-
-        # Compress to ZIP
-        if not self.compress_backup():
-            logging.error("Failed to compress backup")
             return False
 
         logging.info("Backup completed successfully")
