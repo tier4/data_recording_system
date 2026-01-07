@@ -54,13 +54,6 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c++, c, cuda]
-        exclude: |
-          (?x)^(
-            build/|
-            install/|
-            log/|
-            .*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|
-            .*/json\.hpp$|
-          )
+        exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
 
 exclude: .svg
