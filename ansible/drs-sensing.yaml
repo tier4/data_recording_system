@@ -49,6 +49,10 @@
     - role: ptp
       tags: [ptp]
 
+    - role: ntp_server
+      tags: [ntp, ntp_server]
+      when: ntp_server_enabled | default(false) | bool
+
     - role: ros2
       tags: [ros2]
 

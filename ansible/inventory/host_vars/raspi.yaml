@@ -40,6 +40,11 @@ docker_users:
 # Module manager configuration
 module_manager_config: module-manager-raspi.yaml
 
+# NTP Server Configuration for raspi
+# NOTE: This parameter is NOT used for raspi.
+# raspi uses raspi_time_sync role for time synchronization instead.
+# ntp_server_enabled: true  # This setting is ignored for raspi
+
 # CycloneDDS configuration for Raspberry Pi
 cyclonedds:
   network_interface: [eth0.10] # loopback and VLAN 10 interface

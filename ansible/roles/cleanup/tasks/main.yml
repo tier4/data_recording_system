@@ -15,3 +15,20 @@
   become: true
   ignore_errors: true
   when: not (has_dashboard_service | bool)
+
+- name: Remove NTP server configuration if disabled
+  ansible.builtin.file:
+    path: /etc/chrony/chrony.conf.d/drs-ntp-server.conf
+    state: absent
+  become: true
+  ignore_errors: true
+  when: not (ntp_server_enabled | default(false) | bool)
+
+- name: Stop and disable chrony service if ntp_server is disabled
+  ansible.builtin.systemd:
+    name: chrony
+    state: stopped
+    enabled: false
+  become: true
+  ignore_errors: true
+  when: not (ntp_server_enabled | default(false) | bool)

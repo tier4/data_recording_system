@@ -1,0 +1,47 @@
+- name: Verify ntp_server_enabled is not True when ptp.time_sync_type is NTP
+  ansible.builtin.fail:
+    msg: |
+      ntp_server_enabled cannot be True when ptp.time_sync_type is 'NTP'.
+      These settings are incompatible:
+      - ptp role NTP mode disables chrony service and uses it only for one-time sync
+      - ntp_server role enables chrony service to distribute PTP-synchronized time as NTP server
+      Please set ptp.time_sync_type to 'GNSS' if you want to use ntp_server role.
+  when:
+    - ntp_server_enabled | default(false) | bool
+    - ptp.time_sync_type is defined
+    - ptp.time_sync_type == 'NTP'
+
+- name: Install chrony package
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Ensure chrony configuration directory exists
+  ansible.builtin.file:
+    path: /etc/chrony/chrony.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Deploy chrony server configuration
+  ansible.builtin.template:
+    src: chrony-server.conf.j2
+    dest: /etc/chrony/chrony.conf.d/drs-ntp-server.conf
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: restart chrony
+
+- name: Enable and start chrony service
+  ansible.builtin.systemd:
+    name: chrony
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
