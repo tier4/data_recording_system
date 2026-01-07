@@ -59,7 +59,7 @@ repos:
             build/|
             install/|
             log/|
-            .*\.(mcap|db3|pcd|bag|bagdb|bin|so|a|o|dylib|dll|exe)|
+            .*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|
             .*/json\.hpp$|
           )
 
