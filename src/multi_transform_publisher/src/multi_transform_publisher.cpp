@@ -1,3 +1,5 @@
+// Copyright 2025 TIER IV, Inc.
+
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 
@@ -67,9 +69,7 @@ private:
 
       // Process all transforms in the YAML file
       processYamlNode(config, "", transforms_);
-
       RCLCPP_INFO(this->get_logger(), "Loaded %zu transforms from config file", transforms_.size());
-
     } catch (const YAML::Exception & e) {
       RCLCPP_ERROR(this->get_logger(), "Failed to load YAML file: %s", e.what());
       rclcpp::shutdown();
@@ -106,9 +106,8 @@ private:
       // If this is a parent frame (contains child frames)
       if (it->second.IsMap() && !hasTransformFields(it->second)) {
         processYamlNode(it->second, frame_id, transforms);
-      }
-      // If this contains transform data
-      else if (it->second.IsMap() && hasTransformFields(it->second)) {
+      } else if (it->second.IsMap() && hasTransformFields(it->second)) {
+        // If this contains transform data
         geometry_msgs::msg::TransformStamped transform =
           createTransform(parent_frame, frame_id, it->second);
         transforms.push_back(transform);

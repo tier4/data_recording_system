@@ -1,3 +1,5 @@
+// Copyright 2025 TIER IV, Inc.
+
 /*
  * This publisher based on the implementation of tf2_ros::static_transform_publisher.
  * ref:
