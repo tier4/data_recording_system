@@ -49,4 +49,18 @@ repos:
     hooks:
       - id: hadolint
 
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.5
+    hooks:
+      - id: clang-format
+        types_or: [c++, c, cuda]
+        exclude: |
+          (?x)^(
+            build/|
+            install/|
+            log/|
+            .*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|
+            .*/json\.hpp$|
+          )
+
 exclude: .svg
