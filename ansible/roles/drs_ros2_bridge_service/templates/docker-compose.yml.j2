@@ -8,7 +8,7 @@ services:
     pid: host
     ipc: host
     environment:
-      - ROS_DOMAIN_ID=1
+      - ROS_DOMAIN_ID={{ ros_domain_id }}
       - ROS_LOCALHOST_ONLY=0
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - CYCLONEDDS_URI=file:///opt/drs/config/cyclonedds.xml
