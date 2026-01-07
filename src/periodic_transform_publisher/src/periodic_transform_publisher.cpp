@@ -4,6 +4,11 @@
  * https://github.com/ros2/geometry2/blob/humble/tf2_ros/src/static_transform_broadcaster_program.cpp
  */
 
+#include "periodic_transform_publisher/broadcaster.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Vector3.h"
+
 #include <cstdio>
 #include <functional>
 #include <memory>
@@ -12,19 +17,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/LinearMath/Vector3.h"
-
-#include "rclcpp/rclcpp.hpp"
-
-#include "periodic_transform_publisher/broadcaster.hpp"
-
 struct Option
 {
-  explicit Option(bool has_arg)
-  : has_argument(has_arg)
-  {
-  }
+  explicit Option(bool has_arg) : has_argument(has_arg) {}
 
   bool has_argument{false};
 
@@ -36,8 +31,7 @@ struct Option
 struct DoubleOption final : Option
 {
   explicit DoubleOption(bool has_arg, std::function<void(double)> cb)
-  : Option(has_arg),
-    callback(cb)
+  : Option(has_arg), callback(cb)
   {
   }
 
@@ -61,8 +55,7 @@ struct DoubleOption final : Option
 struct StringOption final : Option
 {
   explicit StringOption(bool has_arg, std::function<void(const std::string &)> cb)
-  : Option(has_arg),
-    callback(cb)
+  : Option(has_arg), callback(cb)
   {
   }
 
@@ -77,12 +70,8 @@ struct StringOption final : Option
 };
 
 static std::string parse_args(
-  const std::vector<std::string> & args,
-  bool & help,
-  tf2::Quaternion & quat,
-  tf2::Vector3 & trans,
-  std::string & frame_id,
-  std::string & child_frame_id)
+  const std::vector<std::string> & args, bool & help, tf2::Quaternion & quat, tf2::Vector3 & trans,
+  std::string & frame_id, std::string & child_frame_id)
 {
   size_t size = args.size();
 
@@ -102,68 +91,58 @@ static std::string parse_args(
   double pitch = 0.0;
   double yaw = 0.0;
 
-  auto qx_opt = std::make_shared<DoubleOption>(
-    true, [&quat, &saw_quat_flag](double value) {
-      quat.setX(value);
-      saw_quat_flag = true;
-    });
+  auto qx_opt = std::make_shared<DoubleOption>(true, [&quat, &saw_quat_flag](double value) {
+    quat.setX(value);
+    saw_quat_flag = true;
+  });
 
-  auto qy_opt = std::make_shared<DoubleOption>(
-    true, [&quat, &saw_quat_flag](double value) {
-      quat.setY(value);
-      saw_quat_flag = true;
-    });
+  auto qy_opt = std::make_shared<DoubleOption>(true, [&quat, &saw_quat_flag](double value) {
+    quat.setY(value);
+    saw_quat_flag = true;
+  });
 
-  auto qz_opt = std::make_shared<DoubleOption>(
-    true, [&quat, &saw_quat_flag](double value) {
-      quat.setZ(value);
-      saw_quat_flag = true;
-    });
+  auto qz_opt = std::make_shared<DoubleOption>(true, [&quat, &saw_quat_flag](double value) {
+    quat.setZ(value);
+    saw_quat_flag = true;
+  });
 
-  auto qw_opt = std::make_shared<DoubleOption>(
-    true, [&quat, &saw_quat_flag](double value) {
-      quat.setW(value);
-      saw_quat_flag = true;
-    });
+  auto qw_opt = std::make_shared<DoubleOption>(true, [&quat, &saw_quat_flag](double value) {
+    quat.setW(value);
+    saw_quat_flag = true;
+  });
 
-  auto roll_opt = std::make_shared<DoubleOption>(
-    true, [&roll, &saw_rpy_flag](double value) {
-      roll = value;
-      saw_rpy_flag = true;
-    });
+  auto roll_opt = std::make_shared<DoubleOption>(true, [&roll, &saw_rpy_flag](double value) {
+    roll = value;
+    saw_rpy_flag = true;
+  });
 
-  auto pitch_opt = std::make_shared<DoubleOption>(
-    true, [&pitch, &saw_rpy_flag](double value) {
-      pitch = value;
-      saw_rpy_flag = true;
-    });
+  auto pitch_opt = std::make_shared<DoubleOption>(true, [&pitch, &saw_rpy_flag](double value) {
+    pitch = value;
+    saw_rpy_flag = true;
+  });
 
-  auto yaw_opt = std::make_shared<DoubleOption>(
-    true, [&yaw, &saw_rpy_flag](double value) {
-      yaw = value;
-      saw_rpy_flag = true;
-    });
+  auto yaw_opt = std::make_shared<DoubleOption>(true, [&yaw, &saw_rpy_flag](double value) {
+    yaw = value;
+    saw_rpy_flag = true;
+  });
 
-  auto trans_x_opt = std::make_shared<DoubleOption>(
-    true, [&trans, &saw_trans_flag](double value) {
-      trans.setX(value);
-      saw_trans_flag = true;
-    });
+  auto trans_x_opt = std::make_shared<DoubleOption>(true, [&trans, &saw_trans_flag](double value) {
+    trans.setX(value);
+    saw_trans_flag = true;
+  });
 
-  auto trans_y_opt = std::make_shared<DoubleOption>(
-    true, [&trans, &saw_trans_flag](double value) {
-      trans.setY(value);
-      saw_trans_flag = true;
-    });
+  auto trans_y_opt = std::make_shared<DoubleOption>(true, [&trans, &saw_trans_flag](double value) {
+    trans.setY(value);
+    saw_trans_flag = true;
+  });
 
-  auto trans_z_opt = std::make_shared<DoubleOption>(
-    true, [&trans, &saw_trans_flag](double value) {
-      trans.setZ(value);
-      saw_trans_flag = true;
-    });
+  auto trans_z_opt = std::make_shared<DoubleOption>(true, [&trans, &saw_trans_flag](double value) {
+    trans.setZ(value);
+    saw_trans_flag = true;
+  });
 
-  auto frame_id_opt = std::make_shared<StringOption>(
-    true, [&frame_id, &saw_frame_flag](const std::string & value) {
+  auto frame_id_opt =
+    std::make_shared<StringOption>(true, [&frame_id, &saw_frame_flag](const std::string & value) {
       frame_id = value;
       saw_frame_flag = true;
     });
@@ -174,11 +153,10 @@ static std::string parse_args(
       saw_frame_flag = true;
     });
 
-  auto help_opt = std::make_shared<StringOption>(
-    false, [&help](const std::string & value) {
-      (void)value;
-      help = true;
-    });
+  auto help_opt = std::make_shared<StringOption>(false, [&help](const std::string & value) {
+    (void)value;
+    help = true;
+  });
 
   std::unordered_map<std::string, std::shared_ptr<Option>> options = {
     {"--qx", qx_opt},
@@ -310,7 +288,8 @@ static void print_usage()
     "usage: periodic_transform_publisher [--x X] [--y Y] [--z Z] [--qx QX] [--qy QY] "
     "[--qz QZ] [--qw QW] [--roll ROLL] [--pitch PITCH] [--yaw YAW] --frame-id FRAME_ID "
     "--child-frame-id CHILD_FRAME_ID\n\n"
-    "A command line utility for manually sending a static transform periodically.\n\nIf no translation or"
+    "A command line utility for manually sending a static transform periodically.\n\nIf no "
+    "translation or"
     " orientation is provided, the identity transform will be published.\n\nThe translation offsets"
     " are in meters.\n\nThe rotation may be provided with roll, pitch, yaw euler angles in radians,"
     " or as a quaternion.\n\n"
@@ -354,8 +333,7 @@ int main(int argc, char ** argv)
 
   rclcpp::NodeOptions options;
   // override default parameters with the desired transform
-  options.parameter_overrides(
-  {
+  options.parameter_overrides({
     {"translation.x", translation.x()},
     {"translation.y", translation.y()},
     {"translation.z", translation.z()},
@@ -375,9 +353,8 @@ int main(int argc, char ** argv)
     node->get_logger(),
     "Spinning until stopped - publishing transform\ntranslation: ('%lf', '%lf', '%lf')\n"
     "rotation: ('%lf', '%lf', '%lf', '%lf')\nfrom '%s' to '%s'",
-    translation.x(), translation.y(), translation.z(),
-    rotation.x(), rotation.y(), rotation.z(), rotation.w(),
-    frame_id.c_str(), child_frame_id.c_str());
+    translation.x(), translation.y(), translation.z(), rotation.x(), rotation.y(), rotation.z(),
+    rotation.w(), frame_id.c_str(), child_frame_id.c_str());
 
   rclcpp::spin(node);
 

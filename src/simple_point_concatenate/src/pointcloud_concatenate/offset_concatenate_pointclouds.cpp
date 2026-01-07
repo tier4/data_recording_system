@@ -30,7 +30,8 @@
 
 namespace pointcloud_concatenate
 {
-PointCloudOffsetConcatenationComponent::PointCloudOffsetConcatenationComponent(const rclcpp::NodeOptions & node_options)
+PointCloudOffsetConcatenationComponent::PointCloudOffsetConcatenationComponent(
+  const rclcpp::NodeOptions & node_options)
 : Node("point_cloud_offset_concatenator_component", node_options)
 {
   // Set parameters
@@ -81,7 +82,8 @@ PointCloudOffsetConcatenationComponent::PointCloudOffsetConcatenationComponent(c
   {
     for (size_t i = 0; i < input_offset_msec_.size(); ++i) {
       offset_map_msec_[input_topics_[i]] = input_offset_msec_[i];
-      std::cout << "offset_map_msec_[" << input_topics_[i] << "] = " << offset_map_msec_[input_topics_[i]] << std::endl;
+      std::cout << "offset_map_msec_[" << input_topics_[i]
+                << "] = " << offset_map_msec_[input_topics_[i]] << std::endl;
     }
   }
 
@@ -99,7 +101,8 @@ PointCloudOffsetConcatenationComponent::PointCloudOffsetConcatenationComponent(c
 
   // Subscribers
   {
-    RCLCPP_INFO_STREAM(get_logger(), "Subscribing to " << input_topics_.size() << " user given topics as inputs:");
+    RCLCPP_INFO_STREAM(
+      get_logger(), "Subscribing to " << input_topics_.size() << " user given topics as inputs:");
     for (auto & input_topic : input_topics_) {
       RCLCPP_INFO_STREAM(get_logger(), " - " << input_topic);
     }
@@ -112,7 +115,8 @@ PointCloudOffsetConcatenationComponent::PointCloudOffsetConcatenationComponent(c
       points_stamp_[input_topics_[d]] = 0;
 
       std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr msg)> cb = std::bind(
-        &PointCloudOffsetConcatenationComponent::cloud_callback, this, std::placeholders::_1, input_topics_[d]);
+        &PointCloudOffsetConcatenationComponent::cloud_callback, this, std::placeholders::_1,
+        input_topics_[d]);
 
       filters_[d] = this->create_subscription<sensor_msgs::msg::PointCloud2>(
         input_topics_[d], rclcpp::SensorDataQoS().keep_last(maximum_queue_size_), cb);
@@ -133,19 +137,21 @@ int8_t PointCloudOffsetConcatenationComponent::get_topic_index(const std::string
 }
 
 void PointCloudOffsetConcatenationComponent::transformPointCloud(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & in, sensor_msgs::msg::PointCloud2::SharedPtr & out)
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & in,
+  sensor_msgs::msg::PointCloud2::SharedPtr & out)
 {
   transformPointCloud(in, out, output_frame_);
 }
 
 void PointCloudOffsetConcatenationComponent::transformPointCloud(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & in, sensor_msgs::msg::PointCloud2::SharedPtr & out,
-  const std::string & target_frame)
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & in,
+  sensor_msgs::msg::PointCloud2::SharedPtr & out, const std::string & target_frame)
 {
   if (target_frame != in->header.frame_id) {
     if (!pcl_ros::transformPointCloud(target_frame, *in, *out, *tf2_buffer_)) {
       RCLCPP_ERROR(
-        this->get_logger(), "[transformPointCloud] Error converting first input dataset from %s to %s.",
+        this->get_logger(),
+        "[transformPointCloud] Error converting first input dataset from %s to %s.",
         in->header.frame_id.c_str(), target_frame.c_str());
       return;
     }
@@ -154,11 +160,13 @@ void PointCloudOffsetConcatenationComponent::transformPointCloud(
   }
 }
 
-void PointCloudOffsetConcatenationComponent::combineClouds(sensor_msgs::msg::PointCloud2::SharedPtr & concat_cloud_ptr)
+void PointCloudOffsetConcatenationComponent::combineClouds(
+  sensor_msgs::msg::PointCloud2::SharedPtr & concat_cloud_ptr)
 {
   for (const auto & e : points_) {
     if (e.second != nullptr) {
-      sensor_msgs::msg::PointCloud2::SharedPtr transformed_cloud_ptr(new sensor_msgs::msg::PointCloud2());
+      sensor_msgs::msg::PointCloud2::SharedPtr transformed_cloud_ptr(
+        new sensor_msgs::msg::PointCloud2());
       transformPointCloud(e.second, transformed_cloud_ptr);
 
       if (concat_cloud_ptr == nullptr) {
@@ -177,7 +185,9 @@ void PointCloudOffsetConcatenationComponent::publish()
   combineClouds(concat_cloud_ptr);
 
   if (concat_cloud_ptr) {
-    RCLCPP_INFO(this->get_logger(), "Publishing a pointcloud message with %d points.\n", concat_cloud_ptr->width);
+    RCLCPP_INFO(
+      this->get_logger(), "Publishing a pointcloud message with %d points.\n",
+      concat_cloud_ptr->width);
     auto output = std::make_unique<sensor_msgs::msg::PointCloud2>(*concat_cloud_ptr);
     pub_output_->publish(std::move(output));
   } else {
@@ -185,7 +195,8 @@ void PointCloudOffsetConcatenationComponent::publish()
   }
 }
 
-bool PointCloudOffsetConcatenationComponent::is_in_side_lidar_area(const float x, const float y) const
+bool PointCloudOffsetConcatenationComponent::is_in_side_lidar_area(
+  const float x, const float y) const
 {
   if (x < 0.0) {
     return false;
@@ -201,8 +212,8 @@ bool PointCloudOffsetConcatenationComponent::is_in_side_lidar_area(const float x
 }
 
 void PointCloudOffsetConcatenationComponent::convertToXYZIICloud(
-  const sensor_msgs::msg::PointCloud2::SharedPtr & input_ptr, sensor_msgs::msg::PointCloud2::SharedPtr & output_ptr,
-  const uint8_t topic_index)
+  const sensor_msgs::msg::PointCloud2::SharedPtr & input_ptr,
+  sensor_msgs::msg::PointCloud2::SharedPtr & output_ptr, const uint8_t topic_index)
 {
   output_ptr->header = input_ptr->header;
   output_ptr->height = input_ptr->height;
@@ -211,14 +222,15 @@ void PointCloudOffsetConcatenationComponent::convertToXYZIICloud(
 
   sensor_msgs::PointCloud2Modifier output_modifier(*output_ptr);
   output_modifier.setPointCloud2Fields(
-    5, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1, sensor_msgs::msg::PointField::FLOAT32, "z", 1,
-    sensor_msgs::msg::PointField::FLOAT32, "intensity", 1, sensor_msgs::msg::PointField::FLOAT32, "index", 1,
-    sensor_msgs::msg::PointField::UINT8);
+    5, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1, sensor_msgs::msg::PointField::FLOAT32,
+    "z", 1, sensor_msgs::msg::PointField::FLOAT32, "intensity", 1,
+    sensor_msgs::msg::PointField::FLOAT32, "index", 1, sensor_msgs::msg::PointField::UINT8);
 
   output_modifier.reserve(input_ptr->width);
 
   bool has_intensity = std::any_of(
-    input_ptr->fields.begin(), input_ptr->fields.end(), [](auto & field) { return field.name == "intensity"; });
+    input_ptr->fields.begin(), input_ptr->fields.end(),
+    [](auto & field) { return field.name == "intensity"; });
 
   sensor_msgs::PointCloud2Iterator<float> in_it_x(*input_ptr, "x");
   sensor_msgs::PointCloud2Iterator<float> in_it_y(*input_ptr, "y");
@@ -232,8 +244,8 @@ void PointCloudOffsetConcatenationComponent::convertToXYZIICloud(
 
   if (has_intensity) {
     sensor_msgs::PointCloud2Iterator<uint8_t> in_it_i(*input_ptr, "intensity");
-    for (; in_it_x != in_it_x.end(); ++in_it_x, ++in_it_y, ++in_it_z, ++in_it_i, ++out_it_x, ++out_it_y, ++out_it_z,
-                                     ++out_it_intensity, ++out_it_index) {
+    for (; in_it_x != in_it_x.end(); ++in_it_x, ++in_it_y, ++in_it_z, ++in_it_i, ++out_it_x,
+                                     ++out_it_y, ++out_it_z, ++out_it_intensity, ++out_it_index) {
       if (angle_limit_lidar_index_ >= 0 && topic_index == angle_limit_lidar_index_) {
         if (is_in_side_lidar_area(*in_it_x, *in_it_y)) {
           continue;
@@ -246,8 +258,8 @@ void PointCloudOffsetConcatenationComponent::convertToXYZIICloud(
       *out_it_index = topic_index;
     }
   } else {
-    for (; in_it_x != in_it_x.end();
-         ++in_it_x, ++in_it_y, ++in_it_z, ++out_it_x, ++out_it_y, ++out_it_z, ++out_it_intensity, ++out_it_index) {
+    for (; in_it_x != in_it_x.end(); ++in_it_x, ++in_it_y, ++in_it_z, ++out_it_x, ++out_it_y,
+                                     ++out_it_z, ++out_it_intensity, ++out_it_index) {
       *out_it_x = *in_it_x;
       *out_it_y = *in_it_y;
       *out_it_z = *in_it_z;
@@ -277,8 +289,10 @@ void PointCloudOffsetConcatenationComponent::try_merge_point_clouds(const double
   RCLCPP_DEBUG(this->get_logger(), "merged point cloud at %f msec", stamp_msec);
   for (const auto & topic : input_topics_) {
     RCLCPP_INFO(
-      this->get_logger(), "%s timestamp: %f", topic.c_str(), (points_stamp_[topic] - offset_map_msec_[topic]) * 1e-3);
-    points_buff_[topic].erase(points_buff_[topic].begin(), points_buff_[topic].begin() + indices[topic] + 1);
+      this->get_logger(), "%s timestamp: %f", topic.c_str(),
+      (points_stamp_[topic] - offset_map_msec_[topic]) * 1e-3);
+    points_buff_[topic].erase(
+      points_buff_[topic].begin(), points_buff_[topic].begin() + indices[topic] + 1);
     points_stamp_buff_[topic].erase(
       points_stamp_buff_[topic].begin(), points_stamp_buff_[topic].begin() + indices[topic] + 1);
   }
@@ -296,7 +310,8 @@ bool PointCloudOffsetConcatenationComponent::all_points_received()
   return true;
 }
 
-int PointCloudOffsetConcatenationComponent::lookup_index(const std::vector<double> & stamp_buff, const double stamp)
+int PointCloudOffsetConcatenationComponent::lookup_index(
+  const std::vector<double> & stamp_buff, const double stamp)
 {
   constexpr double tolerance_msec = 50.0;
   double min_offset_msec = tolerance_msec;
@@ -322,18 +337,21 @@ void PointCloudOffsetConcatenationComponent::cloud_callback(
   if (topic_index == -1) {
     return;
   }
-  sensor_msgs::msg::PointCloud2::SharedPtr transformed_in_cloud_ptr(new sensor_msgs::msg::PointCloud2());
+  sensor_msgs::msg::PointCloud2::SharedPtr transformed_in_cloud_ptr(
+    new sensor_msgs::msg::PointCloud2());
   transformPointCloud(input, transformed_in_cloud_ptr);
   if (transformed_in_cloud_ptr->width == 0) {
-    RCLCPP_WARN(this->get_logger(), "Received an empty pointcloud message from topic: %s", topic.c_str());
+    RCLCPP_WARN(
+      this->get_logger(), "Received an empty pointcloud message from topic: %s", topic.c_str());
     return;
   }
   convertToXYZIICloud(transformed_in_cloud_ptr, xyzii_input_ptr, static_cast<uint8_t>(topic_index));
 
-  auto points_stamp_msec = input_ptr->header.stamp.sec * 1e3 + input_ptr->header.stamp.nanosec / 1e6;
+  auto points_stamp_msec =
+    input_ptr->header.stamp.sec * 1e3 + input_ptr->header.stamp.nanosec / 1e6;
   RCLCPP_DEBUG(
-    get_logger(), "Received a pointcloud message from topic: %s at %f. Point num is %d", topic.c_str(),
-    points_stamp_msec, xyzii_input_ptr->width);
+    get_logger(), "Received a pointcloud message from topic: %s at %f. Point num is %d",
+    topic.c_str(), points_stamp_msec, xyzii_input_ptr->width);
 
   points_buff_[topic].push_back(xyzii_input_ptr);
   points_stamp_buff_[topic].push_back(points_stamp_msec + offset_map_msec_[topic]);
