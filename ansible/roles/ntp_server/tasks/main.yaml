@@ -38,6 +38,32 @@
   become: true
   notify: restart chrony
 
+- name: Ensure chrony service override directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/chrony.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Configure chrony service auto-restart on failure
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/chrony.service.d/override.conf
+    content: |
+      [Service]
+      # Auto-restart on failure (restart only on abnormal exit)
+      Restart=on-failure
+      # Wait time before restart (seconds)
+      RestartSec=10
+      # Maximum restart attempts (0 for unlimited)
+      StartLimitIntervalSec=0
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: restart chrony
+
 - name: Enable and start chrony service
   ansible.builtin.systemd:
     name: chrony

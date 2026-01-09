@@ -24,11 +24,20 @@
   ignore_errors: true
   when: not (ntp_server_enabled | default(false) | bool)
 
+- name: Remove chrony service override configuration if ntp_server is disabled
+  ansible.builtin.file:
+    path: /etc/systemd/system/chrony.service.d/override.conf
+    state: absent
+  become: true
+  ignore_errors: true
+  when: not (ntp_server_enabled | default(false) | bool)
+
 - name: Stop and disable chrony service if ntp_server is disabled
   ansible.builtin.systemd:
     name: chrony
     state: stopped
     enabled: false
+    daemon_reload: true
   become: true
   ignore_errors: true
   when: not (ntp_server_enabled | default(false) | bool)
