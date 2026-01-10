@@ -99,35 +99,15 @@
       become: true
 
 # ROS 2 Environment Configuration
-- name: Set ROS_DOMAIN_ID in drs.env
-  ansible.builtin.lineinfile:
+- name: Add ROS2 settings to drs.env
+  ansible.builtin.blockinfile:
     path: /opt/drs/config/drs.env
-    # yamllint disable-line rule:quoted-strings
-    regexp: "^export ROS_DOMAIN_ID="
-    line: export ROS_DOMAIN_ID={{ ros_domain_id }}
     state: present
     create: true
-    mode: "0644"
-  become: true
-
-- name: Set ROS_DISTRO in drs.env
-  ansible.builtin.lineinfile:
-    path: /opt/drs/config/drs.env
-    # yamllint disable-line rule:quoted-strings
-    regexp: "^export ROS_DISTRO="
-    line: export ROS_DISTRO=humble
-    state: present
-    create: true
-    mode: "0644"
-  become: true
-
-- name: Set ROS_LOG_DIR in drs.env
-  ansible.builtin.lineinfile:
-    path: /opt/drs/config/drs.env
-    # yamllint disable-line rule:quoted-strings
-    regexp: "^export ROS_LOG_DIR="
-    line: export ROS_LOG_DIR=/tmp/drs/log
-    state: present
-    create: true
-    mode: "0644"
+    mode: 0644
+    marker: "# {mark} ros2"
+    block: |
+      export ROS_DOMAIN_ID={{ ros_domain_id }}
+      export ROS_DISTRO=humble
+      export ROS_LOG_DIR=/tmp/drs/log
   become: true
