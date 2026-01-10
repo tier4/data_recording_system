@@ -23,6 +23,9 @@
     - role: cleanup
       tags: [drs, cleanup]
 
+    - role: drs_config
+      tags: [drs, config]
+
     - role: ssd_mount
       tags: [anvil, ssd_mount]
 
@@ -58,9 +61,6 @@
 
     - role: anvil_docker
       tags: [anvil, docker]
-
-    - role: drs_config
-      tags: [drs, config]
 
     - role: cyclonedds
       tags: [cyclonedds]
