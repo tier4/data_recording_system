@@ -19,19 +19,24 @@
     cache_valid_time: 3600
   become: true
 
-- name: Ensure chrony configuration directory exists
-  ansible.builtin.file:
-    path: /etc/chrony/chrony.conf.d
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
+- name: Check if backup already exists
+  ansible.builtin.stat:
+    path: /etc/chrony/chrony.conf.backup
+  register: chrony_backup_stat
   become: true
+
+- name: Backup chrony.conf
+  ansible.builtin.copy:
+    src: /etc/chrony/chrony.conf
+    dest: /etc/chrony/chrony.conf.backup
+    remote_src: true
+  become: true
+  when: not chrony_backup_stat.stat.exists
 
 - name: Deploy chrony server configuration
   ansible.builtin.template:
     src: chrony-server.conf.j2
-    dest: /etc/chrony/chrony.conf.d/drs-ntp-server.conf
+    dest: /etc/chrony/chrony.conf
     owner: root
     group: root
     mode: "0644"
