@@ -1,7 +1,0 @@
-# NTP Server Configuration for DRS
-# Use local time source (PTP-synchronized system time)
-local stratum {{ ntp_server_stratum | default(10) }}
-# Allow NTP queries from specified networks
-{% for network in ntp_server_allow_networks | default(['192.168.20.0/24']) %}
-allow {{ network }}
-{% endfor %}

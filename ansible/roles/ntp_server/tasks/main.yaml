@@ -33,13 +33,40 @@
   become: true
   when: not chrony_backup_stat.stat.exists
 
+- name: Remove existing pool and server lines
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    regexp: ^(pool|server) .*$
+    state: absent
+  become: true
+
+- name: Remove existing local stratum and allow lines (to avoid duplicates)
+  ansible.builtin.lineinfile:
+    path: /etc/chrony/chrony.conf
+    regexp: ^(local stratum|allow .*)$
+    state: absent
+  become: true
+
+- name: Remove existing NTP Server Configuration block if exists
+  ansible.builtin.blockinfile:
+    path: /etc/chrony/chrony.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - NTP Server Configuration for DRS"
+    state: absent
+  become: true
+
 - name: Deploy chrony server configuration
-  ansible.builtin.template:
-    src: chrony-server.conf.j2
-    dest: /etc/chrony/chrony.conf
-    owner: root
-    group: root
-    mode: "0644"
+  ansible.builtin.blockinfile:
+    path: /etc/chrony/chrony.conf
+    block: |
+      # Use local time source (PTP-synchronized system time)
+      local stratum {{ ntp_server_stratum | default(10) }}
+      # Allow NTP queries from specified networks
+      {% for network in ntp_server_allow_networks | default(['192.168.20.0/24']) %}
+      allow {{ network }}
+      {% endfor %}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - NTP Server Configuration for DRS"
+    insertafter: EOF
+    create: true
   become: true
   notify: restart chrony
 
