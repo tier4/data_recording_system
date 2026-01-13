@@ -61,6 +61,7 @@
 - name: Save iptables rules after removing NTP rules
   ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
   become: true
+  changed_when: remove_udp123_dport.rc == 0 or remove_udp123_sport.rc == 0
   when:
     - not (ntp_server_enabled | default(false) | bool)
     - (remove_udp123_dport.rc == 0 or remove_udp123_sport.rc == 0)

@@ -30,6 +30,9 @@
     src: /etc/chrony/chrony.conf
     dest: /etc/chrony/chrony.conf.backup
     remote_src: true
+    owner: root
+    group: root
+    mode: "0644"
   become: true
   when: not chrony_backup_stat.stat.exists
 
@@ -67,8 +70,11 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - NTP Server Configuration for DRS"
     insertafter: EOF
     create: true
+    owner: root
+    group: root
+    mode: "0644"
   become: true
-  notify: restart chrony
+  notify: Restart chrony
 
 - name: Ensure chrony service override directory exists
   ansible.builtin.file:
@@ -94,7 +100,7 @@
     group: root
     mode: "0644"
   become: true
-  notify: restart chrony
+  notify: Restart chrony
 
 - name: Enable and start chrony service
   ansible.builtin.systemd:
@@ -138,14 +144,17 @@
 - name: Add UDP 123 INPUT rule (dport) if not exists
   ansible.builtin.command: iptables -A INPUT -p udp --dport 123 -j ACCEPT
   become: true
+  changed_when: iptables_udp123_dport_check.rc != 0
   when: iptables_udp123_dport_check.rc != 0
 
 - name: Add UDP 123 INPUT rule (sport) if not exists
   ansible.builtin.command: iptables -A INPUT -p udp --sport 123 -j ACCEPT
   become: true
+  changed_when: iptables_udp123_sport_check.rc != 0
   when: iptables_udp123_sport_check.rc != 0
 
 - name: Save iptables rules
   ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
   become: true
+  changed_when: iptables_udp123_dport_check.rc != 0 or iptables_udp123_sport_check.rc != 0
   when: iptables_udp123_dport_check.rc != 0 or iptables_udp123_sport_check.rc != 0
