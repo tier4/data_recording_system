@@ -98,7 +98,6 @@
     "zoneinfo",
     "chronyd",
     "dport",
-    "ROS2",
     "zipf"
   ],
   "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],

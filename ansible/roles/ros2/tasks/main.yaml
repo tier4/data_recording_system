@@ -99,7 +99,7 @@
       become: true
 
 # ROS 2 Environment Configuration
-- name: Add ROS2 settings to drs.env
+- name: Add ROS 2 settings to drs.env
   ansible.builtin.blockinfile:
     path: /opt/drs/config/drs.env
     state: present
