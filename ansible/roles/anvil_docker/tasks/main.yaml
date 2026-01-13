@@ -8,8 +8,15 @@
     cache_valid_time: 3600
   become: true
 
-- name: Download and install Docker
-  ansible.builtin.shell: curl https://get.docker.com | sh
+- name: Download Docker installation script
+  ansible.builtin.get_url:
+    url: https://get.docker.com
+    dest: /tmp/get-docker.sh
+    mode: "0755"
+  become: true
+
+- name: Install Docker
+  ansible.builtin.command: /bin/sh /tmp/get-docker.sh
   args:
     creates: /usr/bin/docker
   become: true
@@ -72,9 +79,13 @@
   become: true
 
 - name: Migrate Docker data to new location
-  ansible.builtin.command: rsync -axPS /var/lib/docker/ /mnt/ssd/docker/
+  ansible.posix.synchronize:
+    src: /var/lib/docker/
+    dest: /mnt/ssd/docker/
+    rsync_opts:
+      - -axPS
   become: true
-  changed_when: true
+  delegate_to: "{{ inventory_hostname }}"
 
 - name: Check new Docker data directory size
   ansible.builtin.command: du -csh /mnt/ssd/docker/
