@@ -1,4 +1,4 @@
-// Copyright 2024 TIER IV, Inc.
+// Copyright 2025 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,11 +29,10 @@
 // ROS includes
 #include <point_cloud_msg_wrapper/point_cloud_msg_wrapper.hpp>
 
-#include <pcl/point_types.h>
-
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
 
+#include <pcl/point_types.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -56,8 +55,9 @@ struct PointXYZIWithIndex
   uint8_t index{0U};
   friend bool operator==(const PointXYZIWithIndex & p1, const PointXYZIWithIndex & p2) noexcept
   {
-    return float_eq<float>(p1.x, p2.x) && float_eq<float>(p1.y, p2.y) && float_eq<float>(p1.z, p2.z) &&
-           float_eq<float>(p1.intensity, p2.intensity) && p1.index == p2.index;
+    return float_eq<float>(p1.x, p2.x) && float_eq<float>(p1.y, p2.y) &&
+           float_eq<float>(p1.z, p2.z) && float_eq<float>(p1.intensity, p2.intensity) &&
+           p1.index == p2.index;
   }
 };
 
@@ -81,7 +81,8 @@ private:
   /** \brief The output PointCloud publisher. */
   rclcpp::Publisher<PointCloud2>::SharedPtr pub_output_;
   /** \brief Delay Compensated PointCloud publisher*/
-  std::map<std::string, rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> transformed_raw_pc_publisher_map_;
+  std::map<std::string, rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr>
+    transformed_raw_pc_publisher_map_;
 
   /** \brief The maximum number of messages that we can store in the queue. */
   int maximum_queue_size_ = 3;
@@ -116,18 +117,20 @@ private:
   int8_t get_topic_index(const std::string & topic_name) const;
   void transformPointCloud(const PointCloud2::ConstSharedPtr & in, PointCloud2::SharedPtr & out);
   void transformPointCloud(
-    const PointCloud2::ConstSharedPtr & in, PointCloud2::SharedPtr & out, const std::string & target_frame);
+    const PointCloud2::ConstSharedPtr & in, PointCloud2::SharedPtr & out,
+    const std::string & target_frame);
   void combineClouds(sensor_msgs::msg::PointCloud2::SharedPtr & concat_cloud_ptr);
   void publish();
 
   bool is_in_side_lidar_area(const float x, const float y) const;
   void convertToXYZIICloud(
-    const sensor_msgs::msg::PointCloud2::SharedPtr & input_ptr, sensor_msgs::msg::PointCloud2::SharedPtr & output_ptr,
-    const uint8_t topic_index);
+    const sensor_msgs::msg::PointCloud2::SharedPtr & input_ptr,
+    sensor_msgs::msg::PointCloud2::SharedPtr & output_ptr, const uint8_t topic_index);
   void try_merge_point_clouds(const double stamp_msec);
   bool all_points_received();
   int lookup_index(const std::vector<double> & stamp_buff, const double stamp);
-  void cloud_callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & input_ptr, const std::string & topic);
+  void cloud_callback(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & input_ptr, const std::string & topic);
 };
 
 LIDAR_UTILS__DEFINE_FIELD_GENERATOR_FOR_MEMBER(index);

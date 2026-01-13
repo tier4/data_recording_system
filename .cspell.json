@@ -94,10 +94,12 @@
     "wlan",
     "wpasupplicant",
     "wsize",
+    "wxyz",
     "zoneinfo",
     "chronyd",
     "dport",
-    "ROS2"
+    "ROS2",
+    "zipf"
   ],
   "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],
   "useGitignore": true
