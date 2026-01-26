@@ -15,6 +15,10 @@ has_vehicle_can: false
 has_fisheye: false
 has_dashboard_service: false
 lidar_driver_type: nebula
+# This option specifies the camera configuration used.
+# If using both C3 and C2 cameras: "-4 C3 -4 C2"
+# If using only C2 cameras: "-8 C2"
+make_overlay_dts_anvil_option: -4 C3 -4 C2
 
 # ROS 2 Configuration
 ros_domain_id: 1
