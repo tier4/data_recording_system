@@ -20,9 +20,9 @@
     mode: "0755"
   become: true
 
-- name: Copy docker-compose.yml file
-  ansible.builtin.copy:
-    src: docker-compose.yml
+- name: Deploy docker-compose.yml file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
     dest: /opt/drs/service/drs_ros2_bridge/docker-compose.yml
     owner: root
     group: root

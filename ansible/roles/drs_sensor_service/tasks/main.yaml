@@ -7,6 +7,12 @@
     mode: "0755"
   become: true
 
+- name: Check if drs_param_root_dir exists
+  ansible.builtin.stat:
+    path: "{{ drs_param_root_dir }}"
+  register: drs_param_root_dir_stat
+  become: true
+
 - name: Copy default parameters when custom params enabled
   ansible.builtin.copy:
     src: "{{ drs_install_dir }}/share/individual_params/config/default/"
@@ -16,7 +22,9 @@
     mode: "0755"
     remote_src: true
   become: true
-  when: drs_use_custom_params | bool
+  when:
+    - drs_use_custom_params | bool
+    - not drs_param_root_dir_stat.stat.exists
 
 - name: Create DRS launch script
   ansible.builtin.template:
