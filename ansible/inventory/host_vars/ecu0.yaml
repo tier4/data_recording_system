@@ -1,11 +1,11 @@
 # ECU0 specific configuration
 
 drs_ecu_id: 0
-module_id: eeffgghh
+module_id: h6fBn9V9
 
-has_vehicle_can: false
+has_vehicle_can: true
 has_fisheye: false
-has_dashboard_service: false
+has_dashboard_service: true # JPT#10 needs this for drs_ros2_bridge_service
 
 # Module manager configuration
 module_manager_config: module-manager-ecu0.yaml

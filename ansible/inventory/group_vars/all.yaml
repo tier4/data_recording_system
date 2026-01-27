@@ -3,22 +3,22 @@
 
 # DRS Configuration
 drs_ecu_id: 0
-sensing_system_id: aabbccdd
+sensing_system_id: Pct6CqsV
 module_id: eeffgghh
 drs_user: "{{ ansible_user }}"
 drs_group: "{{ ansible_user }}"
 drs_install_dir: /opt/drs/install
 drs_build_type: RelWithDebInfo
 
-has_raspi_controller: false
+has_raspi_controller: true
 has_vehicle_can: false
 has_fisheye: false
 has_dashboard_service: false
-lidar_driver_type: nebula
+lidar_driver_type: seyond
 # This option specifies the camera configuration used.
 # If using both C3 and C2 cameras: "-4 C3 -4 C2"
 # If using only C2 cameras: "-8 C2"
-make_overlay_dts_anvil_option: -4 C3 -4 C2
+make_overlay_dts_anvil_option: -8 C2
 
 # ROS 2 Configuration
 ros_domain_id: 1

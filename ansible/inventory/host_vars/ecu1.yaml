@@ -1,10 +1,10 @@
 # ECU1 specific configuration
 
 drs_ecu_id: 1
-module_id: eeffgghh
+module_id: hMddSCQG
 
 has_vehicle_can: false
-has_fisheye: false # false: ptp.slave_ports: [eqos0], true: ptp.slave_ports: [eqos0, mgbe0]
+has_fisheye: true # false: ptp.slave_ports: [eqos0], true: ptp.slave_ports: [eqos0, mgbe0]
 has_dashboard_service: false
 
 # Module manager configuration
