@@ -7,16 +7,22 @@
     group: "{{ drs_group }}"
   become: true
 
-# todo: Inspect failed tasks and fix them
-# - name: Import dependencies using vcs from drs.repos
-#   shell: |
-#     cd {{ drs_src_dir }}
-#     vcs import src < drs.repos
-#   args:
-#     executable: /bin/bash
-#   become_user: "{{ drs_user }}"
-#   environment:
-#     HOME: "/home/{{ drs_user }}"
+- name: Import dependencies using vcs from drs.repos
+  ansible.builtin.shell: |
+    cd {{ drs_src_dir }}
+    if [ -n "{{ github_pat }}" ]; then
+      sed -e 's|https://github.com/|https://{{ github_pat }}@github.com/|g' \
+          -e 's|git@github.com:|https://{{ github_pat }}@github.com/|g' \
+          drs.repos | vcs import src
+    else
+      vcs import src < drs.repos
+    fi
+  args:
+    executable: /bin/bash
+  become_user: "{{ drs_user }}"
+  environment:
+    HOME: "/home/{{ drs_user }}"
+  changed_when: true
 
 - name: Initialize rosdep system-wide
   ansible.builtin.shell: |
