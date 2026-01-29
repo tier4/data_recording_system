@@ -5,6 +5,7 @@
 # Visual Studio Code
 .vscode/
 *.code-workspace
+.cursor/
 
 # colcon
 build/

@@ -117,7 +117,7 @@ These files contain:
 The playbook executes roles in this order based on dependencies:
 
 1. **Storage Setup**: `ssd_mount`
-2. **System Configuration**: `jetpack`, `journald`, `netplan`, `ntp`, `ptp`
+2. **System Configuration**: `jetpack`, `journald`, `netplan`, `ptp`
 3. **Core Software**: `ros2`, `docker`
 4. **DRS Environment**: `drs_config`
 5. **Middleware**: `cyclonedds`

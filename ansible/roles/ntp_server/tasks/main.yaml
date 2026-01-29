@@ -1,0 +1,123 @@
+- name: Verify ntp_server_enabled is not True when ptp.time_sync_type is NTP
+  ansible.builtin.fail:
+    msg: |
+      ntp_server_enabled cannot be True when ptp.time_sync_type is 'NTP'.
+      These settings are incompatible:
+      - ptp role NTP mode disables chrony service and uses it only for one-time sync
+      - ntp_server role enables chrony service to distribute PTP-synchronized time as NTP server
+      Please set ptp.time_sync_type to 'GNSS' if you want to use ntp_server role.
+  when:
+    - ntp_server_enabled | default(false) | bool
+    - ptp.time_sync_type is defined
+    - ptp.time_sync_type == 'NTP'
+
+- name: Install chrony package
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Check if backup already exists
+  ansible.builtin.stat:
+    path: /etc/chrony/chrony.conf.backup
+  register: chrony_backup_stat
+  become: true
+
+- name: Backup chrony.conf
+  ansible.builtin.copy:
+    src: /etc/chrony/chrony.conf
+    dest: /etc/chrony/chrony.conf.backup
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: not chrony_backup_stat.stat.exists
+
+- name: Deploy chrony server configuration
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart chrony
+
+- name: Ensure chrony service override directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/chrony.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Configure chrony service auto-restart on failure
+  ansible.builtin.template:
+    src: chrony_override.conf.j2
+    dest: /etc/systemd/system/chrony.service.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart chrony
+
+- name: Enable and start chrony service
+  ansible.builtin.systemd:
+    name: chrony
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
+- name: Install iptables-persistent package
+  ansible.builtin.apt:
+    name: iptables-persistent
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Ensure iptables rules directory exists
+  ansible.builtin.file:
+    path: /etc/iptables
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Check if UDP 123 INPUT rule already exists
+  ansible.builtin.command: iptables -C INPUT -p udp --dport 123 -j ACCEPT
+  register: iptables_udp123_dport_check
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Check if UDP 123 INPUT rule (sport) already exists
+  ansible.builtin.command: iptables -C INPUT -p udp --sport 123 -j ACCEPT
+  register: iptables_udp123_sport_check
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Add UDP 123 INPUT rule (dport) if not exists
+  ansible.builtin.command: iptables -A INPUT -p udp --dport 123 -j ACCEPT
+  become: true
+  changed_when: iptables_udp123_dport_check.rc != 0
+  when: iptables_udp123_dport_check.rc != 0
+
+- name: Add UDP 123 INPUT rule (sport) if not exists
+  ansible.builtin.command: iptables -A INPUT -p udp --sport 123 -j ACCEPT
+  become: true
+  changed_when: iptables_udp123_sport_check.rc != 0
+  when: iptables_udp123_sport_check.rc != 0
+
+- name: Save iptables rules
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  become: true
+  changed_when: iptables_udp123_dport_check.rc != 0 or iptables_udp123_sport_check.rc != 0
+  when: iptables_udp123_dport_check.rc != 0 or iptables_udp123_sport_check.rc != 0

@@ -1,0 +1,11 @@
+# Default variables for ntp_server role
+
+# Enable NTP server (can be overridden in host_vars)
+ntp_server_enabled: false
+
+# Networks allowed to query this NTP server
+ntp_server_allow_networks:
+  - 192.168.0.0/16
+
+# Stratum level for local time source
+ntp_server_stratum: 10
