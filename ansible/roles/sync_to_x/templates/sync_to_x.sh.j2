@@ -1,15 +1,22 @@
 #!/bin/bash
 
-# sync_to_nas.sh - Synchronize sensor data to NFS server
+# sync_to_x.sh - Synchronize sensor data to storage (NAS or External SSD)
 
 # Configuration
-SOURCE_DIR="{{ sync_to_nas_source_dir }}"
-NAS_BASE_DIR="{{ sync_to_nas_base_dir }}"
-HOSTNAME="{{ sync_to_nas_hostname }}"
-DEST_DIR="${NAS_BASE_DIR}/${HOSTNAME}"
-LOCK_FILE="{{ sync_to_nas_lock_file }}"
-SAFE_TIME_SECONDS={{ sync_to_nas_safe_time_seconds }}  # Wait time before mcap files are safe to transfer (seconds)
-RSYNC_BW_LIMIT="{{ sync_to_nas_rsync_bw_limit }}"  # rsync bandwidth limit
+SOURCE_DIR="{{ sync_to_x_source_dir }}"
+HOSTNAME="{{ sync_to_x_hostname }}"
+LOCK_FILE="{{ sync_to_x_lock_file }}"
+SAFE_TIME_SECONDS={{ sync_to_x_safe_time_seconds }}  # Wait time before mcap files are safe to transfer (seconds)
+RSYNC_BW_LIMIT="{{ sync_to_x_rsync_bw_limit }}"  # rsync bandwidth limit
+FREE_SPACE_LIMIT_GB={{ sync_to_x_free_space_limit_gb }}
+
+# Destinations (Priority order)
+# Ansible will expand the list here
+DESTINATIONS=(
+{% for dest in sync_to_x_destinations %}
+    "{{ dest }}"
+{% endfor %}
+)
 
 # Error handling
 error_exit() {
@@ -28,16 +35,60 @@ touch "$LOCK_FILE"
 # Cleanup on exit
 trap 'rm -f "$LOCK_FILE"' EXIT
 
-# Verify NFS mount
-if ! mountpoint -q "${NAS_BASE_DIR}"; then
-    error_exit "NFS not mounted: ${NAS_BASE_DIR}"
+# Select Destination
+TARGET_BASE_DIR=""
+
+for dest in "${DESTINATIONS[@]}"; do
+    # Skip empty entries
+    if [ -z "$dest" ]; then
+        continue
+    fi
+
+    echo "Checking destination: $dest"
+
+    # Check if directory exists
+    if [ ! -d "$dest" ]; then
+        echo "  Skipping: Directory does not exist."
+        continue
+    fi
+
+    # Check if it is a mountpoint (Optional, but good practice for external drives/NAS)
+    # The requirement didn't strictly say it MUST be a mountpoint, but implied it.
+    # However, for robustness, checking if it's writable and has space is more critical.
+    if ! mountpoint -q "$dest"; then
+         echo "  Warning: $dest is not a mountpoint."
+         # Proceeding anyway as it might be a local path, or we can enforce it.
+         # For now, let's treat it as valid if writable.
+    fi
+
+    # Check free space
+    # df output: Filesystem 1K-blocks Used Available Use% Mounted on
+    # We want Available (4th column) in KB
+    available_kb=$(df -k --output=avail "$dest" | tail -n 1)
+
+    # Convert Limit to KB
+    limit_kb=$((FREE_SPACE_LIMIT_GB * 1024 * 1024))
+
+    if [ "$available_kb" -ge "$limit_kb" ]; then
+        echo "  Selected: Enough free space available ($((available_kb / 1024 / 1024)) GB)."
+        TARGET_BASE_DIR="$dest"
+        break
+    else
+        echo "  Skipping: Not enough free space (Available: $((available_kb / 1024 / 1024)) GB, Limit: $FREE_SPACE_LIMIT_GB GB)."
+    fi
+done
+
+if [ -z "$TARGET_BASE_DIR" ]; then
+    error_exit "No suitable destination found with enough free space."
 fi
+
+DEST_DIR="${TARGET_BASE_DIR}/${HOSTNAME}"
 
 # Create destination directory
 mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
 
 # Process files for transfer
-echo "Starting backup process"
+echo "Starting backup process to $DEST_DIR"
 
 # Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
 find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do

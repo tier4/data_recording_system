@@ -1,0 +1,22 @@
+# Source and destination directories
+sync_to_x_source_dir: /mnt/ssd/data
+sync_to_x_destinations:
+  - /mnt/nas/data
+  - /mnt/external/data
+  - ""
+  - ""
+sync_to_x_hostname: "{{ ansible_hostname }}"
+
+# Timing and performance settings
+sync_to_x_safe_time_seconds: 60
+sync_to_x_rsync_bw_limit: 100m
+sync_to_x_timer_interval: 5min
+sync_to_x_free_space_limit_gb: 10
+
+# System paths
+sync_to_x_script_path: /opt/drs/service/sync_to_x/sync_to_x.sh
+sync_to_x_lock_file: /var/run/sync_to_x.lock
+
+# Service resource limits
+sync_to_x_cpu_quota: 50%
+sync_to_x_io_weight: 10

@@ -159,9 +159,8 @@
       tags: [nas, nas_mount]
       when: nas_address is defined
 
-    - role: sync_to_nas
-      tags: [nas, sync_to_nas]
-      when: nas_address is defined
+    - role: sync_to_x
+      tags: [nas, sync_to_x]
 
     - role: extra_apps
       tags: [extra_apps]

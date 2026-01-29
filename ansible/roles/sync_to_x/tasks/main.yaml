@@ -1,14 +1,14 @@
-- name: Create sync_to_nas directory
+- name: Create sync_to_x directory
   ansible.builtin.file:
-    path: "{{ sync_to_nas_script_path | dirname }}"
+    path: "{{ sync_to_x_script_path | dirname }}"
     state: directory
     mode: 0755
   become: true
 
 - name: Create sync script from template
   ansible.builtin.template:
-    src: sync_to_nas.sh.j2
-    dest: "{{ sync_to_nas_script_path }}"
+    src: sync_to_x.sh.j2
+    dest: "{{ sync_to_x_script_path }}"
     owner: root
     group: root
     mode: "0755"
@@ -17,8 +17,8 @@
 
 - name: Create systemd service file
   ansible.builtin.template:
-    src: sync-to-nas.service.j2
-    dest: /etc/systemd/system/sync-to-nas.service
+    src: sync-to-x.service.j2
+    dest: /etc/systemd/system/sync-to-x.service
     owner: root
     group: root
     mode: "0644"
@@ -27,8 +27,8 @@
 
 - name: Create systemd timer file
   ansible.builtin.template:
-    src: sync-to-nas.timer.j2
-    dest: /etc/systemd/system/sync-to-nas.timer
+    src: sync-to-x.timer.j2
+    dest: /etc/systemd/system/sync-to-x.timer
     owner: root
     group: root
     mode: "0644"
@@ -41,9 +41,9 @@
   when: systemd_service.changed or systemd_timer.changed
   become: true
 
-- name: Enable and start sync-to-nas timer
+- name: Enable and start sync-to-x timer
   ansible.builtin.systemd:
-    name: sync-to-nas.timer
+    name: sync-to-x.timer
     state: started
     enabled: true
   become: true
