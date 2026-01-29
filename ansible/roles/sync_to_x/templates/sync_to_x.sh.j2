@@ -2,6 +2,9 @@
 
 # sync_to_x.sh - Synchronize sensor data to storage (NAS or External SSD)
 
+# Set umask to 000 to ensure created directories are fully writable
+umask 000
+
 # Configuration
 SOURCE_DIR="{{ sync_to_x_source_dir }}"
 HOSTNAME="{{ sync_to_x_hostname }}"
@@ -122,6 +125,7 @@ find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d'
     # rsync: Bandwidth limit, checksum verification, no progress
     if ionice -c 3 nice -n 19 rsync \
         --bwlimit="$RSYNC_BW_LIMIT" \
+        --chmod=F666,D777 \
         --checksum \
         --no-progress \
         "$mcap_file" \
