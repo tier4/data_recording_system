@@ -55,8 +55,8 @@
       ansible.builtin.command: fdtoverlay -o /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb -i /boot/dtb/kernel_tegra234-orin-agx-cti-AGX201.dtb /boot/tier4-camera-device-tree-overlay-anvil.dtbo
       args:
         chdir: /boot/
-        creates: /boot/kernel_tegra234-orin-agx-cti-AGX201-user-custom.dtb
       become: true
+      changed_when: true
 
     - name: Backup extlinux.conf
       ansible.builtin.copy:
