@@ -91,6 +91,9 @@
     - role: cleanup
       tags: [drs, cleanup]
 
+    - role: drs_config
+      tags: [drs, config]
+
     - role: ssd_mount
       tags: [anvil, ssd_mount]
 
@@ -117,14 +120,15 @@
     - role: ptp
       tags: [ptp]
 
+    - role: ntp_server
+      tags: [ntp, ntp_server]
+      when: ntp_server_enabled | default(false) | bool
+
     - role: ros2
       tags: [ros2]
 
     - role: anvil_docker
       tags: [anvil, docker]
-
-    - role: drs_config
-      tags: [drs, config]
 
     - role: cyclonedds
       tags: [cyclonedds]
