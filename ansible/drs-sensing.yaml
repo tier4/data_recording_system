@@ -16,7 +16,7 @@
 
   vars_prompt:
     - name: github_pat
-      prompt: "Enter GitHub Personal Access Token (classic) [Optional]"
+      prompt: Enter GitHub Personal Access Token (classic) [Optional]
       private: true
       default: ""
 
@@ -95,7 +95,7 @@
       tags: [anvil, ssd_mount]
 
     - role: jetpack
-      tags: [anvil, nvidia, jetpack]
+      tags: [anvil, nvidia, jetpack, drs]
 
     - role: jetson
       tags: [anvil, nvidia, jetson]
