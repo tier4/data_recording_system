@@ -15,7 +15,7 @@
 
   vars_prompt:
     - name: github_pat
-      prompt: "Enter GitHub Personal Access Token (classic) [Optional]"
+      prompt: Enter GitHub Personal Access Token (classic) [Optional]
       private: true
       default: ""
 
