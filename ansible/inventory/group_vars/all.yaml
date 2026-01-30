@@ -62,3 +62,12 @@ journald_system_max_use: 500M
 # Sensor Trigger Configuration
 sensor_trigger_rtprio: 85
 sensor_trigger_memlock: infinity
+
+# NTP Server Configuration (common settings)
+# Default: disabled, enable per host in host_vars (ecu0/ecu1 only)
+# Note: raspi uses raspi_time_sync role instead
+# This role distributes system time synchronized by PTP as NTP server
+# WARNING: Cannot be enabled when ptp.time_sync_type is 'NTP'
+ntp_server_enabled: false
+# ntp_server_allow_networks: ['192.168.0.0/16', '10.0.0.0/8']
+# ntp_server_stratum: 10

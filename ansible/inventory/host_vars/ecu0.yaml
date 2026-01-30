@@ -26,6 +26,12 @@ ptp:
   priority1: 128
   priority2: 128
 
+# NTP Server Configuration for ECU0
+# Override ntp_server_enabled here to enable NTP server on this host
+# This distributes PTP-synchronized system time as NTP server
+# WARNING: Cannot be enabled when ptp.time_sync_type is 'NTP'
+# ntp_server_enabled: true
+
 # NAS Configuration
 nas_address: 192.168.10.100
 
