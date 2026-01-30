@@ -49,19 +49,19 @@ for dest in "${DESTINATIONS[@]}"; do
 
     echo "Checking destination: $dest"
 
+    # Trigger automount if configured (accessing the directory triggers mount)
+    ls -d "$dest" > /dev/null 2>&1
+
     # Check if directory exists
     if [ ! -d "$dest" ]; then
         echo "  Skipping: Directory does not exist."
         continue
     fi
 
-    # Check if it is a mountpoint (Optional, but good practice for external drives/NAS)
-    # The requirement didn't strictly say it MUST be a mountpoint, but implied it.
-    # However, for robustness, checking if it's writable and has space is more critical.
+    # Check if it is a mountpoint
     if ! mountpoint -q "$dest"; then
-         echo "  Warning: $dest is not a mountpoint."
-         # Proceeding anyway as it might be a local path, or we can enforce it.
-         # For now, let's treat it as valid if writable.
+         echo "  Skipping: $dest is not a mountpoint."
+         continue
     fi
 
     # Check free space

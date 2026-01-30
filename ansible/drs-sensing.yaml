@@ -155,12 +155,15 @@
     - role: sensor_trigger
       tags: [anvil, driver, sensor_trigger]
 
+    - role: external_ssd_mount
+      tags: [external_storage,external_ssd_mount]
+
     - role: nas_mount
-      tags: [nas, nas_mount]
+      tags: [external_storage, nas_mount]
       when: nas_address is defined
 
     - role: sync_to_x
-      tags: [nas, sync_to_x]
+      tags: [external_storage, sync_to_x]
 
     - role: extra_apps
       tags: [extra_apps]

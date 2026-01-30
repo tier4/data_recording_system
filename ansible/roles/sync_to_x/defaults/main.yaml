@@ -1,10 +1,8 @@
 # Source and destination directories
 sync_to_x_source_dir: /mnt/ssd/data
 sync_to_x_destinations:
-  - /mnt/nas/data
   - /mnt/external/data
-  - ""
-  - ""
+  - /mnt/nas/data
 sync_to_x_hostname: "{{ ansible_hostname }}"
 
 # Timing and performance settings
