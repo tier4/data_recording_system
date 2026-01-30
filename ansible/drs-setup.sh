@@ -51,7 +51,15 @@ fi
 # Check if ansible is installed, if not, install it with pipx
 if ! command -v ansible-playbook &>/dev/null; then
     echo "Ansible not found. Installing ansible with pipx..."
-    pipx install --force --include-deps ansible-core
+    # Check if pipx thinks ansible-core is already installed
+    if pipx list --short | grep -q "^ansible-core "; then
+        echo "Ansible seems to be installed via pipx but command is missing."
+        echo "Attempting to reinstall/repair..."
+        pipx reinstall ansible-core
+    else
+        # Clean install
+        pipx install --include-deps ansible-core
+    fi
 
     # Verify installation
     if ! command -v ansible-playbook &>/dev/null; then
@@ -66,7 +74,7 @@ fi
 # Install Ansible Galaxy requirements
 echo "Installing Ansible Galaxy requirements..."
 if [[ -f requirements.yml ]]; then
-    ansible-galaxy collection install -r requirements.yml --force
+    ansible-galaxy collection install -r requirements.yml --upgrade
     if [[ $? -eq 0 ]]; then
         echo "Ansible Galaxy requirements installed successfully."
     else
