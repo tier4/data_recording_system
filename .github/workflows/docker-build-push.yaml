@@ -24,22 +24,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: docker/runtime/Dockerfile
-            image: ghcr.io/tier4/pkg-drs-runtime
-            context: .
-          - dockerfile: docker/calibration/Dockerfile
-            image: ghcr.io/tier4/pkg-drs-calibration
-            context: .
-          - dockerfile: docker/ros2_bridge/Dockerfile
-            image: ghcr.io/tier4/pkg-drs-ros2-bridge
-            context: .
+          - build_dir: docker/runtime
+            local_image: tier4/pkg-drs-runtime:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-runtime
+          - build_dir: docker/calibration
+            local_image: tier4/pkg-drs-calibration:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-calibration
+          - build_dir: docker/ros2_bridge
+            local_image: tier4/drs-ros2-bridge:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-ros2-bridge
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'
@@ -49,27 +46,36 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ matrix.image }}
-          tags: |
-            # Set latest tag for develop branch pushes
-            type=raw,value=latest,enable=${{ github.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/develop/') }}
-            # Set version tag for git tags (e.g., v1.0.0 -> 1.0.0)
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            # Also keep the full tag name
-            type=ref,event=tag
+      - name: Build Docker image using build.sh
+        working-directory: ${{ matrix.build_dir }}
+        run: ./build.sh
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Determine image tags
+        id: tags
+        run: |
+          GHCR_IMAGE="${{ matrix.ghcr_image }}"
+          TAGS=""
+
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            # For git tags (e.g., v1.0.0)
+            TAG_NAME="${{ github.ref_name }}"
+            # Remove 'v' prefix if present
+            VERSION="${TAG_NAME#v}"
+            TAGS="${GHCR_IMAGE}:${VERSION}"
+            # Also add the full tag name
+            TAGS="${TAGS},${GHCR_IMAGE}:${TAG_NAME}"
+          else
+            # For develop branch pushes
+            TAGS="${GHCR_IMAGE}:latest"
+          fi
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and push Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          IFS=',' read -ra TAG_ARRAY <<< "${{ steps.tags.outputs.tags }}"
+          for TAG in "${TAG_ARRAY[@]}"; do
+            docker tag "${{ matrix.local_image }}" "${TAG}"
+            docker push "${TAG}"
+          done
