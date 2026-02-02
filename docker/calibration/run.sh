@@ -114,4 +114,4 @@ else
 fi
 
 # Execute Docker command
-docker run "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" "$DOCKER_IMAGE" "${COMMAND_ARGS[@]}"
+docker run --pull always "${BASE_DOCKER_OPTS[@]}" "${EXTRA_DOCKER_OPTS[@]}" "$DOCKER_IMAGE" "${COMMAND_ARGS[@]}"
