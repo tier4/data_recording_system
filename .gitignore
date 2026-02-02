@@ -29,3 +29,6 @@ src/proto_recorder
 
 # cache
 .cache/
+
+# Private docs
+.docs/
