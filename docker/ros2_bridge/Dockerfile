@@ -68,9 +68,9 @@ RUN rosdep init && \
 # Create install directory
 RUN mkdir -p /opt/drs/install
 
-# Build DRS packages
+# Build DRS packages (parallel workers capped at 4)
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon build --symlink-install --install-base /opt/drs/install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to ros2_bridge
+    colcon build --symlink-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to ros2_bridge
 
 # Add cyclonedds.xml
 COPY docker/cyclonedds.xml /opt/drs/config/
