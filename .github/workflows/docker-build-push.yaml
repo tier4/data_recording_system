@@ -27,16 +27,28 @@ jobs:
           - build_dir: docker/runtime
             local_image: tier4/pkg-drs-runtime:latest
             ghcr_image: ghcr.io/tier4/pkg-drs-runtime
+            needs_vcs_import: true
           - build_dir: docker/calibration
             local_image: tier4/pkg-drs-calibration:latest
             ghcr_image: ghcr.io/tier4/pkg-drs-calibration
+            needs_vcs_import: false
           - build_dir: docker/ros2_bridge
             local_image: tier4/drs-ros2-bridge:latest
             ghcr_image: ghcr.io/tier4/pkg-drs-ros2-bridge
+            needs_vcs_import: true
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Import external repositories
+        if: matrix.needs_vcs_import
+        env:
+          GH_TOKEN: ${{ secrets.DRS_PAT }}
+        run: |
+          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          sudo apt-get update && sudo apt-get install -y python3-vcstool
+          vcs import src < drs.repos
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'

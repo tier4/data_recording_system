@@ -17,7 +17,7 @@ repositories:
     version: 7081f40b32341d8d82ef00dee20b856e4283d4e9  # aeva_seyond
   dependencies/seyond_ros_driver:
     type: git
-    url: git@github.com:tier4/seyond_ros_driver.git
+    url: https://github.com/tier4/seyond_ros_driver.git
     version: 516db2d344105935b56c979b0c1b138e28b08434  # tier4/develop
     recursive: true
   dependencies/seyond_ros_driver/src/seyond_lidar_ros/src/seyond_sdk:
@@ -34,15 +34,15 @@ repositories:
     version: 022d160e13e378bdfe34e5222a0e89f3a51cf081  # feat/data_recording_system
   dependencies/c2_readout_delay_setter:
     type: git
-    url: git@github.com:tier4/c2_readout_delay_setter.git
+    url: https://github.com/tier4/c2_readout_delay_setter.git
     version: 47ed673503a4796099478e1e11646a11d2709c7d  # feat/drs
   proto_recorder:
     type: git
-    url: git@github.com:tier4/proto_recorder.git
+    url: https://github.com/tier4/proto_recorder.git
     version: 13b9c84aacf16e9d7a22915c3b929e4ddf68e6a6  # main
   drs-api:
     type: git
-    url: git@github.com:tier4/drs-api.git
+    url: https://github.com/tier4/drs-api.git
     version: 058feb116fecdaccfbdc47571ba98400be3dfe7d  # main
   bag_converter:
     type: git
