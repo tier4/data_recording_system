@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - develop/**
-    tags:
-      - v*
   pull_request:
     branches:
       - develop/**
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
@@ -56,9 +56,9 @@ jobs:
           GHCR_IMAGE="${{ matrix.ghcr_image }}"
           TAGS=""
 
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            # For git tags (e.g., v1.0.0)
-            TAG_NAME="${{ github.ref_name }}"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            # For GitHub releases (e.g., v1.0.0)
+            TAG_NAME="${{ github.event.release.tag_name }}"
             # Remove 'v' prefix if present
             VERSION="${TAG_NAME#v}"
             TAGS="${GHCR_IMAGE}:${VERSION}"
