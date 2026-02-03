@@ -57,8 +57,11 @@ jobs:
           sed -e "s|https://github.com/|https://${GH_TOKEN}@github.com/|g" \
               -e "s|git@github.com:|https://${GH_TOKEN}@github.com/|g" \
               drs.repos > /tmp/drs-auth.repos
-          # Import from temp file
-          vcs import src < /tmp/drs-auth.repos
+          # Debug: Show temp file content (masked)
+          echo "=== Temp file content (masked) ==="
+          sed "s|${GH_TOKEN}|***TOKEN***|g" /tmp/drs-auth.repos | grep -E "proto_recorder|drs-api"
+          # Import from temp file (use --input flag instead of stdin)
+          vcs import --input /tmp/drs-auth.repos src
           rm -f /tmp/drs-auth.repos
 
       - name: Log in to Container Registry
