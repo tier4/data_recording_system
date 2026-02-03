@@ -49,14 +49,17 @@ jobs:
           pip install vcstool
           # Debug: Check if token is set (show length only for security)
           echo "GH_TOKEN length: ${#GH_TOKEN}"
-          # Debug: Show transformed URLs (with token masked)
+          # Debug: Test direct clone of one private repo
+          echo "Testing direct clone..."
+          git clone --depth 1 "https://${GH_TOKEN}@github.com/tier4/proto_recorder.git" /tmp/test-clone && echo "Direct clone SUCCESS" || echo "Direct clone FAILED"
+          rm -rf /tmp/test-clone
+          # Transform URLs and save to temp file
           sed -e "s|https://github.com/|https://${GH_TOKEN}@github.com/|g" \
               -e "s|git@github.com:|https://${GH_TOKEN}@github.com/|g" \
-              drs.repos | sed "s|${GH_TOKEN}|***TOKEN***|g"
-          # Actual import
-          sed -e "s|https://github.com/|https://${GH_TOKEN}@github.com/|g" \
-              -e "s|git@github.com:|https://${GH_TOKEN}@github.com/|g" \
-              drs.repos | vcs import src
+              drs.repos > /tmp/drs-auth.repos
+          # Import from temp file
+          vcs import src < /tmp/drs-auth.repos
+          rm -f /tmp/drs-auth.repos
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'
