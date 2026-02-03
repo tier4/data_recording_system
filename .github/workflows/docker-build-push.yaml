@@ -47,22 +47,14 @@ jobs:
           GH_TOKEN: ${{ secrets.DRS_PAT }}
         run: |
           pip install vcstool
-          # Debug: Check if token is set (show length only for security)
-          echo "GH_TOKEN length: ${#GH_TOKEN}"
-          # Debug: Test direct clone of one private repo
-          echo "Testing direct clone..."
-          git clone --depth 1 "https://${GH_TOKEN}@github.com/tier4/proto_recorder.git" /tmp/test-clone && echo "Direct clone SUCCESS" || echo "Direct clone FAILED"
-          rm -rf /tmp/test-clone
-          # Transform URLs and save to temp file
-          sed -e "s|https://github.com/|https://${GH_TOKEN}@github.com/|g" \
-              -e "s|git@github.com:|https://${GH_TOKEN}@github.com/|g" \
-              drs.repos > /tmp/drs-auth.repos
-          # Debug: Show temp file content (masked)
-          echo "=== Temp file content (masked) ==="
-          sed "s|${GH_TOKEN}|***TOKEN***|g" /tmp/drs-auth.repos | grep -E "proto_recorder|drs-api"
-          # Import from temp file (use --input flag instead of stdin)
-          vcs import src --input /tmp/drs-auth.repos
-          rm -f /tmp/drs-auth.repos
+          # Configure git to use token for github.com
+          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          # Convert SSH URLs to HTTPS in repos file (git config will add auth)
+          sed -e "s|git@github.com:|https://github.com/|g" drs.repos > /tmp/drs-https.repos
+          # Import repositories
+          vcs import src --input /tmp/drs-https.repos
+          rm -f /tmp/drs-https.repos
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'
