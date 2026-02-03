@@ -50,6 +50,13 @@ jobs:
           # Configure git to use token for github.com
           git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          # Debug: show git config (masked)
+          echo "=== Git config ==="
+          git config --global --list | grep insteadOf | sed "s|${GH_TOKEN}|***|g"
+          # Debug: test if config works
+          echo "=== Testing git clone with insteadOf ==="
+          git clone --depth 1 https://github.com/tier4/proto_recorder.git /tmp/test-insteadof && echo "SUCCESS" || echo "FAILED"
+          rm -rf /tmp/test-insteadof
           # Convert SSH URLs to HTTPS in repos file (git config will add auth)
           sed -e "s|git@github.com:|https://github.com/|g" drs.repos > /tmp/drs-https.repos
           # Import repositories
