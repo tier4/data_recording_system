@@ -13,9 +13,9 @@
     if [ -n "{{ github_pat }}" ]; then
       sed -e 's|https://github.com/|https://{{ github_pat }}@github.com/|g' \
           -e 's|git@github.com:|https://{{ github_pat }}@github.com/|g' \
-          drs.repos | vcs import src
+          drs.repos | vcs import --force src
     else
-      vcs import src < drs.repos
+      vcs import --force src < drs.repos
     fi
   args:
     executable: /bin/bash

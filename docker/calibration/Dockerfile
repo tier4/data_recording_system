@@ -42,7 +42,7 @@ WORKDIR /opt/drs
 
 RUN mkdir -p /opt/drs/src && \
     git clone https://github.com/tier4/CalibrationTools.git -b feat/drs_202505 /opt/drs/src/calibration_tools && \
-    vcs import src < /opt/drs/src/calibration_tools/calibration_tools_standalone.repos
+    vcs import --force src < /opt/drs/src/calibration_tools/calibration_tools_standalone.repos
 
 # Initialize and update rosdep
 RUN rosdep init && \
