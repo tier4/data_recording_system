@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -47,7 +47,7 @@ jobs:
           GH_TOKEN: ${{ secrets.DRS_PAT }}
         run: |
           git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-          sudo apt-get update && sudo apt-get install -y python3-vcstool
+          pip install vcstool
           vcs import src < drs.repos
 
       - name: Log in to Container Registry
