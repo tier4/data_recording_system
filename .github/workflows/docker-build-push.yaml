@@ -47,12 +47,20 @@ jobs:
           GH_TOKEN: ${{ secrets.DRS_PAT }}
         run: |
           pip install vcstool
+          # Debug: Check token
+          echo "GH_TOKEN length: ${#GH_TOKEN}"
+          if [ -z "$GH_TOKEN" ]; then
+            echo "ERROR: GH_TOKEN is empty!"
+            exit 1
+          fi
           # Configure git to use token for github.com
-          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          AUTH_URL="https://${GH_TOKEN}@github.com/"
+          echo "Setting git config insteadOf..."
+          git config --global url."${AUTH_URL}".insteadOf "https://github.com/"
+          git config --global url."${AUTH_URL}".insteadOf "git@github.com:"
           # Debug: show git config (masked)
-          echo "=== Git config ==="
-          git config --global --list | grep insteadOf | sed "s|${GH_TOKEN}|***|g"
+          echo "=== Git config (masked) ==="
+          git config --global --list | grep -i url | sed "s|${GH_TOKEN}|***TOKEN***|g"
           # Debug: test if config works
           echo "=== Testing git clone with insteadOf ==="
           git clone --depth 1 https://github.com/tier4/proto_recorder.git /tmp/test-insteadof && echo "SUCCESS" || echo "FAILED"
