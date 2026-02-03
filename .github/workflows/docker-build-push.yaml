@@ -3,10 +3,10 @@ name: Build and Push Docker Images
 on:
   push:
     branches:
-      - develop/**
+      - develop/r36.4.0
   pull_request:
     branches:
-      - develop/**
+      - develop/r36.4.0
   release:
     types: [published]
 
@@ -79,13 +79,9 @@ jobs:
           if [[ "${{ github.event_name }}" == "release" ]]; then
             # For GitHub releases (e.g., v1.0.0)
             TAG_NAME="${{ github.event.release.tag_name }}"
-            # Remove 'v' prefix if present
-            VERSION="${TAG_NAME#v}"
-            TAGS="${GHCR_IMAGE}:${VERSION}"
-            # Also add the full tag name
-            TAGS="${TAGS},${GHCR_IMAGE}:${TAG_NAME}"
+            TAGS="${GHCR_IMAGE}:${TAG_NAME}"
           else
-            # For develop branch pushes
+            # For pushes to main branch
             TAGS="${GHCR_IMAGE}:latest"
           fi
 
