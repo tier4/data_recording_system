@@ -47,29 +47,14 @@ jobs:
           GH_TOKEN: ${{ secrets.DRS_PAT }}
         run: |
           pip install vcstool
-          # Debug: Check token
-          echo "GH_TOKEN length: ${#GH_TOKEN}"
-          if [ -z "$GH_TOKEN" ]; then
-            echo "ERROR: GH_TOKEN is empty!"
-            exit 1
-          fi
-          # Configure git to use token for github.com
-          AUTH_URL="https://${GH_TOKEN}@github.com/"
-          echo "Setting git config insteadOf..."
-          git config --global url."${AUTH_URL}".insteadOf "https://github.com/"
-          git config --global url."${AUTH_URL}".insteadOf "git@github.com:"
-          # Debug: show git config (masked)
-          echo "=== Git config (masked) ==="
-          git config --global --list | grep -i url | sed "s|${GH_TOKEN}|***TOKEN***|g"
-          # Debug: test if config works
-          echo "=== Testing git clone with insteadOf ==="
-          git clone --depth 1 https://github.com/tier4/proto_recorder.git /tmp/test-insteadof && echo "SUCCESS" || echo "FAILED"
-          rm -rf /tmp/test-insteadof
-          # Convert SSH URLs to HTTPS in repos file (git config will add auth)
-          sed -e "s|git@github.com:|https://github.com/|g" drs.repos > /tmp/drs-https.repos
-          # Import repositories
-          vcs import src --input /tmp/drs-https.repos
-          rm -f /tmp/drs-https.repos
+          # Remove extraheader set by actions/checkout (uses GITHUB_TOKEN which
+          # only has access to this repo, not external private repos)
+          git config --unset-all http.https://github.com/.extraheader || true
+          # Configure git to use PAT for github.com
+          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global --add url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          # Convert SSH URLs to HTTPS and import
+          sed -e "s|git@github.com:|https://github.com/|g" drs.repos | vcs import src
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'
