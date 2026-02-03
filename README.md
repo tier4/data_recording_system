@@ -26,7 +26,7 @@ For detailed dependency libraries, please refer to [`docker/runtime/Dockerfile`]
 ```bash
 git clone https://github.com/tier4/data_recording_system.git
 cd data_recording_system
-vcs import src < drs.repos
+vcs import --force src < drs.repos
 rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch -p` --ignore-src
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to drs_launch
 ```

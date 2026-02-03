@@ -55,7 +55,7 @@ jobs:
           git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
           git config --global --add url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
           # Convert SSH URLs to HTTPS and import
-          sed -e "s|git@github.com:|https://github.com/|g" drs.repos | vcs import src
+          sed -e "s|git@github.com:|https://github.com/|g" drs.repos | vcs import --force src
           echo "vcs import completed successfully"
 
       - name: Log in to Container Registry
