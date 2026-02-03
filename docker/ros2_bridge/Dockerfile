@@ -61,7 +61,7 @@ RUN rosdep init && \
     rosdep update && \
     apt-get update && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon list --packages-up-to ros2_bridge | awk '{print $2}' | xargs rosdep install -iry --from-paths && \
+    rosdep install -y -r --from-paths `colcon list --packages-up-to ros2_bridge -p` --ignore-src --rosdistro ${ROS_DISTRO} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

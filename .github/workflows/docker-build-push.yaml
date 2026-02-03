@@ -1,0 +1,101 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - develop/**
+  pull_request:
+    branches:
+      - develop/**
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_dir: docker/runtime
+            local_image: tier4/pkg-drs-runtime:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-runtime
+            needs_vcs_import: true
+          - build_dir: docker/calibration
+            local_image: tier4/pkg-drs-calibration:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-calibration
+            needs_vcs_import: false
+          - build_dir: docker/ros2_bridge
+            local_image: tier4/drs-ros2-bridge:latest
+            ghcr_image: ghcr.io/tier4/pkg-drs-ros2-bridge
+            needs_vcs_import: true
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Import external repositories
+        if: matrix.needs_vcs_import
+        env:
+          GH_TOKEN: ${{ secrets.DRS_PAT }}
+        run: |
+          set -euo pipefail
+          pip install vcstool
+          # Remove extraheader set by actions/checkout (uses GITHUB_TOKEN which
+          # only has access to this repo, not external private repos)
+          git config --unset-all http.https://github.com/.extraheader || true
+          # Configure git to use PAT for github.com
+          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global --add url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          # Convert SSH URLs to HTTPS and import
+          sed -e "s|git@github.com:|https://github.com/|g" drs.repos | vcs import src
+          echo "vcs import completed successfully"
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image using build.sh
+        working-directory: ${{ matrix.build_dir }}
+        run: ./build.sh
+
+      - name: Determine image tags
+        id: tags
+        run: |
+          GHCR_IMAGE="${{ matrix.ghcr_image }}"
+          TAGS=""
+
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            # For GitHub releases (e.g., v1.0.0)
+            TAG_NAME="${{ github.event.release.tag_name }}"
+            # Remove 'v' prefix if present
+            VERSION="${TAG_NAME#v}"
+            TAGS="${GHCR_IMAGE}:${VERSION}"
+            # Also add the full tag name
+            TAGS="${TAGS},${GHCR_IMAGE}:${TAG_NAME}"
+          else
+            # For develop branch pushes
+            TAGS="${GHCR_IMAGE}:latest"
+          fi
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and push Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          IFS=',' read -ra TAG_ARRAY <<< "${{ steps.tags.outputs.tags }}"
+          for TAG in "${TAG_ARRAY[@]}"; do
+            docker tag "${{ matrix.local_image }}" "${TAG}"
+            docker push "${TAG}"
+          done
