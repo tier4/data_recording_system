@@ -61,7 +61,7 @@ jobs:
           echo "=== Temp file content (masked) ==="
           sed "s|${GH_TOKEN}|***TOKEN***|g" /tmp/drs-auth.repos | grep -E "proto_recorder|drs-api"
           # Import from temp file (use --input flag instead of stdin)
-          vcs import --input /tmp/drs-auth.repos src
+          vcs import src --input /tmp/drs-auth.repos
           rm -f /tmp/drs-auth.repos
 
       - name: Log in to Container Registry
