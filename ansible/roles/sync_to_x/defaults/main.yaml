@@ -8,7 +8,7 @@ sync_to_x_hostname: "{{ ansible_hostname }}"
 # Timing and performance settings
 sync_to_x_safe_time_seconds: 60
 sync_to_x_rsync_bw_limit: 100m
-sync_to_x_timer_interval: 5min
+sync_to_x_timer_interval: 1min
 sync_to_x_free_space_limit_gb: 10
 
 # System paths

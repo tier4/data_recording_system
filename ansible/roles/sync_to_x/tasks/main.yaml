@@ -1,9 +1,10 @@
 - name: Create sync_to_x directory
   ansible.builtin.file:
     path: "{{ sync_to_x_script_path | dirname }}"
-    state: directory
-    mode: 0755
-  become: true
+    name:
+      - psmisc # For fuser command
+      - util-linux # For flock command
+    state: present
 
 - name: Create sync script from template
   ansible.builtin.template:

@@ -24,147 +24,145 @@ DESTINATIONS=(
 # Error handling
 error_exit() {
     echo "ERROR: $1"
-    rm -f "$LOCK_FILE"
     exit 1
 }
 
-# Check lock file (prevent multiple instances)
-if [ -f "$LOCK_FILE" ]; then
-    echo "Already running. Exiting."
-    exit 0
-fi
-touch "$LOCK_FILE"
+# Main execution block with flock
+(
+    # Exclusive lock with non-blocking check
+    flock -n "$fd" || error_exit "Already running."
 
-# Cleanup on exit
-trap 'rm -f "$LOCK_FILE"' EXIT
+    # Select Destination
+    TARGET_BASE_DIR=""
 
-# Select Destination
-TARGET_BASE_DIR=""
+    # Trigger automounts for all destinations first
+    echo "Triggering automounts..."
+    for dest in "${DESTINATIONS[@]}"; do
+        if [ -n "$dest" ]; then
+            ls -d "$dest" > /dev/null 2>&1
+        fi
+    done
 
-for dest in "${DESTINATIONS[@]}"; do
-    # Skip empty entries
-    if [ -z "$dest" ]; then
-        continue
+    for dest in "${DESTINATIONS[@]}"; do
+        # Skip empty entries
+        if [ -z "$dest" ]; then
+            continue
+        fi
+
+        echo "Checking destination: $dest"
+
+        # Check if directory exists
+        if [ ! -d "$dest" ]; then
+            echo "  Skipping: Directory does not exist."
+            continue
+        fi
+
+        # Check if it is a mountpoint
+        if ! mountpoint -q "$dest"; then
+             echo "  Skipping: $dest is not a mountpoint."
+             continue
+        fi
+
+        # Check free space
+        # df output: Filesystem 1K-blocks Used Available Use% Mounted on
+        # We want Available (4th column) in KB
+        available_kb=$(df -k --output=avail "$dest" | tail -n 1)
+
+        # Convert Limit to KB
+        limit_kb=$((FREE_SPACE_LIMIT_GB * 1024 * 1024))
+
+        if [ "$available_kb" -ge "$limit_kb" ]; then
+            echo "  Selected: Enough free space available ($((available_kb / 1024 / 1024)) GB)."
+            TARGET_BASE_DIR="$dest"
+            break
+        else
+            echo "  Skipping: Not enough free space (Available: $((available_kb / 1024 / 1024)) GB, Limit: $FREE_SPACE_LIMIT_GB GB)."
+        fi
+    done
+
+    if [ -z "$TARGET_BASE_DIR" ]; then
+        error_exit "No suitable destination found with enough free space."
     fi
 
-    echo "Checking destination: $dest"
-
-    # Trigger automount if configured (accessing the directory triggers mount)
-    ls -d "$dest" > /dev/null 2>&1
-
-    # Check if directory exists
-    if [ ! -d "$dest" ]; then
-        echo "  Skipping: Directory does not exist."
-        continue
-    fi
-
-    # Check if it is a mountpoint
-    if ! mountpoint -q "$dest"; then
-         echo "  Skipping: $dest is not a mountpoint."
-         continue
-    fi
-
-    # Check free space
-    # df output: Filesystem 1K-blocks Used Available Use% Mounted on
-    # We want Available (4th column) in KB
-    available_kb=$(df -k --output=avail "$dest" | tail -n 1)
-
-    # Convert Limit to KB
-    limit_kb=$((FREE_SPACE_LIMIT_GB * 1024 * 1024))
-
-    if [ "$available_kb" -ge "$limit_kb" ]; then
-        echo "  Selected: Enough free space available ($((available_kb / 1024 / 1024)) GB)."
-        TARGET_BASE_DIR="$dest"
-        break
-    else
-        echo "  Skipping: Not enough free space (Available: $((available_kb / 1024 / 1024)) GB, Limit: $FREE_SPACE_LIMIT_GB GB)."
-    fi
-done
-
-if [ -z "$TARGET_BASE_DIR" ]; then
-    error_exit "No suitable destination found with enough free space."
-fi
-
-DEST_DIR="${TARGET_BASE_DIR}/${HOSTNAME}"
-
-# Create destination directory
-mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
-
-# Process files for transfer
-echo "Starting backup process to $DEST_DIR"
-
-# Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
-find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do
-    # Get file last modified time
-    last_modified=$(stat -c %Y "$mcap_file")
-    current_time=$(date +%s)
-    time_diff=$((current_time - last_modified))
-
-    # Skip if not enough time has passed for safe transfer
-    if [ $time_diff -lt $SAFE_TIME_SECONDS ]; then
-        continue
-    fi
-
-    # Get relative path (to preserve directory structure)
-    relative_path="${mcap_file#$SOURCE_DIR/}"
-    dest_file="$DEST_DIR/$relative_path"
-    dest_dir=$(dirname "$dest_file")
+    DEST_DIR="${TARGET_BASE_DIR}/${HOSTNAME}"
 
     # Create destination directory
-    mkdir -p "$dest_dir"
+    mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
 
-    # Get file size (for logging)
-    file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
-    file_size_mb=$((file_size / 1048576))
+    # Process files for transfer
+    echo "Starting backup process to $DEST_DIR"
 
-    echo "Starting transfer: $relative_path (${file_size_mb}MB)"
+    # Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
+    find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do
 
-    # Transfer with rsync (low priority)
-    # ionice: Set I/O priority to lowest
-    # nice: Set CPU priority to low
-    # rsync: Bandwidth limit, checksum verification, no progress
-    if ionice -c 3 nice -n 19 rsync \
-        --bwlimit="$RSYNC_BW_LIMIT" \
-        --chmod=F666,D777 \
-        --checksum \
-        --no-progress \
-        "$mcap_file" \
-        "$dest_file"; then
-
-        # Transfer successful, delete source file
-        rm -f "$mcap_file"
-        echo "Transfer completed and deleted: $relative_path"
-
-        # Remove empty directories
-        src_dir=$(dirname "$mcap_file")
-        if [ -d "$src_dir" ] && [ -z "$(ls -A "$src_dir")" ]; then
-            rmdir "$src_dir" 2>/dev/null
+        # Check if file is currently open by any process (e.g., recording is still active)
+        if fuser "$mcap_file" > /dev/null 2>&1; then
+             echo "Skipping active file (in use): $mcap_file"
+             continue
         fi
-    else
-        echo "ERROR: Transfer failed: $relative_path"
-    fi
 
-    # Short sleep to reduce CPU load
-    sleep 0.1
-done
+        # Get relative path (to preserve directory structure)
+        relative_path="${mcap_file#$SOURCE_DIR/}"
+        dest_file="$DEST_DIR/$relative_path"
+        dest_dir=$(dirname "$dest_file")
 
-# Cleanup directories with only metadata.yaml
-echo "Starting empty directory cleanup"
-find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
-    # Count files in directory (excluding metadata.yaml)
-    mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
+        # Create destination directory
+        mkdir -p "$dest_dir"
 
-    if [ $mcap_count -eq 0 ]; then
-        # No mcap files present
-        if [ -f "$dir/metadata.yaml" ]; then
-            echo "Removing directory with only metadata.yaml: $(basename "$dir")"
-            rm -rf "$dir"
-        elif [ -z "$(ls -A "$dir")" ]; then
-            # Completely empty directory
-            echo "Removing empty directory: $(basename "$dir")"
-            rmdir "$dir"
+        # Get file size (for logging)
+        file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
+        file_size_mb=$((file_size / 1048576))
+
+        echo "Starting transfer: $relative_path (${file_size_mb}MB)"
+
+        # Transfer with rsync (low priority)
+        # ionice: Set I/O priority to lowest
+        # nice: Set CPU priority to low
+        # rsync: Bandwidth limit, checksum verification, no progress
+        if ionice -c 3 nice -n 19 rsync \
+            --bwlimit="$RSYNC_BW_LIMIT" \
+            --chmod=F666,D777 \
+            --checksum \
+            --no-progress \
+            "$mcap_file" \
+            "$dest_file"; then
+
+            # Transfer successful, delete source file
+            rm -f "$mcap_file"
+            echo "Transfer completed and deleted: $relative_path"
+
+            # Remove empty directories
+            src_dir=$(dirname "$mcap_file")
+            if [ -d "$src_dir" ] && [ -z "$(ls -A "$src_dir")" ]; then
+                rmdir "$src_dir" 2>/dev/null
+            fi
+        else
+            echo "ERROR: Transfer failed: $relative_path"
         fi
-    fi
-done
 
-echo "Backup process completed"
+        # Short sleep to reduce CPU load
+        sleep 0.1
+    done
+
+    # Cleanup directories with only metadata.yaml
+    echo "Starting empty directory cleanup"
+    find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
+        # Count files in directory (excluding metadata.yaml)
+        mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
+
+        if [ $mcap_count -eq 0 ]; then
+            # No mcap files present
+            if [ -f "$dir/metadata.yaml" ]; then
+                echo "Removing directory with only metadata.yaml: $(basename "$dir")"
+                rm -rf "$dir"
+            elif [ -z "$(ls -A "$dir")" ]; then
+                # Completely empty directory
+                echo "Removing empty directory: $(basename "$dir")"
+                rmdir "$dir"
+            fi
+        fi
+    done
+
+    echo "Backup process completed"
+
+) {fd}>"$LOCK_FILE"
