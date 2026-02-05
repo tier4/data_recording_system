@@ -39,7 +39,7 @@ error_exit() {
     echo "Triggering automounts..."
     for dest in "${DESTINATIONS[@]}"; do
         if [ -n "$dest" ]; then
-            ls -d "$dest" > /dev/null 2>&1
+            ls "$dest" > /dev/null 2>&1
         fi
     done
 
