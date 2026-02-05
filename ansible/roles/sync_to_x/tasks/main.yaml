@@ -1,10 +1,20 @@
-- name: Create sync_to_x directory
-  ansible.builtin.file:
-    path: "{{ sync_to_x_script_path | dirname }}"
+- name: Install dependencies for sync_to_x
+  ansible.builtin.apt:
     name:
       - psmisc # For fuser command
       - util-linux # For flock command
     state: present
+    update_cache: true
+  become: true
+
+- name: Create sync_to_x directory
+  ansible.builtin.file:
+    path: "{{ sync_to_x_script_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
 
 - name: Create sync script from template
   ansible.builtin.template:
