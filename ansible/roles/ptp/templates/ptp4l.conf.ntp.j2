@@ -15,6 +15,8 @@ delay_mechanism         E2E
 network_transport       UDPv4
 twoStepFlag             1
 
+logSyncInterval         -3
+
 # Slave ports
 {% for port in ptp.slave_ports %}
 [{{ port }}]
