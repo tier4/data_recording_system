@@ -1,6 +1,6 @@
 oxts_driver:
   ros__parameters:
-#===============================================================================
+    #===============================================================================
     # INS configuration (set up to match the unit)
     ## Unit IP address
     unit_ip: 192.168.4.250
@@ -11,17 +11,17 @@ oxts_driver:
     ## Topic to publish NCOM messages to
     ncom_topic: "ncom"
 
-#===============================================================================
+    #===============================================================================
     ## Rate is in Hz. 0 Hz => Message will not be published
     ### Configure sample rate of NCom (do not exceed output rate of ncom)
-    ncom_rate               : 100
+    ncom_rate: 100
 
-#===============================================================================
+    #===============================================================================
     ## Timing - how to timestamp messages published by the ROS driver
 
     # 0 => Timestamped by the ROS node time (future default)
     # 1 => Timestamped from NCom
-    timestamp_mode : 0
-#===============================================================================
-    use_sim_time : false
-    wait_for_init : false
+    timestamp_mode: 0
+    #===============================================================================
+    use_sim_time: false
+    wait_for_init: false
