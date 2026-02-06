@@ -20,7 +20,7 @@ All text must be written in English.
 
 ### Docker
 
-- When writing Dockerfiles, minimize the final image size and build time (e.g., multi-stage builds, layer caching, minimal base images, combining RUN instructions).
+- When writing a Dockerfile, minimize the final image size and build time (e.g., multi-stage builds, layer caching, minimal base images, combining RUN instructions).
 - Proactively suggest optimizations whenever opportunities are found.
 
 ## Git and CI
