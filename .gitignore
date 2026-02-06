@@ -1,34 +1,66 @@
+# ── OS-specific ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editor / IDE ─────────────────────────────────────────────
 # Vim
 *.swp
 *.swo
-
-# Visual Studio Code
+*~
+# VSCode
 .vscode/
 *.code-workspace
+# Cursor
 .cursor/
+# Windsurf
+.windsurf/
+# Antigravity (Google)
+.agent/
+# JetBrains
+.idea/
 
-# colcon
+# ── C/C++ build artifacts ────────────────────────────────────
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+
+# ── Python ───────────────────────────────────────────────────
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ── ROS 2 / colcon ──────────────────────────────────────────
 build/
 install/
 log/
 /src/dependencies
+.colcon*
+# rosbag files (all storage backends)
+*.bag
+*.db3
+*.mcap
 
-# Python
-*.pyc
+# ── IDE / language server ────────────────────────────────────
+.clangd/
+compile_commands.json
 
-# Jetbrains
-.idea/
+# ── Cache ────────────────────────────────────────────────────
+.cache/
 
-# External repositories
+# ── External repositories (managed via vcs import) ──────────
 src/bag_converter/
 src/drs-api/
 src/proto_recorder
 
-# Ansible temporary directories
+# ── Ansible ──────────────────────────────────────────────────
 .ansible/
 
-# cache
-.cache/
-
-# Private docs
+# ── Private docs ─────────────────────────────────────────────
 .docs/
