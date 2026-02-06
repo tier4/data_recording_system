@@ -1,0 +1,76 @@
+# ── Git ───────────────────────────────────────────────────────
+.git/
+.github/
+.gitignore
+
+# ── ROS 2 / colcon build artifacts ───────────────────────────
+build/
+install/
+log/
+.colcon*
+
+# ── Documentation ────────────────────────────────────────────
+docs/
+.docs/
+README.md
+CLAUDE.md
+LICENSE
+
+# ── Ansible ──────────────────────────────────────────────────
+ansible/
+.ansible/
+.ansible-lint
+
+# ── CI / linter configs ─────────────────────────────────────
+.pre-commit-config*.yaml
+.cspell.json
+.hadolint.yaml
+.markdownlint.yaml
+.markdown-link-check.json
+.prettierrc.yaml
+.shellcheckrc
+.yamllint.yaml
+.clang-format
+CPPLINT.cfg
+setup.cfg
+
+# ── IDE / editor ─────────────────────────────────────────────
+.vscode/
+.cursor/
+.windsurf/
+.idea/
+.agent/
+.claude/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# ── OS-specific ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Caches ───────────────────────────────────────────────────
+.cache/
+.clangd/
+compile_commands.json
+
+# ── C/C++ build artifacts ───────────────────────────────────
+*.o
+*.a
+*.so
+*.dylib
+
+# ── Python artifacts ────────────────────────────────────────
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ── ROS bag files ───────────────────────────────────────────
+*.bag
+*.db3
+*.mcap
+
+# ── Scripts (not used in Docker builds) ─────────────────────
+scripts/
