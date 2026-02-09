@@ -12,10 +12,18 @@ chronyd -q -t 15 -n 'server {{ ptp.ntp_server }} iburst'
 /usr/sbin/phc_ctl {{ port }} set
 {% endfor %}
 
-# Synchronize PHCs with system clock (NTP-synchronized system time)
+# Synchronize PHCs with system clock (NTP-synchronized system time) only once
 # System time (CLOCK_REALTIME) is the source, PHCs are the targets
 {% for port in ptp.slave_ports %}
-/usr/sbin/phc2sys -s CLOCK_REALTIME -c {{ port }} -w -m --step_threshold=1 &
+/usr/sbin/phc2sys -s CLOCK_REALTIME -c {{ port }} -w -O 0
+{% endfor %}
+
+# Synchronize System Clock and other PHCs from the first PHC (Master) periodically
+/usr/sbin/phc2sys -s {{ ptp.slave_ports[0] }} -c CLOCK_REALTIME -w -m --step_threshold=1 &
+{% for port in ptp.slave_ports %}
+{% if not loop.first %}
+/usr/sbin/phc2sys -s {{ ptp.slave_ports[0] }} -c {{ port }} -w -m --step_threshold=1 &
+{% endif %}
 {% endfor %}
 
 # Wait for all background processes
