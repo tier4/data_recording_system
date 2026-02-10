@@ -140,6 +140,16 @@ error_exit() {
             echo "ERROR: Transfer failed: $relative_path"
         fi
 
+
+        # Check free space again to stop if we are running low
+        available_kb=$(df -k --output=avail "$TARGET_BASE_DIR" | tail -n 1)
+        limit_kb=$((FREE_SPACE_LIMIT_GB * 1024 * 1024))
+
+        if [ "$available_kb" -lt "$limit_kb" ]; then
+             echo "WARNING: Free space below limit ($((available_kb / 1024 / 1024)) GB < $FREE_SPACE_LIMIT_GB GB). Stopping transfer."
+             break
+        fi
+
         # Short sleep to reduce CPU load
         sleep 0.1
     done
