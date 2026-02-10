@@ -12,6 +12,13 @@
     # Default values - will be resolved in pre_tasks with priority: inventory > env > default
     sensing_system_id_default: aabbccdd
     module_id_default: eeffgghh
+    github_pat: ""
+
+  vars_prompt:
+    - name: github_pat
+      prompt: Enter GitHub Personal Access Token (classic) [Optional]
+      private: true
+      default: ""
 
   pre_tasks:
     # Resolve sensing_system_id with priority: inventory > env > default
@@ -91,7 +98,7 @@
       tags: [anvil, ssd_mount]
 
     - role: jetpack
-      tags: [anvil, nvidia, jetpack]
+      tags: [anvil, nvidia, jetpack, drs]
 
     - role: jetson
       tags: [anvil, nvidia, jetson]

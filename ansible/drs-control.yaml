@@ -11,6 +11,13 @@
     drs_ecu_id: "{{ lookup('env', 'DRS_ECU_ID') | default(ansible_hostname.split('ecu')[-1] | default(0)) }}"
     sensing_system_id: "{{ lookup('env', 'SENSING_SYSTEM_ID') | default('aabbccdd') }}"
     module_id: "{{ lookup('env', 'MODULE_ID') | default('eeffgghh') }}"
+    github_pat: ""
+
+  vars_prompt:
+    - name: github_pat
+      prompt: Enter GitHub Personal Access Token (classic) [Optional]
+      private: true
+      default: ""
 
   pre_tasks:
     - name: Disable cloud-init permanently
