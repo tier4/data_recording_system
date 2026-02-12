@@ -1,38 +1,34 @@
-- name: Stop and disable drs-dashboard.service if disabled
+# ------------------------------------------------------------------------------
+# Cleanup drs_dashboard_service artifacts (Unconditional)
+# ------------------------------------------------------------------------------
+
+- name: Stop and disable drs-dashboard.service
   ansible.builtin.systemd:
     name: drs-dashboard.service
     state: stopped
     enabled: false
   become: true
   ignore_errors: true
-  when: not (has_dashboard_service | bool)
+  tags: [drs, drs_dashboard_service]
 
-- name: Stop and disable drs-ros2-bridge.service if disabled
+# ------------------------------------------------------------------------------
+# Cleanup drs_ros2_bridge_service artifacts (Unconditional)
+# ------------------------------------------------------------------------------
+
+- name: Stop and disable drs-ros2-bridge.service
   ansible.builtin.systemd:
     name: drs-ros2-bridge.service
     state: stopped
     enabled: false
   become: true
   ignore_errors: true
-  when: not (has_dashboard_service | bool)
+  tags: [drs, drs_ros2_bridge_service]
 
-- name: Remove NTP server configuration if disabled
-  ansible.builtin.file:
-    path: /etc/chrony/chrony.conf.d/drs-ntp-server.conf
-    state: absent
-  become: true
-  ignore_errors: true
-  when: not (ntp_server_enabled | default(false) | bool)
+# ------------------------------------------------------------------------------
+# Cleanup ptp artifacts (Unconditional)
+# ------------------------------------------------------------------------------
 
-- name: Remove chrony service override configuration if ntp_server is disabled
-  ansible.builtin.file:
-    path: /etc/systemd/system/chrony.service.d/override.conf
-    state: absent
-  become: true
-  ignore_errors: true
-  when: not (ntp_server_enabled | default(false) | bool)
-
-- name: Stop and disable chrony service if ntp_server is disabled
+- name: Stop and disable chrony service
   ansible.builtin.systemd:
     name: chrony
     state: stopped
@@ -40,28 +36,154 @@
     daemon_reload: true
   become: true
   ignore_errors: true
-  when: not (ntp_server_enabled | default(false) | bool)
+  tags: [ptp]
 
-- name: Remove UDP 123 INPUT rule (dport) if ntp_server is disabled
-  ansible.builtin.command: iptables -D INPUT -p udp --dport 123 -j ACCEPT
+- name: Remove NTP server configuration
+  ansible.builtin.file:
+    path: /etc/chrony/chrony.conf.d/drs-ntp-server.conf
+    state: absent
+  become: true
+  ignore_errors: true
+  tags: [ptp]
+
+- name: Remove chrony service override configuration
+  ansible.builtin.file:
+    path: /etc/systemd/system/chrony.service.d/override.conf
+    state: absent
+  become: true
+  ignore_errors: true
+  tags: [ptp]
+
+- name: Remove UDP 123 INPUT rule (dport)
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: 123
+    jump: ACCEPT
+    state: absent
+  become: true
   register: remove_udp123_dport
-  changed_when: remove_udp123_dport.rc == 0
-  failed_when: false
-  become: true
-  when: not (ntp_server_enabled | default(false) | bool)
+  tags: [ptp]
 
-- name: Remove UDP 123 INPUT rule (sport) if ntp_server is disabled
-  ansible.builtin.command: iptables -D INPUT -p udp --sport 123 -j ACCEPT
-  register: remove_udp123_sport
-  changed_when: remove_udp123_sport.rc == 0
-  failed_when: false
+- name: Remove UDP 123 INPUT rule (sport)
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: udp
+    source_port: 123
+    jump: ACCEPT
+    state: absent
   become: true
-  when: not (ntp_server_enabled | default(false) | bool)
+  register: remove_udp123_sport
+  tags: [ptp]
 
 - name: Save iptables rules after removing NTP rules
   ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
   become: true
-  changed_when: remove_udp123_dport.rc == 0 or remove_udp123_sport.rc == 0
+  changed_when: remove_udp123_dport.changed or remove_udp123_sport.changed
   when:
-    - not (ntp_server_enabled | default(false) | bool)
-    - (remove_udp123_dport.rc == 0 or remove_udp123_sport.rc == 0)
+    - (remove_udp123_dport.changed or remove_udp123_sport.changed)
+  tags: [ptp]
+
+# ------------------------------------------------------------------------------
+# Cleanup legacy sync-to-nas and sync_to_x artifacts (Unconditional)
+# ------------------------------------------------------------------------------
+
+- name: Stop and disable legacy sync-to-nas timer/service
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  become: true
+  ignore_errors: true
+  loop:
+    - sync-to-nas.timer
+    - sync-to-nas.service
+  tags: [external_storage]
+
+- name: Remove legacy sync-to-nas systemd files
+  ansible.builtin.file:
+    path: /etc/systemd/system/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - sync-to-nas.timer
+    - sync-to-nas.service
+  notify: Reload systemd
+  tags: [external_storage]
+
+- name: Remove legacy sync-to-nas directory
+  ansible.builtin.file:
+    path: /opt/drs/service/sync_to_nas
+    state: absent
+  become: true
+  tags: [external_storage]
+
+- name: Stop and disable sync-to-x timer/service
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  become: true
+  ignore_errors: true
+  loop:
+    - sync-to-x.timer
+    - sync-to-x.service
+  tags: [external_storage]
+
+- name: Remove sync-to-x systemd files
+  ansible.builtin.file:
+    path: /etc/systemd/system/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - sync-to-x.timer
+    - sync-to-x.service
+  notify: Reload systemd
+  tags: [external_storage]
+
+- name: Remove sync-to-x directory
+  ansible.builtin.file:
+    path: /opt/drs/service/sync_to_x
+    state: absent
+  become: true
+  tags: [external_storage]
+
+# ------------------------------------------------------------------------------
+# Cleanup Mounts (Unconditional)
+# ------------------------------------------------------------------------------
+
+- name: Unmount and remove NAS mount configuration
+  ansible.posix.mount:
+    path: /mnt/nas/data
+    state: absent
+  become: true
+  tags: [external_storage]
+
+- name: Remove NAS mount point directory
+  ansible.builtin.file:
+    path: /mnt/nas/data
+    state: absent
+  become: true
+  tags: [external_storage]
+
+- name: Unmount and remove External SSD mount configuration
+  ansible.posix.mount:
+    path: /mnt/external/data
+    state: absent
+  become: true
+  tags: [external_storage]
+
+- name: Remove External SSD mount point directory
+  ansible.builtin.file:
+    path: /mnt/external/data
+    state: absent
+  become: true
+  tags: [external_storage]
+
+- name: Remove custom udev rule for External SSD
+  ansible.builtin.file:
+    path: /etc/udev/rules.d/99-no-automount-comlops.rules
+    state: absent
+  become: true
+  notify: Reload udev rules
+  tags: [external_storage]

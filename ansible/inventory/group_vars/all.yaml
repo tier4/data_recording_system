@@ -32,29 +32,13 @@ cyclonedds:
   rmem_max: 2147483647
   rmem_default: 8388608
 
-# PTP Configuration (optional - uncomment to enable)
-# ptp:
-#   master_port: mgbe0
-#   slave_ports: ['eqos0', 'eth0']
-#   clock_class: 248
-#   priority1: 128
-#   priority2: 128
-
-# NAS Configuration (optional - uncomment to enable)
-# nas_address: 192.168.10.100
-# nas_export_path: /data
-# nas_mount_point: /mnt/nas/data
-
-# Sync to NAS Configuration
-sync_to_nas_source_dir: /mnt/ssd/data
-sync_to_nas_base_dir: /mnt/nas/data
-sync_to_nas_rsync_bw_limit: 200m
-sync_to_nas_timer_interval: 5min
-
-# Netplan Configuration (optional - define to enable)
-# netplan_files:
-#   - src: 99-drs-ecu0.yaml
-#     dest: /etc/netplan/99-drs.yaml
+# Sync to X Configuration
+sync_to_x_source_dir: /mnt/ssd/data
+sync_to_x_destinations:
+  - /mnt/external/data
+  - /mnt/nas/data
+sync_to_x_rsync_bw_limit: 100m
+sync_to_x_timer_interval: 1min
 
 # Journald Configuration
 journald_system_max_use: 500M
@@ -69,5 +53,5 @@ sensor_trigger_memlock: infinity
 # This role distributes system time synchronized by PTP as NTP server
 # WARNING: Cannot be enabled when ptp.time_sync_type is 'NTP'
 ntp_server_enabled: false
-# ntp_server_allow_networks: ['192.168.0.0/16', '10.0.0.0/8']
-# ntp_server_stratum: 10
+ntp_server_allow_networks: [192.168.20.0/24]
+ntp_server_stratum: 10
