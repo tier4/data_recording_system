@@ -42,7 +42,7 @@ WORKDIR /opt/drs
 
 RUN mkdir -p /opt/drs/src && \
     git clone https://github.com/tier4/CalibrationTools.git -b feat/drs_202505 /opt/drs/src/calibration_tools && \
-    vcs import src < /opt/drs/src/calibration_tools/calibration_tools_standalone.repos
+    vcs import --force src < /opt/drs/src/calibration_tools/calibration_tools_standalone.repos
 
 # Initialize and update rosdep
 RUN rosdep init && \
@@ -58,9 +58,9 @@ RUN apt-get update && \
 # Create install directory
 RUN mkdir -p /opt/drs/install
 
-# Build DRS packages
+# Build DRS packages (parallel workers capped at 4)
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon build --symlink-install --install-base /opt/drs/install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to sensor_calibration_tools
+    colcon build --symlink-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to sensor_calibration_tools
 
 # Add cyclonedds.xml
 COPY docker/cyclonedds.xml /opt/drs/config/

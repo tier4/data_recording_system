@@ -7,16 +7,22 @@
     group: "{{ drs_group }}"
   become: true
 
-# todo: Inspect failed tasks and fix them
-# - name: Import dependencies using vcs from drs.repos
-#   shell: |
-#     cd {{ drs_src_dir }}
-#     vcs import src < drs.repos
-#   args:
-#     executable: /bin/bash
-#   become_user: "{{ drs_user }}"
-#   environment:
-#     HOME: "/home/{{ drs_user }}"
+- name: Import dependencies using vcs from drs.repos
+  ansible.builtin.shell: |
+    cd {{ drs_src_dir }}
+    if [ -n "{{ github_pat }}" ]; then
+      sed -e 's|https://github.com/|https://{{ github_pat }}@github.com/|g' \
+          -e 's|git@github.com:|https://{{ github_pat }}@github.com/|g' \
+          drs.repos | vcs import --force src
+    else
+      vcs import --force src < drs.repos
+    fi
+  args:
+    executable: /bin/bash
+  become_user: "{{ drs_user }}"
+  environment:
+    HOME: /home/{{ drs_user }}
+  changed_when: true
 
 - name: Initialize rosdep system-wide
   ansible.builtin.shell: |
@@ -54,8 +60,15 @@
     cd {{ drs_src_dir }}
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
-    colcon build --merge-install --install-base {{ drs_install_dir }} --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-up-to {{ drs_packages | join(' ') }}
-    chown -R {{ drs_user }}:{{ drs_group }} {{ drs_install_dir }}
+    colcon build --merge-install --install-base {{ drs_install_dir }} --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} --packages-up-to {{ drs_packages | join(' ') }}
   args:
     executable: /bin/bash
   changed_when: true
+
+- name: Set ownership of DRS installation directory
+  ansible.builtin.file:
+    path: "{{ drs_install_dir }}"
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    recurse: true
+  become: true

@@ -20,8 +20,8 @@ ptp:
   ntp_server: ntp.nict.jp
   master_port: mgbe0
   slave_ports:
-    - eqos0
     - enP1p1s0
+    - eqos0
   clock_class: 187
   priority1: 128
   priority2: 128
