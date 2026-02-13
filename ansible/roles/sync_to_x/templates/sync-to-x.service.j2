@@ -1,0 +1,24 @@
+# /etc/systemd/system/sync-to-x.service
+[Unit]
+Description=Sync ROS bag data to storage (NAS or External SSD)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart={{ sync_to_x_script_path }}
+User=root
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+CPUQuota={{ sync_to_x_cpu_quota }}
+IOWeight={{ sync_to_x_io_weight }}
+Nice=19
+
+# Retry on failure
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target

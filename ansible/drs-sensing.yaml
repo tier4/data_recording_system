@@ -89,7 +89,7 @@
 
   roles:
     - role: cleanup
-      tags: [drs, cleanup]
+      tags: [cleanup]
 
     - role: drs_config
       tags: [drs, config]
@@ -137,20 +137,20 @@
       tags: [drs]
 
     - role: drs_recorder_service
-      tags: [drs, service, drs_recorder_service]
+      tags: [drs, drs_recorder_service]
 
     - role: drs_sensor_service
-      tags: [drs, service, drs_sensor_service]
+      tags: [drs, drs_sensor_service]
 
     - role: drs_api_service
-      tags: [drs, service, drs_api_service]
+      tags: [drs, drs_api_service]
 
     - role: drs_ros2_bridge_service
-      tags: [drs, service, drs_ros2_bridge_service]
+      tags: [drs, drs_ros2_bridge_service]
       when: has_dashboard_service | bool
 
     - role: drs_dashboard_service
-      tags: [drs, service, drs_dashboard_service]
+      tags: [drs, drs_dashboard_service]
       when: has_dashboard_service | bool
 
     - role: tier4_hdr_camera_driver
@@ -162,13 +162,15 @@
     - role: sensor_trigger
       tags: [anvil, driver, sensor_trigger]
 
+    - role: external_ssd_mount
+      tags: [external_storage]
+
     - role: nas_mount
-      tags: [nas, nas_mount]
+      tags: [external_storage]
       when: nas_address is defined
 
-    - role: sync_to_nas
-      tags: [nas, sync_to_nas]
-      when: nas_address is defined
+    - role: sync_to_x
+      tags: [external_storage]
 
     - role: extra_apps
       tags: [extra_apps]
