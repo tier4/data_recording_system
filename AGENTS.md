@@ -1,10 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
 All text must be written in English.
 
 ## General rules
 
-- Never include Claude's signature (e.g., `Co-Authored-By: Claude ...`) in any text, including commit messages.
+- Never include the AI agent's signature (e.g., `Co-Authored-By: <agent-name> ...`) in any text, including commit messages.
 - Before reading large-token files (images, videos, PDFs, etc.), always ask the user for confirmation first.
 - When unused packages or source files (not referenced anywhere in the codebase) are found, proactively suggest their removal — but never delete them without user approval.
 
@@ -47,3 +47,7 @@ pre-commit run --all-files -c .pre-commit-config-ansible.yaml
 ### CI compatibility
 
 When making changes, ensure the modified source code does not break existing GitHub workflows. This means writing code that passes existing CI checks — not modifying the workflows themselves to make them pass.
+
+### CI failure investigation
+
+When investigating GitHub Actions workflow failures, always use the `gh` CLI to directly fetch the workflow run logs (e.g., `gh run view`, `gh run view --log-failed`) rather than guessing the cause. Identify the root cause from the actual logs before making any fixes.
