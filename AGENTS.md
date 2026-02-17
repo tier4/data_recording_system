@@ -1,10 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
 All text must be written in English.
 
 ## General rules
 
-- Never include Claude's signature (e.g., `Co-Authored-By: Claude ...`) in any text, including commit messages.
+- Never include the AI agent's signature (e.g., `Co-Authored-By: <agent-name> ...`) in any text, including commit messages.
 - Before reading large-token files (images, videos, PDFs, etc.), always ask the user for confirmation first.
 - When unused packages or source files (not referenced anywhere in the codebase) are found, proactively suggest their removal — but never delete them without user approval.
 
