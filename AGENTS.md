@@ -47,3 +47,7 @@ pre-commit run --all-files -c .pre-commit-config-ansible.yaml
 ### CI compatibility
 
 When making changes, ensure the modified source code does not break existing GitHub workflows. This means writing code that passes existing CI checks — not modifying the workflows themselves to make them pass.
+
+### CI failure investigation
+
+When investigating GitHub Actions workflow failures, always use the `gh` CLI to directly fetch the workflow run logs (e.g., `gh run view`, `gh run view --log-failed`) rather than guessing the cause. Identify the root cause from the actual logs before making any fixes.
