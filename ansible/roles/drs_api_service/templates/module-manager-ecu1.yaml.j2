@@ -3,7 +3,13 @@ server:
 
 disk:
   enabled: true
-  monitor_path: /mnt/ssd/data
+  disks:
+    - name: internal
+      mount_path: /mnt/ssd/data
+      description: Internal SSD
+    - name: external
+      mount_path: /mnt/external/data
+      description: External SSD
 
 services:
   enabled: true
