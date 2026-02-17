@@ -1,7 +1,7 @@
 # ECU1 specific configuration
 
 drs_ecu_id: 1
-module_id: hMddSCQG
+module_id: uVHGKzHS
 
 has_vehicle_can: false
 has_fisheye: true # false: ptp.slave_ports: [eqos0], true: ptp.slave_ports: [eqos0, mgbe0]

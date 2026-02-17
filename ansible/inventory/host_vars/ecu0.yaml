@@ -1,7 +1,7 @@
 # ECU0 specific configuration
 
 drs_ecu_id: 0
-module_id: h6fBn9V9
+module_id: eNdWhZgc
 
 has_vehicle_can: true
 has_fisheye: false
