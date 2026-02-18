@@ -1,5 +1,7 @@
 <launch>
   <arg name="launch_driver" default="true" />
+  <arg name="vehicle_id" default="default"/>
+  <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="interface" default="can0"/>
   <arg name="receiver_interval_sec" default="0.1"/>
 
@@ -10,13 +12,16 @@
       <arg name="filters" value="025:7FF,0B4:7FF,0AA:7FF,024:7FF,0A6:7FF,230:7FF,245:7FF,361:7FF,260:7FF,1C4:7FF,3BC:7FF,127:7FF"/>
     </include>
 
-    <!-- TODO: Implement vehicle node -->
-    <!--
-    <node pkg="xxxx" exec="xxxx_node" name="xxxx" if="$(var launch_driver)">
-      <remap from="~/input/frame" to="from_can_bus"/>
-      <remap from="~/output/velocity" to="velocity"/>
-      <remap from="~/output/steer" to="steer"/>
+    <!-- vehicle_info_converter: CAN -> VelocityReport etc. -->
+    <node pkg="vehicle_info_converter" exec="vehicle_info_converter_node" name="vehicle_info_converter_node" if="$(var launch_driver)">
+      <param from="$(var param_root_dir)/vehicle_info_converter.param.yaml"/>
+      <param name="vehicle_id" value="$(var vehicle_id)"/>
+      <param name="param_root_dir" value="$(var param_root_dir)"/>
     </node>
-    -->
+
+    <!-- oxts_gad_sender: VelocityReport -> GAD Packet (UDP to OxTS AV200) -->
+    <node pkg="oxts_gad_interface" exec="oxts_gad_sender_node" name="oxts_gad_sender_node" if="$(var launch_driver)">
+      <param from="$(var param_root_dir)/oxts_gad_sender.param.yaml"/>
+    </node>
   </group>
 </launch>

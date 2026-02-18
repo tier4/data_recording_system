@@ -1,0 +1,9 @@
+vehicle_info_converter_node:
+  ros__parameters:
+    vehicle_id: "default"
+    param_root_dir: "/opt/drs/config"
+    can_topic: "from_can_bus"
+    velocity_report_topic: "velocity_report"
+    can_message_name: "VEHICLE_SPEED_RPT"
+    can_signal_name: "VEHICLE_SPEED"
+    frame_id: "base_link"

@@ -1,0 +1,9 @@
+oxts_gad_sender_node:
+  ros__parameters:
+    velocity_report_topic: "velocity_report"
+    ins_ip: "192.168.4.250"
+    stream_id: 157
+    gad_speed_std_dev: 0.1
+    gad_latency: 0.02
+    aiding_lever_arm: [-0.6895, 0.0, -1.9705]
+    publish_rate_hz: 10.0

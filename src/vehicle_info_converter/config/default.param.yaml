@@ -1,0 +1,11 @@
+vehicle_info_converter_node:
+  ros__parameters:
+    # Vehicle identifier used to resolve DBC path when dbc_file_path is not set
+    vehicle_id: "default"
+    # Root directory for parameters and DBC files
+    param_root_dir: "/opt/drs/config"
+    # CAN message and signal names in the DBC file
+    can_message_name: "VEHICLE_SPEED_RPT"
+    can_signal_name: "VEHICLE_SPEED"
+    # Frame ID for VelocityReport header
+    frame_id: "base_link"
