@@ -51,3 +51,13 @@ When making changes, ensure the modified source code does not break existing Git
 ### CI failure investigation
 
 When investigating GitHub Actions workflow failures, always use the `gh` CLI to directly fetch the workflow run logs (e.g., `gh run view`, `gh run view --log-failed`) rather than guessing the cause. Identify the root cause from the actual logs before making any fixes.
+
+### GitHub integration
+
+Use the **`gh` CLI** (GitHub CLI) for all GitHub-related operations. Do not use GitKraken MCP or other tools for these tasks. This includes:
+
+- Creating and managing pull requests (e.g., `gh pr create`, `gh pr view`).
+- Creating and managing releases (e.g., `gh release create`, `gh release list`).
+- Repository settings and configuration where supported by `gh`.
+- Interacting with CI (e.g., `gh run view`, `gh run list`, `gh run watch`).
+- Any other GitHub operations that `gh` can perform.
