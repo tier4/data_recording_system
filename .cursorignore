@@ -1,3 +1,3 @@
-# src/ 以下を Cursor の検索・インデックスに含める（.gitignore で無視されていても見えるようにする）
+# Include src/ and its contents in Cursor search/index (even if ignored by .gitignore)
 !src/
 !src/**
