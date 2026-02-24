@@ -3,6 +3,7 @@
   <arg name="param_root_dir"/>
   <group>
     <include file="$(find-pkg-share gst_rtp_image_receiver)/launch/rtp_image_receiver.launch.xml">
+      <arg name="namespace" value="camera"/>
       <arg name="name" value="camera8"/>
       <arg name="udp_port" value="5004"/>
       <arg name="frame_id" value="camera8/camera_optical_link"/>
@@ -15,6 +16,7 @@
     </include>
 
     <include file="$(find-pkg-share gst_rtp_image_receiver)/launch/rtp_image_receiver.launch.xml">
+      <arg name="namespace" value="camera"/>
       <arg name="name" value="camera9"/>
       <arg name="udp_port" value="5005"/>
       <arg name="frame_id" value="camera9/camera_optical_link"/>
@@ -27,6 +29,7 @@
     </include>
 
     <include file="$(find-pkg-share gst_rtp_image_receiver)/launch/rtp_image_receiver.launch.xml">
+      <arg name="namespace" value="camera"/>
       <arg name="name" value="camera10"/>
       <arg name="udp_port" value="5006"/>
       <arg name="frame_id" value="camera10/camera_optical_link"/>
@@ -39,6 +42,7 @@
     </include>
 
     <include file="$(find-pkg-share gst_rtp_image_receiver)/launch/rtp_image_receiver.launch.xml">
+      <arg name="namespace" value="camera"/>
       <arg name="name" value="camera11"/>
       <arg name="udp_port" value="5007"/>
       <arg name="frame_id" value="camera11/camera_optical_link"/>
