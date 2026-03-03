@@ -7,3 +7,4 @@ oxts_gad_sender_node:
     gad_latency: 0.02
     aiding_lever_arm: [-0.6895, 0.0, -1.9705]
     publish_rate_hz: 10.0
+    enable_gad_output: true

@@ -1,0 +1,11 @@
+Data Recording System
+Copyright 2026 TIER IV, Inc.
+
+This product includes software developed by third parties.
+
+=========================================================================
+ansible/roles/can_interface/files/_toyota_2017.dbc
+=========================================================================
+Copyright (c) 2020, Comma.ai, Inc.
+Licensed under the MIT License.
+https://github.com/commaai/opendbc

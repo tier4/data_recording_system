@@ -35,6 +35,9 @@ class VehicleInfoConverterNode(Node):
         self.declare_parameter('can_message_name', 'VEHICLE_SPEED_RPT')
         self.declare_parameter('can_signal_name', 'VEHICLE_SPEED')
         self.declare_parameter('vehicle_id', 'default')
+        self.declare_parameter('speed_unit_conversion_factor', 1.0)
+        # Debug: fixed speed override in m/s (negative value disables override)
+        self.declare_parameter('debug_fixed_speed', -1.0)
 
         self.can_topic: str = self.get_parameter('can_topic').get_parameter_value().string_value
         self.velocity_report_topic: str = self.get_parameter(
@@ -51,6 +54,9 @@ class VehicleInfoConverterNode(Node):
             'can_signal_name'
         ).get_parameter_value().string_value
         self.vehicle_id: str = self.get_parameter('vehicle_id').get_parameter_value().string_value
+        self.speed_unit_conversion_factor: float = self.get_parameter(
+            'speed_unit_conversion_factor'
+        ).get_parameter_value().double_value
 
         # Resolve DBC path: $(var param_root_dir)/vehicle.dbc
         self.dbc_file_path = str(Path(self.param_root_dir) / 'vehicle.dbc')
@@ -76,6 +82,7 @@ class VehicleInfoConverterNode(Node):
         self.get_logger().info(f"Publishing to: '{self.velocity_report_topic}'")
         self.get_logger().info(f"DBC Message: '{self.can_message_name}' (ID: {self.target_can_id})")
         self.get_logger().info(f"DBC Signal: '{self.can_signal_name}'")
+        self.get_logger().info(f"Speed unit conversion factor: {self.speed_unit_conversion_factor}")
         self.get_logger().info("---------------------------------------------")
 
         # --- Subscriber and Publisher ---
@@ -99,8 +106,17 @@ class VehicleInfoConverterNode(Node):
             return
 
         try:
-            decoded_data = self.can_db.decode_message(msg.id, bytes(msg.data))
-            longitudinal_velocity = float(decoded_data[self.can_signal_name])
+            # Check debug fixed speed override (read dynamically for ros2 param set)
+            debug_fixed_speed: float = self.get_parameter(
+                'debug_fixed_speed'
+            ).get_parameter_value().double_value
+
+            if debug_fixed_speed >= 0.0:
+                longitudinal_velocity = debug_fixed_speed
+            else:
+                decoded_data = self.can_db.decode_message(msg.id, bytes(msg.data))
+                raw_speed = float(decoded_data[self.can_signal_name])
+                longitudinal_velocity = raw_speed * self.speed_unit_conversion_factor
 
             velocity_report = VelocityReport()
             velocity_report.header.stamp = self.get_clock().now().to_msg()
@@ -112,6 +128,7 @@ class VehicleInfoConverterNode(Node):
             self.publisher.publish(velocity_report)
             self.get_logger().debug(
                 f"Published VelocityReport: longitudinal_velocity={longitudinal_velocity:.2f} m/s"
+                + (" [FIXED]" if debug_fixed_speed >= 0.0 else "")
             )
 
         except KeyError:

@@ -14,3 +14,21 @@
   become: true
   loop: "{{ can_interfaces }}"
   notify: Restart systemd-networkd
+
+- name: Ensure /opt/drs/config directory exists
+  ansible.builtin.file:
+    path: /opt/drs/config
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Deploy vehicle DBC file
+  ansible.builtin.copy:
+    src: "{{ dbc_type }}.dbc"
+    dest: /opt/drs/config/vehicle.dbc
+    owner: root
+    group: root
+    mode: "0644"
+  become: true

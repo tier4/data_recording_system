@@ -6,6 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    return LaunchDescription([
         DeclareLaunchArgument(
             'vehicle_id',
             default_value='default',

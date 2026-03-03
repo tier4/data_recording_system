@@ -1,9 +1,18 @@
 vehicle_info_converter_node:
   ros__parameters:
+    # Vehicle identifier used to resolve DBC path when dbc_file_path is not set
     vehicle_id: "default"
+    # Root directory for parameters and DBC files
     param_root_dir: "/opt/drs/config"
+    # CAN topic
     can_topic: "from_can_bus"
+    # Output topic
     velocity_report_topic: "velocity_report"
-    can_message_name: "VEHICLE_SPEED_RPT"
-    can_signal_name: "VEHICLE_SPEED"
+    # CAN message and signal names in the DBC file
+    can_message_name: "SPEED"
+    can_signal_name: "SPEED"
+    # Conversion factor to convert the CAN signal value to m/s
+    # e.g., km/h -> m/s: 1.0 / 3.6 = 0.27778
+    speed_unit_conversion_factor: 0.27778
+    # Frame ID for VelocityReport header
     frame_id: "base_link"

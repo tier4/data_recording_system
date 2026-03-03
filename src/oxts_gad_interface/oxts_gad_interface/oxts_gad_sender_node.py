@@ -43,6 +43,7 @@ class OxTSGadSenderNode(Node):
         self.declare_parameter('gad_latency', 0.0)
         self.declare_parameter('aiding_lever_arm', [-0.6895, 0.0, -1.9705])
         self.declare_parameter('publish_rate_hz', 10.0)
+        self.declare_parameter('enable_gad_output', True)
 
         self.velocity_report_topic: str = self.get_parameter(
             'velocity_report_topic'
@@ -117,6 +118,15 @@ class OxTSGadSenderNode(Node):
         """
         Called by timer to send the latest received speed as a GAD packet.
         """
+        # Check enable_gad_output parameter (read dynamically for ros2 param set)
+        enable_gad_output: bool = self.get_parameter(
+            'enable_gad_output'
+        ).get_parameter_value().bool_value
+
+        if not enable_gad_output:
+            self.get_logger().debug("GAD output is disabled by parameter.", throttle_duration_sec=10.0)
+            return
+
         with self.lock:
             if self.latest_speed_ms is None:
                 self.get_logger().debug("No velocity data received yet, skipping GAD packet.")
@@ -127,7 +137,12 @@ class OxTSGadSenderNode(Node):
             gad_speed = oxts_sdk.GadSpeed(self.stream_id)
             gad_speed.speed_fw_ms = speed_to_send
             gad_speed.speed_ms_var = self.gad_speed_std_dev ** 2
-            gad_speed.set_time_void()
+
+            if self.gad_latency > 0:
+                gad_speed.set_time_latency(self.gad_latency)
+            else:
+                gad_speed.set_time_void()
+
             gad_speed.aiding_lever_arm_fixed = self.aiding_lever_arm
             gad_speed.aiding_lever_arm_var = [0.01, 0.01, 0.01]
 
