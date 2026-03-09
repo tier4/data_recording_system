@@ -37,7 +37,8 @@ class VehicleInfoConverterNode(Node):
         self.declare_parameter('vehicle_id', 'default')
         self.declare_parameter('speed_unit_conversion_factor', 1.0)
         # Debug: fixed speed override in m/s (negative value disables override)
-        self.declare_parameter('debug_fixed_speed', -1.0)
+        # If >= 0.0, dummy output is enabled at 10Hz
+        self.declare_parameter('debug_fixed_speed', -0.1)
 
         self.can_topic: str = self.get_parameter('can_topic').get_parameter_value().string_value
         self.velocity_report_topic: str = self.get_parameter(
@@ -97,39 +98,59 @@ class VehicleInfoConverterNode(Node):
             self.velocity_report_topic,
             10,
         )
+        
+        # --- Timer for Dummy Output (10Hz) ---
+        self.timer = self.create_timer(0.1, self.on_timer)
+
+    def on_timer(self) -> None:
+        """
+        Periodic timer callback to publish VelocityReport if dummy output is enabled.
+        Dummy output is enabled if debug_fixed_speed is non-negative.
+        """
+        debug_fixed_speed = self.get_parameter('debug_fixed_speed').get_parameter_value().double_value
+
+        if debug_fixed_speed >= 0.0:
+            self.publish_velocity_report(debug_fixed_speed, is_fixed=True)
+
+    def publish_velocity_report(self, longitudinal_velocity: float, is_fixed: bool = False) -> None:
+        """
+        Helper method to create and publish a VelocityReport message.
+        """
+        velocity_report = VelocityReport()
+        velocity_report.header.stamp = self.get_clock().now().to_msg()
+        velocity_report.header.frame_id = self.frame_id
+        velocity_report.longitudinal_velocity = longitudinal_velocity
+        velocity_report.lateral_velocity = 0.0
+        velocity_report.heading_rate = 0.0
+
+        self.publisher.publish(velocity_report)
+        self.get_logger().debug(
+            f"Published VelocityReport: longitudinal_velocity={longitudinal_velocity:.2f} m/s"
+            + (" [FIXED]" if is_fixed else "")
+        )
 
     def can_message_callback(self, msg: Frame) -> None:
         """
         Process incoming CAN messages, decode speed, and publish VelocityReport.
         """
+        # Read debug fixed speed override
+        debug_fixed_speed: float = self.get_parameter(
+            'debug_fixed_speed'
+        ).get_parameter_value().double_value
+
+        # If dummy output is enabled (debug_fixed_speed >= 0.0), skip processing CAN messages
+        if debug_fixed_speed >= 0.0:
+            return
+
         if msg.id != self.target_can_id:
             return
 
         try:
-            # Check debug fixed speed override (read dynamically for ros2 param set)
-            debug_fixed_speed: float = self.get_parameter(
-                'debug_fixed_speed'
-            ).get_parameter_value().double_value
+            decoded_data = self.can_db.decode_message(msg.id, bytes(msg.data))
+            raw_speed = float(decoded_data[self.can_signal_name])
+            longitudinal_velocity = raw_speed * self.speed_unit_conversion_factor
 
-            if debug_fixed_speed >= 0.0:
-                longitudinal_velocity = debug_fixed_speed
-            else:
-                decoded_data = self.can_db.decode_message(msg.id, bytes(msg.data))
-                raw_speed = float(decoded_data[self.can_signal_name])
-                longitudinal_velocity = raw_speed * self.speed_unit_conversion_factor
-
-            velocity_report = VelocityReport()
-            velocity_report.header.stamp = self.get_clock().now().to_msg()
-            velocity_report.header.frame_id = self.frame_id
-            velocity_report.longitudinal_velocity = longitudinal_velocity
-            velocity_report.lateral_velocity = 0.0
-            velocity_report.heading_rate = 0.0
-
-            self.publisher.publish(velocity_report)
-            self.get_logger().debug(
-                f"Published VelocityReport: longitudinal_velocity={longitudinal_velocity:.2f} m/s"
-                + (" [FIXED]" if debug_fixed_speed >= 0.0 else "")
-            )
+            self.publish_velocity_report(longitudinal_velocity, is_fixed=False)
 
         except KeyError:
             self.get_logger().warn(

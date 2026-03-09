@@ -28,6 +28,10 @@ repositories:
     type: git
     url: https://github.com/mojomex/transport_drivers
     version: abf8aa8e171f33e0acd6d845c3d795192c964e9c  # mutable-buffer-in-udp-callback
+  dependencies/autoware_msgs:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_msgs.git
+    version: 1.11.0  # matches ros-humble-autoware-vehicle-msgs
   dependencies/oxts_ros2_driver:
     type: git
     url: https://github.com/tier4/oxts_ros2_driver.git
