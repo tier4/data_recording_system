@@ -230,7 +230,7 @@ void PointCloudOffsetConcatenationComponent::convertToXYZIICloud(
 
   bool has_intensity = std::any_of(
     input_ptr->fields.begin(), input_ptr->fields.end(),
-    [](auto & field) { return field.name == "intensity"; });
+    [](const auto & field) { return field.name == "intensity"; });
 
   sensor_msgs::PointCloud2Iterator<float> in_it_x(*input_ptr, "x");
   sensor_msgs::PointCloud2Iterator<float> in_it_y(*input_ptr, "y");

@@ -1,7 +1,3 @@
-ci:
-  autofix_commit_msg: "style(pre-commit): autofix"
-  autoupdate_commit_msg: "ci(pre-commit): autoupdate"
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -62,5 +58,37 @@ repos:
         args: [--quiet]
         types_or: [c++, c, cuda]
         exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
+
+  # cppcheck requires a system-installed binary (not pip-installable).
+  # Using a local hook to gracefully skip with a warning when cppcheck is not installed,
+  # instead of failing the entire pre-commit run.
+  - repo: local
+    hooks:
+      - id: cppcheck
+        name: cppcheck
+        language: system
+        entry: >-
+          bash -c '
+          if ! command -v cppcheck &>/dev/null; then
+          echo "WARNING: cppcheck is not installed, skipping." >&2;
+          exit 0; fi;
+          cppcheck --suppressions-list=.cppcheck_suppressions
+          --error-exitcode=1 --inline-suppr "$@"' --
+        types_or: [c++, c, cuda]
+        exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
+
+  - repo: https://github.com/tcort/markdown-link-check
+    rev: v3.11.2
+    hooks:
+      - id: markdown-link-check
+        args: [--quiet, --config=.markdown-link-check.json]
+
+  - repo: https://github.com/ansible/ansible-lint.git
+    rev: v6.17.2
+    hooks:
+      - id: ansible-lint
+        additional_dependencies:
+          - ansible-core==2.17.14
+          - ansible==10.7.0
 
 exclude: .svg
