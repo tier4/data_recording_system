@@ -79,5 +79,5 @@ COPY docker/bashrc /etc/bash.bashrc
 COPY docker/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
-# entrypointとしてentrypoint.shを設定
+# Set entrypoint.sh as the entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
