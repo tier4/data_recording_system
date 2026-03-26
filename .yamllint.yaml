@@ -1,8 +1,5 @@
 extends: default
 
-ignore: |
-  *.param.yaml
-
 rules:
   braces:
     level: error

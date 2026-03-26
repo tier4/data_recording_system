@@ -1,5 +1,5 @@
 /**:
   ros__parameters:
-    video_device: "/dev/video3"
-    output_encoding: "rgb8"
+    video_device: /dev/video3
+    output_encoding: rgb8
     image_size: [3840, 2160] # C2
