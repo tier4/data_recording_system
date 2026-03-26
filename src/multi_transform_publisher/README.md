@@ -69,7 +69,7 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 ### Standalone Node Launch
 
 ```xml
-<include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.py">
+<include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.xml">
   <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
   <arg name="publish_camera_optical_link" value="true"/>
 </include>
