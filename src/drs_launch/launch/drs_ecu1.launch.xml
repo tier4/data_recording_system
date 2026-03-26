@@ -5,6 +5,7 @@
   <arg name="has_vehicle_can" default="False"/>
   <arg name="publish_tf" default="True"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
+  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
 
   <group>
     <push-ros-namespace namespace="sensing"/>

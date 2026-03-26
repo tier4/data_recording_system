@@ -12,7 +12,7 @@
        description="Should be False when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>
-  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE)"
+  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
   <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
        description="Should be True when vehicle CAN is available"/>

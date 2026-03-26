@@ -8,7 +8,7 @@
   <arg name="concatenate_pointcloud" default="False"
        description="If true, pointclouds from all LiDARs will be concatenated into a single topic"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
-  <arg name="lidar_driver_type" default="nebula" description="Type of LiDAR driver to use: nebula or seyond"/>
+  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)" description="Type of LiDAR driver to use: nebula or seyond"/>
 
   <group if="$(eval &quot;'$(var lidar_driver_type)' == 'nebula'&quot;)">
     <push-ros-namespace namespace="sensing"/>
