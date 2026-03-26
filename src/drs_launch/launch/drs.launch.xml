@@ -1,6 +1,6 @@
 <launch>
   <!-- Entry point of DRS launcher -->
-  <arg name="vehicle_id" default="default"/>
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="drs_ecu_id" default="$(env DRS_ECU_ID)"/>
   <arg name="live_sensor" default="True"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>

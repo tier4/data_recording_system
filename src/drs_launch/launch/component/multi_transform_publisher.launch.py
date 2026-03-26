@@ -2,19 +2,16 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     # Declare arguments
-    config_file_arg = DeclareLaunchArgument(
-        'config_file',
-        default_value=os.path.join(
-            get_package_share_directory('individual_params'),
-            'config/default/multi_tf_static.yaml'
-        ),
-        description='Path to YAML configuration file containing all transforms'
+    vehicle_id_arg = DeclareLaunchArgument(
+        'vehicle_id',
+        default_value=os.environ.get('VEHICLE_ID', 'default'),
+        description='Vehicle ID used to select the individual_params config directory'
     )
 
     publish_camera_optical_link_arg = DeclareLaunchArgument(
@@ -41,7 +38,12 @@ def generate_launch_description():
         executable='multi_transform_publisher',
         name='multi_transform_publisher',
         parameters=[{
-            'config_file': LaunchConfiguration('config_file'),
+            'config_file': PathJoinSubstitution([
+                get_package_share_directory('individual_params'),
+                'config',
+                LaunchConfiguration('vehicle_id'),
+                'multi_tf_static.yaml',
+            ]),
             'publish_camera_optical_link': LaunchConfiguration('publish_camera_optical_link'),
             'periodic_publish': LaunchConfiguration('periodic_publish'),
             'publish_period': LaunchConfiguration('publish_period')
@@ -50,7 +52,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        config_file_arg,
+        vehicle_id_arg,
         publish_camera_optical_link_arg,
         periodic_publish_arg,
         publish_period_arg,

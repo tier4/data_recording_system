@@ -1,5 +1,5 @@
 <launch>
-  <arg name="vehicle_id" default="default"/>
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="live_sensor" default="False"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="True"
@@ -130,7 +130,7 @@
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
     <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.py">
-      <arg name="config_file" value="$(var param_root_dir)/multi_tf_static.yaml"/>
+      <arg name="vehicle_id" value="$(var vehicle_id)"/>
       <arg name="publish_camera_optical_link" value="True"/>
     </include>
   </group>
