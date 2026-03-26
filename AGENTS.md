@@ -38,12 +38,10 @@
 
 ### Pre-commit
 
-When editing files, always run pre-commit against all config files matching `.pre-commit-config*` and confirm there are no errors before committing. Run pre-commit with each config file:
+When editing files, always run pre-commit and confirm there are no errors before committing:
 
 ```bash
-pre-commit run --all-files -c .pre-commit-config.yaml
-pre-commit run --all-files -c .pre-commit-config-optional.yaml
-pre-commit run --all-files -c .pre-commit-config-ansible.yaml
+pre-commit run --all-files
 ```
 
 ### CI compatibility
