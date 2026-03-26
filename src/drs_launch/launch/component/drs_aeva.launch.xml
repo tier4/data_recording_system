@@ -1,8 +1,9 @@
 <launch>
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="live_sensor"/>
   <arg name="lidar_position" default="front4d"/>
   <arg name="lidar_model"  default="Aeries2"/>
-  <arg name="config_file" default="$(find-pkg-share individual_params)/config/default/aeva_lidar.param.yaml"/>
+  <arg name="config_file" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)/aeva_lidar.param.yaml"/>
 
   <group>
     <let name="lidar_name" value="lidar_$(var lidar_position)"/>
