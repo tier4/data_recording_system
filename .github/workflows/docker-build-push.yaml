@@ -68,7 +68,7 @@ jobs:
 
       - name: Build Docker image using build.sh
         working-directory: ${{ matrix.build_dir }}
-        run: ./build.sh
+        run: ./build.sh --colcon-parallel-workers 2
 
       - name: Determine image tags
         id: tags

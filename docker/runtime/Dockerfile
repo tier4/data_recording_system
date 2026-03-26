@@ -44,6 +44,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && \
     apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-ros-core ros-dev-tools ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosbag2-storage-mcap ros-${ROS_DISTRO}-rosbag2
 
+ARG COLCON_PARALLEL_WORKERS=2
+
 WORKDIR /opt/drs
 
 # Copy source code (assumes vcs import has been done in src directory)
@@ -63,9 +65,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # Create install directory
 RUN mkdir -p /opt/drs/install
 
-# Build DRS packages (parallel workers capped at 4)
+# Build DRS packages
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon build --merge-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to drs_launch && \
+    colcon build --merge-install --install-base /opt/drs/install --parallel-workers ${COLCON_PARALLEL_WORKERS} --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to drs_launch && \
     # Remove unnecessary development files before copying to runtime
     find /opt/drs/install -name "*.a" -delete && \
     find /opt/drs/install -name "*.cmake" -delete && \

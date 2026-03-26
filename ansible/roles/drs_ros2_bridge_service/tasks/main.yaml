@@ -6,7 +6,7 @@
 - name: Build DRS ROS 2 Bridge Docker image
   ansible.builtin.shell: |
     cd {{ playbook_dir }}/..
-    bash docker/ros2_bridge/build.sh
+    bash docker/ros2_bridge/build.sh --colcon-parallel-workers 2
   when: docker_build_script.stat.exists
   register: build_result
   changed_when: true
