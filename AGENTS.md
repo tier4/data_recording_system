@@ -1,6 +1,8 @@
 # AGENTS.md
 
-All text must be written in English.
+## Language
+
+- All text must be written in English — this includes source code comments, documentation, commit messages, PR titles, and PR descriptions.
 
 ## General rules
 
