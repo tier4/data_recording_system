@@ -10,7 +10,7 @@ repositories:
   dependencies/accelerated_image_processor:
     type: git
     url: https://github.com/tier4/accelerated_image_processor.git
-    version: 1647db7bc121d1a427a2ad86e9d403416303fbab  # main
+    version: 51467abb890e2c03594414dd28133f6b404acf2f  # fix/turbojpeg-cpucompressor-imageformat
   dependencies/nebula:
     type: git
     url: https://github.com/tier4/nebula_drs.git
