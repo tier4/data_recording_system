@@ -20,6 +20,10 @@
 
 - Always separate declarations into header files (`.h`/`.hpp`) and implementations into source files (`.c`/`.cpp`), except for the `main` entry point file.
 
+### ROS 2 Launch files
+
+- Always use XML format for launch files unless there is a sufficient reason to use Python (e.g., complex conditional logic or dynamic computation that cannot be expressed in XML).
+
 ### Docker
 
 - When writing a Dockerfile, minimize the final image size and build time (e.g., multi-stage builds, layer caching, minimal base images, combining RUN instructions).
