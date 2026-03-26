@@ -59,14 +59,18 @@ repos:
         types_or: [c++, c, cuda]
         exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
 
-  - repo: https://github.com/pocc/pre-commit-hooks
-    rev: v1.3.5
+  - repo: local
     hooks:
       - id: cppcheck
-        args:
-          - --suppressions-list=.cppcheck_suppressions
-          - --error-exitcode=1
-          - --inline-suppr
+        name: cppcheck
+        language: system
+        entry: >-
+          bash -c '
+          if ! command -v cppcheck &>/dev/null; then
+          echo "WARNING: cppcheck is not installed, skipping." >&2;
+          exit 0; fi;
+          cppcheck --suppressions-list=.cppcheck_suppressions
+          --error-exitcode=1 --inline-suppr "$@"' --
         types_or: [c++, c, cuda]
         exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
 
