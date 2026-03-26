@@ -112,7 +112,8 @@
     "UDISKS",
     "psmisc",
     "fuser",
-    "automounts"
+    "automounts",
+    "extraheader"
   ],
   "import": ["https://raw.githubusercontent.com/tier4/autoware-spell-check-dict/main/.cspell.json"],
   "useGitignore": true
