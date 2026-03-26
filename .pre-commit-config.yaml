@@ -59,6 +59,9 @@ repos:
         types_or: [c++, c, cuda]
         exclude: ^(build/|install/|log/|.*\.(mcap|db3|pcd|bag|bin|so|a|o|dylib|dll|exe)|.*/json\.hpp$)
 
+  # cppcheck requires a system-installed binary (not pip-installable).
+  # Using a local hook to gracefully skip with a warning when cppcheck is not installed,
+  # instead of failing the entire pre-commit run.
   - repo: local
     hooks:
       - id: cppcheck
