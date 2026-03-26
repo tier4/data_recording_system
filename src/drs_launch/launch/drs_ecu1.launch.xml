@@ -1,7 +1,5 @@
 <launch>
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
-  <arg name="sensing_system_id" default="unknown"/>
-  <arg name="module_id" default="unknown"/>
   <arg name="live_sensor" default="True"/>
   <arg name="publish_pointcloud" default="False"/>
   <arg name="has_vehicle_can" default="False"/>
