@@ -2,13 +2,13 @@
   <!-- Entry point of DRS launcher -->
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="drs_ecu_id" default="$(env DRS_ECU_ID)"/>
-  <arg name="live_sensor" default="True"
+  <arg name="live_sensor" default="true"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
-  <arg name="publish_pointcloud" default="False"
+  <arg name="publish_pointcloud" default="false"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
-  <arg name="has_front4d" default="False"
+  <arg name="has_front4d" default="false"
        description="Should be True when a front-mounted 4D LiDAR is present"/>
-  <arg name="publish_tf" default="True"
+  <arg name="publish_tf" default="true"
        description="Should be False when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>

@@ -98,7 +98,8 @@ def launch_setup(context, *args, **kwargs):
         ],
         condition=IfCondition(Command([
             'bash -c "',
-            f'if [ "{live_sensor}" = "True" ] && [ "{set_readout_delay}" = "True" ]; then ',
+            f'shopt -s nocasematch; '
+            f'if [[ "{live_sensor}" == "true" ]] && [[ "{set_readout_delay}" == "true" ]]; then ',
             'echo true; else echo false; fi"'
         ])),
         output='screen'
@@ -142,7 +143,7 @@ def generate_launch_description():
 
     set_readout_delay_arg = DeclareLaunchArgument(
         'set_readout_delay',
-        default_value='True',
+        default_value='true',
         description='Whether to set readout delay'
     )
 

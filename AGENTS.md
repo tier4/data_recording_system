@@ -23,6 +23,7 @@
 ### ROS 2 Launch files
 
 - Always use XML format for launch files unless there is a sufficient reason to use Python (e.g., complex conditional logic or dynamic computation that cannot be expressed in XML).
+- Use lowercase `true`/`false` for boolean values in launch files (not `True`/`False`).
 
 ### Docker
 
