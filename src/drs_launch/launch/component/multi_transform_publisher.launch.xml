@@ -1,0 +1,19 @@
+<launch>
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"
+       description="Vehicle ID used to select the individual_params config directory"/>
+  <arg name="publish_camera_optical_link" default="true"
+       description="Whether to publish camera optical link transforms"/>
+  <arg name="periodic_publish" default="true"
+       description="Whether to publish transforms periodically instead of as static transforms"/>
+  <arg name="publish_period" default="1.0"
+       description="Period in seconds for periodic publishing (only used when periodic_publish is true)"/>
+
+  <node pkg="multi_transform_publisher" exec="multi_transform_publisher"
+        name="multi_transform_publisher" output="screen">
+    <param name="config_file"
+           value="$(find-pkg-share individual_params)/config/$(var vehicle_id)/multi_tf_static.yaml"/>
+    <param name="publish_camera_optical_link" value="$(var publish_camera_optical_link)"/>
+    <param name="periodic_publish" value="$(var periodic_publish)"/>
+    <param name="publish_period" value="$(var publish_period)"/>
+  </node>
+</launch>

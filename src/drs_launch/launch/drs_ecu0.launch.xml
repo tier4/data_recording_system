@@ -102,7 +102,7 @@
 
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
-    <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.py">
+    <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.xml">
       <arg name="vehicle_id" value="$(var vehicle_id)"/>
       <arg name="publish_camera_optical_link" value="True"/>
     </include>
