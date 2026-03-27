@@ -10,7 +10,7 @@
   <!-- container name that this ROS node to be loaded -->
   <arg name="container_name" default="" />
   <!-- flag to use ROS 2 intra process -->
-  <arg name="use_intra_process" default="True" />
+  <arg name="use_intra_process" default="true" />
 
   <let name="empty_container_is_specified" value="$(eval 'not &quot;$(var container_name)&quot;')" />
   <!-- If container name is not specified,

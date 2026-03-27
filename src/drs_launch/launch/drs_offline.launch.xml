@@ -1,11 +1,11 @@
 <launch>
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
-  <arg name="live_sensor" default="False"
+  <arg name="live_sensor" default="false"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
-  <arg name="publish_pointcloud" default="True"
+  <arg name="publish_pointcloud" default="true"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
-  <arg name="publish_tf" default="False"/>
-  <arg name="concatenate_pointcloud" default="False"
+  <arg name="publish_tf" default="false"/>
+  <arg name="concatenate_pointcloud" default="false"
        description="If true, pointclouds from all LiDARs will be concatenated into a single topic"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)" description="Type of LiDAR driver to use: nebula or seyond"/>
@@ -131,7 +131,7 @@
   <group if="$(var publish_tf)">
     <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.xml">
       <arg name="vehicle_id" value="$(var vehicle_id)"/>
-      <arg name="publish_camera_optical_link" value="True"/>
+      <arg name="publish_camera_optical_link" value="true"/>
     </include>
   </group>
 

@@ -2,20 +2,20 @@
   <!-- Entry point of DRS launcher -->
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="drs_ecu_id" default="$(env DRS_ECU_ID)"/>
-  <arg name="live_sensor" default="True"
+  <arg name="live_sensor" default="true"
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
-  <arg name="publish_pointcloud" default="False"
+  <arg name="publish_pointcloud" default="false"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
-  <arg name="has_front4d" default="False"
-       description="Should be True when a front-mounted 4D LiDAR is present"/>
-  <arg name="publish_tf" default="True"
-       description="Should be False when LiDAR-camera extrinsic calibration"/>
+  <arg name="has_front4d" default="false"
+       description="Should be true when a front-mounted 4D LiDAR is present"/>
+  <arg name="publish_tf" default="true"
+       description="Should be false when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
        description="Root directory for sensor parameters"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
   <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
-       description="Should be True when vehicle CAN is available"/>
+       description="Should be true when vehicle CAN is available"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>

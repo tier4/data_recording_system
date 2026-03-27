@@ -10,9 +10,9 @@
   <!-- container name that this ROS node to be loaded -->
   <arg name="container_name" default="" />
   <!-- flag to use ROS 2 intra process -->
-  <arg name="use_intra_process" default="True" />
+  <arg name="use_intra_process" default="true" />
   <!-- flag to use sensor data QoS -->
-  <arg name="use_sensor_data_qos" default="True" />
+  <arg name="use_sensor_data_qos" default="true" />
   <!-- publish frame number per second. value <= 0 means no limitation on publish rate -->
   <arg name="publish_rate" default="-1.0" />
 
