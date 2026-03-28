@@ -16,6 +16,7 @@ def launch_setup(context, *args, **kwargs):
     live_sensor = LaunchConfiguration('live_sensor').perform(context)
     set_readout_delay = LaunchConfiguration('set_readout_delay').perform(context)
     startup_delay = float(LaunchConfiguration('startup_delay').perform(context))
+    use_v4l2_buffer_timestamps = LaunchConfiguration('use_v4l2_buffer_timestamps').perform(context)
 
     # Create the root container name
     root_container_name = f'camera{camera_id}_container'
@@ -49,7 +50,8 @@ def launch_setup(context, *args, **kwargs):
                 'camera_info_url': f'file://{param_root_dir}/camera{camera_id}/camera_info.yaml',
                 'use_sensor_data_qos': False,
                 'publish_rate': -1.0,
-                'use_image_transport': False
+                'use_image_transport': False,
+                'use_v4l2_buffer_timestamps': use_v4l2_buffer_timestamps.lower() == 'true'
             }
         ],
         extra_arguments=[{'use_intra_process_comms': True}]
@@ -150,6 +152,12 @@ def generate_launch_description():
         description='Delay in seconds before starting the camera'
     )
 
+    use_v4l2_buffer_timestamps_arg = DeclareLaunchArgument(
+        'use_v4l2_buffer_timestamps',
+        default_value='true',
+        description='Use v4l2 buffer timestamps instead of ROS system time'
+    )
+
     # Return the launch description
     return LaunchDescription([
         camera_id_arg,
@@ -157,5 +165,6 @@ def generate_launch_description():
         live_sensor_arg,
         set_readout_delay_arg,
         startup_delay_arg,
+        use_v4l2_buffer_timestamps_arg,
         OpaqueFunction(function=launch_setup)
     ])
