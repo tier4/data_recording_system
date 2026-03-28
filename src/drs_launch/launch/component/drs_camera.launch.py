@@ -3,7 +3,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, TimerAction, OpaqueFunction
 from launch.conditions import IfCondition
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node, PushRosNamespace
 from launch_ros.descriptions import ComposableNode
 
@@ -96,12 +96,9 @@ def launch_setup(context, *args, **kwargs):
             f'{param_root_dir}/camera{camera_id}/readout_delay.param.yaml',
             {'target_v4l2_node': 'v4l2_camera'}
         ],
-        condition=IfCondition(Command([
-            'bash -c "',
-            f'shopt -s nocasematch; '
-            f'if [[ "{live_sensor}" == "true" ]] && [[ "{set_readout_delay}" == "true" ]]; then ',
-            'echo true; else echo false; fi"'
-        ])),
+        condition=IfCondition(
+            'true' if live_sensor.lower() == 'true' and set_readout_delay.lower() == 'true' else 'false'
+        ),
         output='screen'
     )
 
