@@ -11,6 +11,8 @@
   <arg name="container_name" default="" />
   <!-- flag to use ROS 2 intra process -->
   <arg name="use_intra_process" default="true" />
+  <!-- flag to use v4l2 buffer timestamps -->
+  <arg name="use_v4l2_buffer_timestamps" default="true" />
   <!-- flag to use sensor data QoS -->
   <arg name="use_sensor_data_qos" default="true" />
   <!-- publish frame number per second. value <= 0 means no limitation on publish rate -->
@@ -29,6 +31,7 @@
       <param name="camera_frame_id" value="$(var camera_frame_id)" />
       <param name="camera_info_url" value="$(var camera_info_url)" />
       <param name="use_sensor_data_qos" value="$(var use_sensor_data_qos)" />
+      <param name="use_v4l2_buffer_timestamps" value="$(var use_v4l2_buffer_timestamps)" />
       <param name="publish_rate" value="$(var publish_rate)" />
     </node>
   </group>
@@ -46,6 +49,7 @@
         <param name="camera_frame_id" value="$(var camera_frame_id)" />
         <param name="camera_info_url" value="$(var camera_info_url)" />
         <param name="use_sensor_data_qos" value="$(var use_sensor_data_qos)" />
+        <param name="use_v4l2_buffer_timestamps" value="$(var use_v4l2_buffer_timestamps)" />
         <param name="publish_rate" value="$(var publish_rate)" />
         <param name="use_image_transport" value="false" />
         <extra_arg name="use_intra_process_comms" value="$(var use_intra_process)" />
