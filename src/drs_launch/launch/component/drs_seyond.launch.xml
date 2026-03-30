@@ -14,7 +14,9 @@
 
   <group>
     <node pkg="seyond" exec="seyond_component_node" name="$(var lidar_name)" output="screen" >
-      <param name="replay_rosbag" value="$(eval 'not $(var live_sensor)')" />
+      <let name="replay_rosbag" value="true" unless="$(var live_sensor)"/>
+      <let name="replay_rosbag" value="false" if="$(var live_sensor)"/>
+      <param name="replay_rosbag" value="$(var replay_rosbag)" />
       <param name="packet_mode" value="true" />
       <param name="publish_pointcloud" value="$(var publish_pointcloud)" />
       <param name="frame_id" value="$(var lidar_name)" />
