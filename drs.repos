@@ -39,7 +39,7 @@ repositories:
   proto_recorder:
     type: git
     url: https://github.com/tier4/proto_recorder.git
-    version: 13b9c84aacf16e9d7a22915c3b929e4ddf68e6a6  # main
+    version: v0.1.0
   drs-api:
     type: git
     url: https://github.com/tier4/drs-api.git
