@@ -23,7 +23,11 @@ For detailed dependency libraries, please refer to [`docker/runtime/Dockerfile`]
 
 ## Build
 
-This project depends on the private repository [tier4/c2_readout_delay_setter](https://github.com/tier4/c2_readout_delay_setter) (will be made public soon). `<GITHUB_TOKEN>` is a GitHub personal access token with permission to clone this repository. You can create one at <https://github.com/settings/tokens>.
+<!-- markdown-link-check-disable -->
+
+This project depends on the private repository [tier4/c2_readout_delay_setter](https://github.com/tier4/c2_readout_delay_setter) (will be made public soon).
+
+<!-- markdown-link-check-enable --> `<GITHUB_TOKEN>` is a GitHub personal access token with permission to clone this repository. You can create one at <https://github.com/settings/tokens>.
 
 ```bash
 git clone https://github.com/tier4/data_recording_system.git
