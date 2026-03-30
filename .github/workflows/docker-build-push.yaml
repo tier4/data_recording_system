@@ -45,6 +45,9 @@ jobs:
         if: matrix.needs_vcs_import
         run: |
           pip install vcstool
+          # Remove extraheader set by actions/checkout (uses GITHUB_TOKEN which
+          # only has access to this repo, not external private repos)
+          git config --unset-all http.https://github.com/.extraheader || true
           ./scripts/setup_repos.sh --token "${{ secrets.DRS_PAT }}"
 
       - name: Log in to Container Registry
