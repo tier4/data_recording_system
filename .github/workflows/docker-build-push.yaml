@@ -43,20 +43,12 @@ jobs:
 
       - name: Import external repositories
         if: matrix.needs_vcs_import
-        env:
-          GH_TOKEN: ${{ secrets.DRS_PAT }}
         run: |
-          set -euo pipefail
           pip install vcstool
           # Remove extraheader set by actions/checkout (uses GITHUB_TOKEN which
           # only has access to this repo, not external private repos)
           git config --unset-all http.https://github.com/.extraheader || true
-          # Configure git to use PAT for github.com
-          git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global --add url."https://${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
-          # Convert SSH URLs to HTTPS and import
-          sed -e "s|git@github.com:|https://github.com/|g" drs.repos | vcs import --force src
-          echo "vcs import completed successfully"
+          ./scripts/setup_repos.sh --token "${{ secrets.DRS_PAT }}"
 
       - name: Log in to Container Registry
         if: github.event_name != 'pull_request'
