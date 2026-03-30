@@ -23,10 +23,18 @@ For detailed dependency libraries, please refer to [`docker/runtime/Dockerfile`]
 
 ## Build
 
+<!-- markdown-link-check-disable -->
+
+This project depends on the private repository [tier4/c2_readout_delay_setter](https://github.com/tier4/c2_readout_delay_setter) (will be made public soon).
+
+<!-- markdown-link-check-enable -->
+
+`<GITHUB_TOKEN>` is a GitHub personal access token with permission to clone this repository. You can create one at <https://github.com/settings/tokens>.
+
 ```bash
 git clone https://github.com/tier4/data_recording_system.git
 cd data_recording_system
-vcs import --force src < drs.repos
+./scripts/setup_repos.sh --token <GITHUB_TOKEN>
 rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch -p` --ignore-src
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to drs_launch
 ```
