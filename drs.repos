@@ -34,7 +34,7 @@ repositories:
     version: 75648c23ca54bc860aa52d2c03848f601f51bae4  # feat/data_recording_system
   dependencies/c2_readout_delay_setter:
     type: git
-    url: git@github.com:tier4/c2_readout_delay_setter.git
+    url: https://github.com/tier4/c2_readout_delay_setter.git
     version: 47ed673503a4796099478e1e11646a11d2709c7d  # feat/drs
   proto_recorder:
     type: git
