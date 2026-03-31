@@ -1,7 +1,7 @@
 <launch>
   <arg name="lidar_position"/>
   <arg name="live_sensor" default="true" />
-  <arg name="publish_pointcloud" default="true" />
+  <arg name="publish_pointcloud" default="false" />
   <arg name="lidar_name" default="lidar_$(var lidar_position)" />
   <arg name="sensor_ip" default="172.168.1.10" />
   <arg name="data_port" default="8010" />
