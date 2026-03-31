@@ -5,7 +5,7 @@ drs_install_dir: /opt/drs/install
 drs_src_dir: "{{ playbook_dir }}/../"
 
 # Build type for colcon build
-drs_build_type: RelWithDebInfo
+drs_build_type: Release
 
 # DRS packages to build
 drs_packages:

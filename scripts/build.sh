@@ -10,4 +10,4 @@ if ! command -v colcon &>/dev/null; then
     exit 1
 fi
 
-colcon build --merge-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to drs_launch
+colcon build --merge-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to drs_launch

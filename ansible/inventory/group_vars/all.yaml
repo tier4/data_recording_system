@@ -8,7 +8,7 @@ module_id: eeffgghh
 drs_user: "{{ ansible_user }}"
 drs_group: "{{ ansible_user }}"
 drs_install_dir: /opt/drs/install
-drs_build_type: RelWithDebInfo
+drs_build_type: Release
 
 has_raspi_controller: false
 has_vehicle_can: false
