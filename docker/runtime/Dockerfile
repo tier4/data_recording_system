@@ -60,14 +60,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    rosdep install -y -r --from-paths src --ignore-src
+    rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch proto_recorder ros2_bridge -p` --ignore-src --rosdistro ${ROS_DISTRO}
 
 # Create install directory
 RUN mkdir -p /opt/drs/install
 
 # Build DRS packages
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon build --merge-install --install-base /opt/drs/install --parallel-workers ${COLCON_PARALLEL_WORKERS} --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to drs_launch proto_recorder && \
+    colcon build --merge-install --install-base /opt/drs/install --parallel-workers ${COLCON_PARALLEL_WORKERS} --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to drs_launch proto_recorder ros2_bridge && \
     # Remove unnecessary development files before copying to runtime
     find /opt/drs/install -name "*.a" -delete && \
     find /opt/drs/install -name "*.cmake" -delete && \

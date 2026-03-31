@@ -40,7 +40,6 @@ RUN apt-get update && \
 ARG COLCON_PARALLEL_WORKERS=2
 
 WORKDIR /opt/drs
-# COPY src/ /opt/drs/src/
 
 RUN mkdir -p /opt/drs/src && \
     git clone https://github.com/tier4/CalibrationTools.git -b feat/drs_202505 /opt/drs/src/calibration_tools && \
