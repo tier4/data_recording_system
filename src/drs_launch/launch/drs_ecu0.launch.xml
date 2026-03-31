@@ -59,6 +59,8 @@
           <arg name="sensor_ip" value="192.168.2.201"/>
           <arg name="host_ip" value="192.168.2.1"/>
           <arg name="data_port" value="2368"/>
+          <arg name="min_range" value="0.4"/>
+          <arg name="max_range" value="300.0"/>
         </include>
       </group>
 
@@ -73,6 +75,8 @@
           <arg name="sensor_ip" value="192.168.2.203"/>
           <arg name="host_ip" value="192.168.2.1"/>
           <arg name="data_port" value="8010"/>
+          <arg name="min_range" value="0.4"/>
+          <arg name="max_range" value="70.0"/>
         </include>
       </group>
     </group>

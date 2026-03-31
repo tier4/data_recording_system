@@ -9,7 +9,7 @@
   <arg name="multiple_return" default="1" />
   <arg name="continue_live" default="false" />
   <arg name="calibration_file_path" default="" />
-  <arg name="max_range" default="2000.0" />
+  <arg name="max_range" default="300.0" />
   <arg name="min_range" default="0.4" />
 
   <group>
