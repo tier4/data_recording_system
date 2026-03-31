@@ -1,7 +1,7 @@
 [Unit]
 Description=DRS Launch Service
 Requires=network-online.target systemd-modules-load.service
-After=network-online.target cyclonedds-local.service systemd-modules-load.service
+After=network-online.target cyclonedds-local.service systemd-modules-load.service ptp4l.service
 
 [Service]
 Type=exec
