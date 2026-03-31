@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 # Re-declare ARG after FROM to use in RUN commands
 ARG ROS_DISTRO=humble
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/bash", "-c", "-o", "pipefail"]
 
 # Set timezone and locale
 ENV DEBIAN_FRONTEND=noninteractive
