@@ -6,8 +6,6 @@
        description="If true, sensor drivers will be executed (for actual recording operation)"/>
   <arg name="publish_pointcloud" default="false"
        description="If false, pointcloud decoding will not be performed (for actual recording operation)"/>
-  <arg name="has_front4d" default="false"
-       description="Should be true when a front-mounted 4D LiDAR is present"/>
   <arg name="publish_tf" default="true"
        description="Should be false when LiDAR-camera extrinsic calibration"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"
@@ -21,7 +19,6 @@
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
     <arg name="live_sensor" value="$(var live_sensor)"/>
     <arg name="publish_pointcloud" value="$(var publish_pointcloud)"/>
-    <arg name="has_front4d" value="$(var has_front4d)"/>
     <arg name="publish_tf" value="$(var publish_tf)"/>
     <arg name="param_root_dir" value="$(var param_root_dir)"/>
     <arg name="lidar_driver_type" value="$(var lidar_driver_type)"/>
