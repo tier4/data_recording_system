@@ -2,7 +2,6 @@
   <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
   <arg name="live_sensor" default="true"/>
   <arg name="publish_pointcloud" default="false"/>
-  <arg name="has_front4d" default="false"/>
   <arg name="publish_tf" default="true"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
