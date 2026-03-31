@@ -7,7 +7,7 @@ FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04 AS builder
 # Re-declare ARG after FROM to use in RUN commands
 ARG ROS_DISTRO=humble
 
-SHELL ["/bin/bash", "-c", "-o", "pipefail"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Set timezone and locale
 ENV DEBIAN_FRONTEND=noninteractive
@@ -80,7 +80,7 @@ FROM nvidia/cuda:${CUDA_VERSION}-runtime-ubuntu22.04
 # Re-declare ARG after FROM
 ARG ROS_DISTRO=humble
 
-SHELL ["/bin/bash", "-c", "-o", "pipefail"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Set timezone and locale
 ENV DEBIAN_FRONTEND=noninteractive
