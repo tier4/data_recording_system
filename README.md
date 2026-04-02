@@ -35,6 +35,6 @@ This project depends on the private repository [tier4/c2_readout_delay_setter](h
 git clone https://github.com/tier4/data_recording_system.git
 cd data_recording_system
 ./scripts/setup_repos.sh --token <GITHUB_TOKEN>
-rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch -p` --ignore-src
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to drs_launch
+rosdep install -y -r --from-paths `colcon list --packages-up-to drs_launch proto_recorder ros2_bridge -p` --ignore-src
+colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to drs_launch proto_recorder ros2_bridge
 ```

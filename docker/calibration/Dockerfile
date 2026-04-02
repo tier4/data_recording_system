@@ -40,7 +40,6 @@ RUN apt-get update && \
 ARG COLCON_PARALLEL_WORKERS=2
 
 WORKDIR /opt/drs
-# COPY src/ /opt/drs/src/
 
 RUN mkdir -p /opt/drs/src && \
     git clone https://github.com/tier4/CalibrationTools.git -b feat/drs_202505 /opt/drs/src/calibration_tools && \
@@ -62,7 +61,7 @@ RUN mkdir -p /opt/drs/install
 
 # Build DRS packages
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    colcon build --symlink-install --install-base /opt/drs/install --parallel-workers ${COLCON_PARALLEL_WORKERS} --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo --packages-up-to sensor_calibration_tools
+    colcon build --symlink-install --install-base /opt/drs/install --parallel-workers ${COLCON_PARALLEL_WORKERS} --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to sensor_calibration_tools
 
 # Add cyclonedds.xml
 COPY docker/cyclonedds.xml /opt/drs/config/
