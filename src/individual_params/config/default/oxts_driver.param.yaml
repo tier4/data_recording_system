@@ -24,4 +24,4 @@ oxts_driver:
     timestamp_mode: 0
     # ===============================================================================
     use_sim_time: false
-    wait_for_init: false
+    wait_for_init: true
