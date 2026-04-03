@@ -1,0 +1,23 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_:
+
+BO_ 256 CHASSIS_RPT: 8 Vector__XXX
+ SG_ VEHICLE_SPEED : 0|16@1+ (0.01,0) [0|655.35] "km/h" Vector__XXX
+ SG_ YAW_RATE : 16|16@1+ (0.01,-327.68) [-327.68|327.67] "deg/s" Vector__XXX
+
+BO_ 257 STEERING_RPT: 8 Vector__XXX
+ SG_ STEER_ANGLE : 0|16@1+ (0.1,-3276.8) [-3276.8|3276.7] "deg" Vector__XXX
+ SG_ STEER_TORQUE : 16|8@1+ (0.1,-12.8) [-12.8|12.7] "Nm" Vector__XXX
+
+BO_ 512 BRAKE_RPT: 8 Vector__XXX
+ SG_ BRAKE_PEDAL : 0|8@1+ (0.392157,0) [0|100] "%" Vector__XXX
+ SG_ BRAKE_ACTIVE : 8|1@1+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 768 VEHICLE_STATUS: 8 Vector__XXX
+ SG_ GEAR : 0|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ TURN_SIGNAL : 4|3@1+ (1,0) [0|7] "" Vector__XXX

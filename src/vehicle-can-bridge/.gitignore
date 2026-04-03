@@ -1,0 +1,13 @@
+# Build artifacts
+build/
+install/
+log/
+
+# DBC files (often NDA-restricted; place in dbc/ but do not commit)
+dbc/*.dbc
+!dbc/.gitkeep
+
+# Editor
+.vscode/
+.idea/
+*.swp

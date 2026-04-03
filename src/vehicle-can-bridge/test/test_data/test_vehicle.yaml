@@ -1,0 +1,40 @@
+vehicle_can_node:
+  ros__parameters:
+    vehicle_id: test_vehicle
+    can_interface: vcan0
+    dbc_file: test/test_data/test_vehicle.dbc
+    loop_rate_hz: 100.0
+    signal_timeout_ms: 500
+
+    domain_names: [chassis, brake, status]
+
+    domains.chassis.topic: /vehicle/chassis
+    domains.chassis.can_ids: [256, 257]
+
+    domains.brake.topic: /vehicle/brake
+    domains.brake.can_ids: [512]
+
+    domains.status.topic: /vehicle/status
+    domains.status.can_ids: [768]
+
+    alias_names: [VEHICLE_SPEED, STEER_ANGLE, BRAKE_PEDAL]
+    aliases.VEHICLE_SPEED: vehicle_speed
+    aliases.STEER_ANGLE: steering_angle
+    aliases.BRAKE_PEDAL: brake_pedal
+
+    transform_names: [vehicle_speed, steering_angle, brake_pedal]
+    transforms.vehicle_speed.expression: x / 3.6
+    transforms.vehicle_speed.unit: m/s
+    transforms.steering_angle.expression: x * pi / 180.0
+    transforms.steering_angle.unit: rad
+    transforms.brake_pedal.expression: x / 100.0
+    transforms.brake_pedal.unit: ""
+
+    publish_all_signals: true
+    all_signals_topic: /vehicle/signals/all
+
+    promoted_signal_names: [vehicle_speed]
+    promoted_signals.vehicle_speed.topic_suffix: vehicle_speed
+
+    diagnostics_topic: /vehicle/diagnostics
+    diagnostics_rate_hz: 1.0

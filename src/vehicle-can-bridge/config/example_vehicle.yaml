@@ -1,0 +1,98 @@
+vehicle_can_node:
+  ros__parameters:
+    # ── Vehicle identity ──────────────────────────────────────────────────────
+    vehicle_id: example_vehicle_01
+
+    # ── CAN interface ─────────────────────────────────────────────────────────
+    # Use "vcan0" for simulation:
+    #   sudo modprobe vcan
+    #   sudo ip link add dev vcan0 type vcan
+    #   sudo ip link set up vcan0
+    can_interface: can0
+
+    # ── DBC file ──────────────────────────────────────────────────────────────
+    # Absolute path or relative to the working directory.
+    # Keep DBC files out of version control if they are NDA-restricted.
+    dbc_file: /path/to/your/vehicle.dbc
+
+    # ── Timing ───────────────────────────────────────────────────────────────
+    loop_rate_hz: 100.0 # How often to drain the CAN socket and publish
+    signal_timeout_ms: 500 # Signal considered stale after this many ms
+
+    # ── Domain definitions ────────────────────────────────────────────────────
+    # Each domain becomes one SignalGroup topic.
+    # CAN IDs are decimal integers.
+    domain_names: [chassis, powertrain, body]
+
+    domains.chassis.topic: /vehicle/chassis
+    domains.chassis.can_ids: [256, 257] # CHASSIS_RPT, STEERING_RPT
+
+    domains.powertrain.topic: /vehicle/powertrain
+    domains.powertrain.can_ids: [512, 513] # BRAKE_RPT, THROTTLE_RPT
+
+    domains.body.topic: /vehicle/body
+    domains.body.can_ids: [768, 769] # VEHICLE_STATUS, LIGHTS_RPT
+
+    # ── Signal name aliases ───────────────────────────────────────────────────
+    # Rename DBC-internal signal names to semantic names.
+    # The alias is used for transform lookup, promoted topic naming, etc.
+    alias_names: [StrAng_Sns, WhlSpd_FL, WhlSpd_FR, WhlSpd_RL, WhlSpd_RR]
+
+    aliases.StrAng_Sns: steering_angle
+    aliases.WhlSpd_FL: wheel_speed_front_left
+    aliases.WhlSpd_FR: wheel_speed_front_right
+    aliases.WhlSpd_RL: wheel_speed_rear_left
+    aliases.WhlSpd_RR: wheel_speed_rear_right
+
+    # ── Signal transforms (exprtk expressions) ────────────────────────────────
+    # 'x' is the raw decoded DBC physical value.
+    # 'pi' and other math constants are available.
+    transform_names:
+      [
+        VEHICLE_SPEED,
+        steering_angle,
+        BRAKE_PEDAL,
+        THROTTLE_PEDAL,
+        YAW_RATE,
+        LATERAL_ACCEL,
+        LONG_ACCEL,
+      ]
+
+    transforms.VEHICLE_SPEED.expression: x / 3.6
+    transforms.VEHICLE_SPEED.unit: m/s
+
+    transforms.steering_angle.expression: x * pi / 180.0
+    transforms.steering_angle.unit: rad
+
+    transforms.BRAKE_PEDAL.expression: x / 100.0
+    transforms.BRAKE_PEDAL.unit: ""
+
+    transforms.THROTTLE_PEDAL.expression: x / 100.0
+    transforms.THROTTLE_PEDAL.unit: ""
+
+    transforms.YAW_RATE.expression: x * pi / 180.0
+    transforms.YAW_RATE.unit: rad/s
+
+    transforms.LATERAL_ACCEL.expression: x * 9.80665
+    transforms.LATERAL_ACCEL.unit: m/s^2
+
+    transforms.LONG_ACCEL.expression: x * 9.80665
+    transforms.LONG_ACCEL.unit: m/s^2
+
+    # ── Firehose topic ────────────────────────────────────────────────────────
+    # All decoded signals in one SignalGroup message (useful for logging).
+    publish_all_signals: true
+    all_signals_topic: /vehicle/signals/all
+
+    # ── Promoted signals ──────────────────────────────────────────────────────
+    # Publish selected signals as std_msgs/Float64 for simple downstream nodes.
+    # Topic: /vehicle/signals/<topic_suffix>
+    promoted_signal_names: [VEHICLE_SPEED, steering_angle, BRAKE_PEDAL]
+
+    promoted_signals.VEHICLE_SPEED.topic_suffix: vehicle_speed
+    promoted_signals.steering_angle.topic_suffix: steering_angle
+    promoted_signals.BRAKE_PEDAL.topic_suffix: brake_pedal_position
+
+    # ── Diagnostics ───────────────────────────────────────────────────────────
+    diagnostics_topic: /vehicle/diagnostics
+    diagnostics_rate_hz: 1.0
