@@ -13,8 +13,8 @@ repositories:
     version: a93473691e88f24b7655025a1a5348bf9982933c  # main
   dependencies/nebula:
     type: git
-    url: https://github.com/tier4/nebula_drs.git
-    version: 7081f40b32341d8d82ef00dee20b856e4283d4e9  # aeva_seyond
+    url: git@github.com:otenim/nebula.git
+    version: 551e4750b8dcb9af1fa2996606d4e3ac8797d031  # feat/add-seyond-driver
   dependencies/seyond_ros_driver:
     type: git
     url: https://github.com/tier4/seyond_ros_driver.git
