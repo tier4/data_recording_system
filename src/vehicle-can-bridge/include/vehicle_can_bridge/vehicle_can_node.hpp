@@ -73,6 +73,26 @@ private:
   double diagnostics_rate_hz_;
   std::vector<PromotedSignalConfig> promoted_signals_;
 
+  // ── Vehicle schema (optional) ────────────────────────────────────────────────
+  // Loaded from schema_domain_names + schema.<name>.{topic,signals} parameters.
+  // When non-empty, enables schema mode:
+  //   - Routing is by canonical signal name (not CAN ID)
+  //   - Every domain always publishes a full SignalGroup; signals not received
+  //     from the DBC are included with status = STATUS_INITIAL.
+  //
+  // Compound alias keys: when two DBC messages share the same signal name,
+  // use "CAN{decimal_id}_{signal_name}" as the alias_names key to disambiguate.
+  // Example: "CAN556_OUTPUT_VALUE" maps only STEERING_RPT's OUTPUT_VALUE.
+
+  /// Domain name → ordered list of canonical signal names (from schema).
+  std::unordered_map<std::string, std::vector<std::string>> domain_schema_;
+
+  /// Canonical signal name → domain name (reverse index of domain_schema_).
+  std::unordered_map<std::string, std::string> signal_to_domain_;
+
+  /// Domain name → ROS2 topic (from schema params, may differ from domains.*).
+  std::unordered_map<std::string, std::string> schema_domain_topics_;
+
   // ── Core components ─────────────────────────────────────────────────────────
   DbcDecoder decoder_;
   SignalTransformer transformer_;

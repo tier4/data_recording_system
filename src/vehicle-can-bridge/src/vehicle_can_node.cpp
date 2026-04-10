@@ -55,6 +55,7 @@ void VehicleCanNode::declare_parameters()
   declare_parameter("all_signals_topic", "/vehicle/signals/all");
   declare_parameter("diagnostics_topic", "/vehicle/diagnostics");
   declare_parameter("diagnostics_rate_hz", 1.0);
+  declare_parameter("schema_domain_names", std::vector<std::string>{});
 }
 
 // ── Parameter loading ─────────────────────────────────────────────────────────
@@ -185,6 +186,33 @@ void VehicleCanNode::load_parameters()
     pc.topic_suffix = get_parameter(suffix_param).as_string();
     promoted_signals_.push_back(std::move(pc));
   }
+
+  // ── Vehicle schema (optional) ─────────────────────────────────────────────────
+  // schema_domain_names: [operation, dynamics, ...]
+  // schema.operation.topic: /vehicle/operation
+  // schema.operation.signals: [operation.steering.command.angle, ...]
+  //
+  // When schema_domain_names is non-empty, schema mode is active:
+  //   - Signals are routed by canonical name (signal_to_domain_) instead of CAN ID.
+  //   - Each domain always publishes a full SignalGroup; absent signals get STATUS_INITIAL.
+  const auto schema_names = get_parameter("schema_domain_names").as_string_array();
+  for (const auto & name : schema_names) {
+    const std::string topic_param = "schema." + name + ".topic";
+    const std::string sigs_param = "schema." + name + ".signals";
+    declare_parameter(topic_param, "/vehicle/" + name);
+    declare_parameter(sigs_param, std::vector<std::string>{});
+
+    schema_domain_topics_[name] = get_parameter(topic_param).as_string();
+    domain_schema_[name] = get_parameter(sigs_param).as_string_array();
+    for (const auto & sig : domain_schema_.at(name)) {
+      signal_to_domain_[sig] = name;
+    }
+  }
+  if (!schema_names.empty()) {
+    RCLCPP_INFO(
+      get_logger(), "Schema mode active: %zu domains, %zu canonical signals", schema_names.size(),
+      signal_to_domain_.size());
+  }
 }
 
 // ── Publisher setup ───────────────────────────────────────────────────────────
@@ -196,13 +224,18 @@ void VehicleCanNode::setup_publishers()
     all_signals_pub_ = create_publisher<msg::SignalGroup>(all_signals_topic_, 10);
   }
 
-  // Per-domain publishers — create one for every domain the router knows about
+  // Per-domain publishers — legacy CAN-ID-routed domains
   const auto domain_names = get_parameter("domain_names").as_string_array();
   for (const auto & name : domain_names) {
     const std::string topic = router_.topic_for_domain(name);
     if (!topic.empty()) {
       domain_pubs_[name] = create_publisher<msg::SignalGroup>(topic, 10);
     }
+  }
+
+  // Schema domain publishers (may overlap with legacy; overwrite is harmless)
+  for (const auto & [name, topic] : schema_domain_topics_) {
+    domain_pubs_[name] = create_publisher<msg::SignalGroup>(topic, 10);
   }
 
   // Promoted signal publishers
@@ -281,12 +314,27 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
 
   ++frames_decoded_;
 
-  const std::string & domain = router_.domain_for_id(frame.id);
   const rclcpp::Time stamp = now();
 
   for (const RawSignal & raw_sig : *decoded) {
-    // Apply alias
-    const std::string & name = router_.apply_alias(raw_sig.name);
+    // Apply alias: try compound key "CAN{id}_{signal}" first to disambiguate
+    // signals that share the same name across different CAN messages (e.g.,
+    // PACMod's OUTPUT_VALUE appearing in ACCEL_RPT, BRAKE_RPT, STEERING_RPT).
+    const std::string compound_key = "CAN" + std::to_string(frame.id) + "_" + raw_sig.name;
+    const std::string & compound_alias = router_.apply_alias(compound_key);
+    const std::string & name =
+      (compound_alias != compound_key) ? compound_alias : router_.apply_alias(raw_sig.name);
+
+    // Determine domain: schema-based routing by canonical signal name takes
+    // precedence over legacy CAN-ID-based routing.
+    std::string domain;
+    if (!signal_to_domain_.empty()) {
+      const auto it = signal_to_domain_.find(name);
+      domain =
+        (it != signal_to_domain_.end()) ? it->second : std::string(SignalRouter::kUnassignedDomain);
+    } else {
+      domain = router_.domain_for_id(frame.id);
+    }
 
     // Apply transform; catch expression evaluation errors (MEDIUM-3)
     TransformResult tr;
@@ -340,6 +388,67 @@ void VehicleCanNode::flush_pending_groups()
 {
   const rclcpp::Time stamp = now();
 
+  if (!domain_schema_.empty()) {
+    // ── Schema mode ─────────────────────────────────────────────────────────────
+    // Every schema-defined domain is published every tick. Signals not received
+    // from the DBC are pre-filled with STATUS_INITIAL so downstream nodes always
+    // see the same SignalGroup structure regardless of which DBC is loaded.
+
+    for (const auto & [domain, expected] : domain_schema_) {
+      // Index received signals by canonical name for O(1) overlay
+      std::unordered_map<std::string, msg::Signal> rx;
+      if (auto it = pending_signals_.find(domain); it != pending_signals_.end()) {
+        for (auto & s : it->second) {
+          rx[s.name] = std::move(s);
+        }
+        it->second.clear();
+      }
+
+      msg::SignalGroup group;
+      group.header.stamp = stamp;
+      group.header.frame_id = "";
+      group.vehicle_id = vehicle_id_;
+      group.domain = domain;
+      group.signals.reserve(expected.size());
+
+      for (const auto & sig_name : expected) {
+        auto rx_it = rx.find(sig_name);
+        if (rx_it != rx.end()) {
+          group.signals.push_back(std::move(rx_it->second));
+        } else {
+          // Signal not present in this DBC: publish as STATUS_INITIAL
+          msg::Signal init;
+          init.name = sig_name;
+          init.value = 0.0;
+          init.raw_value = 0.0;
+          init.status = msg::Signal::STATUS_INITIAL;
+          init.can_id = 0;
+          init.timestamp_can = 0.0;
+          group.signals.push_back(std::move(init));
+        }
+      }
+
+      if (auto pub_it = domain_pubs_.find(domain); pub_it != domain_pubs_.end()) {
+        pub_it->second->publish(group);
+      }
+    }
+
+    // Firehose: publish all received signals (only actually-received ones)
+    auto & all_batch = pending_signals_["__all__"];
+    if (publish_all_signals_ && all_signals_pub_ && !all_batch.empty()) {
+      msg::SignalGroup all_group;
+      all_group.header.stamp = stamp;
+      all_group.header.frame_id = "";
+      all_group.vehicle_id = vehicle_id_;
+      all_group.domain = "all";
+      all_group.signals = std::move(all_batch);
+      all_signals_pub_->publish(all_group);
+    }
+    all_batch.clear();
+    return;
+  }
+
+  // ── Legacy mode (CAN-ID-routed domains) ─────────────────────────────────────
   for (auto & [domain, signals] : pending_signals_) {
     if (signals.empty()) {
       continue;

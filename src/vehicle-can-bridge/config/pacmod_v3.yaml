@@ -1,0 +1,298 @@
+# =============================================================================
+# Vehicle CAN Bridge — AStuff PACMod v3 DBC config
+# =============================================================================
+#
+# Load together with vehicle_schema.yaml:
+#
+#   parameters=[vehicle_schema_yaml, pacmod_v3_yaml]
+#
+# DBC: https://github.com/astuff/pacmod_dbc/blob/v3/as_pacmod.dbc
+# Place the DBC at the path below (not committed to version control):
+#
+#   dbc_file: /path/to/as_pacmod.dbc
+#
+# Alias format:
+#   Simple:   aliases.SIGNAL_NAME: canonical.name
+#   Compound: aliases.CAN{decimal_id}_SIGNAL_NAME: canonical.name
+#             Used when the same signal name appears in multiple CAN messages.
+#             Example: OUTPUT_VALUE appears in ACCEL_RPT(512), BRAKE_RPT(516),
+#             STEERING_RPT(556) → disambiguated by CAN ID prefix.
+#
+# Transforms: exprtk expressions where 'x' is the raw DBC physical value.
+# =============================================================================
+
+vehicle_can_node:
+  ros__parameters:
+    vehicle_id: pacmod_vehicle
+    can_interface: can0
+    dbc_file: /path/to/as_pacmod.dbc
+    loop_rate_hz: 100.0
+    signal_timeout_ms: 500
+    publish_all_signals: true
+    all_signals_topic: /vehicle/signals/all
+    diagnostics_topic: /vehicle/diagnostics
+    diagnostics_rate_hz: 1.0
+
+    # ── Aliases ────────────────────────────────────────────────────────────────
+    # Simple signals (unique name across all DBC messages)
+    # Compound signals (CAN{id}_SIGNAL) for names shared across messages
+    alias_names:
+      # operation.steering
+      - POSITION # STEERING_CMD.POSITION       → command angle (rad)
+      - ROTATION_RATE # STEERING_CMD.ROTATION_RATE  → command rate (rad/s)
+      - CAN556_OUTPUT_VALUE # STEERING_RPT(556)           → report angle (rad)
+      - CAN556_MANUAL_INPUT # STEERING_RPT(556)           → manual input (rad)
+      - STEERING_TORQUE # STEERING_AUX_RPT            → report torque (ratio)
+      # operation.throttle
+      - ACCEL_CMD # ACCEL_CMD.ACCEL_CMD         → command (ratio)
+      - CAN512_OUTPUT_VALUE # ACCEL_RPT(512)              → report position (ratio)
+      - CAN512_MANUAL_INPUT # ACCEL_RPT(512)              → manual input (ratio)
+      # operation.brake
+      - BRAKE_CMD # BRAKE_CMD.BRAKE_CMD         → command (ratio)
+      - CAN516_OUTPUT_VALUE # BRAKE_RPT(516)              → report position (ratio)
+      - CAN516_MANUAL_INPUT # BRAKE_RPT(516)              → manual input (ratio)
+      - BRAKE_DECEL_CMD # BRAKE_DECEL_CMD             → decel demand (m/s^2)
+      # operation.shift
+      - CAN296_SHIFT_CMD # SHIFT_CMD(296)              → command gear
+      - CAN552_OUTPUT_VALUE # SHIFT_RPT(552)              → report gear
+      - CAN552_MANUAL_INPUT # SHIFT_RPT(552)              → manual gear
+      # operation.parking_brake
+      - PARKING_BRAKE_CMD # PARKING_BRAKE_CMD           → command (bool)
+      - PARKING_BRAKE_STATUS # PARKING_BRAKE_AUX_RPT       → status enum
+      # operation.engaged
+      - SYSTEM_ENABLED # GLOBAL_RPT_2                → engaged bool
+      # dynamics
+      - VEHICLE_SPEED # VEHICLE_SPEED_RPT           → m/s
+      - WHEEL_SPD_AXLE_1_LEFT # WHEEL_SPEED_RPT             → rad/s
+      - WHEEL_SPD_AXLE_1_RIGHT # WHEEL_SPEED_RPT             → rad/s
+      - WHEEL_SPD_AXLE_2_LEFT # WHEEL_SPEED_RPT             → rad/s
+      - WHEEL_SPD_AXLE_2_RIGHT # WHEEL_SPEED_RPT             → rad/s
+      - LONGITUDINAL_ACCEL # LINEAR_ACCEL_RPT            → m/s^2
+      - LATERAL_ACCEL # LINEAR_ACCEL_RPT            → m/s^2
+      - VERTICAL_ACCEL # LINEAR_ACCEL_RPT            → m/s^2
+      - YAW_VEL # ANG_VEL_RPT                 → rad/s
+      - PITCH_VEL # ANG_VEL_RPT                 → rad/s
+      - ROLL_VEL # ANG_VEL_RPT                 → rad/s
+      # powertrain
+      - ENGINE_SPEED # ENGINE_AUX_RPT              → rpm
+      - ENGINE_TORQUE # ENGINE_AUX_RPT              → Nm
+      - DRVR_DEMANDED_ENG_TORQUE # ENGINE_LOAD_FACTOR_RPT      → %
+      - ENG_LOAD_AT_CURRENT_SPEED # ENGINE_LOAD_FACTOR_RPT      → %
+      - ENGINE_COOLANT_TEMP # ENGINE_AUX_RPT              → deg_C
+      - FUEL_LEVEL # ENGINE_AUX_RPT              → ratio
+      - FUEL_RATE # ENGINE_AUX_RPT_2            → L/h
+      - OIL_LEVEL # ENGINE_AUX_RPT_2            → ratio
+      - OIL_PRESSURE # ENGINE_AUX_RPT_2            → kPa
+      - GEAR_NUMBER # SHIFT_AUX_RPT               → gear (enum)
+      - ACTUAL_GEAR_RATIO # SHIFT_AUX_RPT               → ratio
+      - BATTERY_VOLTAGE_1 # BATTERY_VOLTAGE_LEVEL_RPT_1 → V
+      # chassis
+      - FRONT_LEFT_TIRE_PRESSURE # TIRE_PRESSURE_RPT           → kPa
+      - FRONT_RIGHT_TIRE_PRESSURE # TIRE_PRESSURE_RPT           → kPa
+      - REAR_LEFT_TIRE_PRESSURE # TIRE_PRESSURE_RPT           → kPa
+      - REAR_RIGHT_TIRE_PRESSURE # TIRE_PRESSURE_RPT           → kPa
+      - BRAKE_CIRCUIT_1_PRESSURE # AIR_PRESSURE_RPT            → kPa
+      - BRAKE_CIRCUIT_2_PRESSURE # AIR_PRESSURE_RPT            → kPa
+      - PNEUMATIC_SUPPLY_PRESSURE # AIR_PRESSURE_RPT            → kPa
+      - ANTILOCK_BRAKE_ACTIVE # DRIVE_TRAIN_FEATURE_RPT     → bool
+      - TRACTION_CONTROL_ACTIVE # DRIVE_TRAIN_FEATURE_RPT     → bool
+      - ANTILOCK_BRAKE_DISABLED # DRIVE_TRAIN_FEATURE_RPT     → bool
+      # body.door
+      - DRIVER_DOOR_OPEN # DOOR_RPT                    → bool
+      - PASS_DOOR_OPEN # DOOR_RPT                    → bool
+      - REAR_DRIVER_DOOR_OPEN # DOOR_RPT                    → bool
+      - REAR_PASS_DOOR_OPEN # DOOR_RPT                    → bool
+      - HOOD_OPEN # DOOR_RPT                    → bool
+      - TRUNK_OPEN # DOOR_RPT                    → bool
+      - FUEL_DOOR_OPEN # DOOR_RPT                    → bool
+      # body.seatbelt & occupancy
+      - DRIVER_SEATBELT_BUCKLED # OCCUPANCY_RPT               → bool
+      - PASS_SEATBELT_BUCKLED # OCCUPANCY_RPT               → bool
+      - DRVR_REAR_SEATBELT_BUCKLED # OCCUPANCY_RPT               → bool
+      - PASS_REAR_SEATBELT_BUCKLED # OCCUPANCY_RPT               → bool
+      - DRIVER_SEAT_OCCUPIED # OCCUPANCY_RPT               → bool
+      - PASS_SEAT_OCCUPIED # OCCUPANCY_RPT               → bool
+      - REAR_SEAT_OCCUPIED # OCCUPANCY_RPT               → bool
+      # body.lights
+      - CAN560_OUTPUT_VALUE # TURN_RPT(560)               → turn signal enum
+      - HEADLIGHTS_ON # HEADLIGHT_AUX_RPT           → bool
+      - HEADLIGHTS_ON_BRIGHT # HEADLIGHT_AUX_RPT           → bool
+      - FOG_LIGHTS_ON # HEADLIGHT_AUX_RPT           → bool
+      - BRAKE_LIGHTS_ON # REAR_LIGHTS_RPT             → bool
+      - REVERSE_LIGHTS_ON # REAR_LIGHTS_RPT             → bool
+      # body.climate
+      - INTERIOR_AMBIENT_TEMP # AMBIENT_CONDITION_RPT       → deg_C
+      - CAN588_OUTPUT_VALUE # CABIN_TEMP_RPT(588)         → deg_C set point
+      - CMD_DEFROST_OFF_ON # CABIN_CLIMATE_RPT           → bool
+      # system
+      - SYSTEM_READY # GLOBAL_RPT_2                → bool
+      - SYSTEM_OVERRIDE_ACTIVE # GLOBAL_RPT_2                → bool
+      - SYSTEM_FAULT_ACTIVE # GLOBAL_RPT_2                → bool
+      - STATE # SAFETY_FUNC_RPT             → enum
+      - ESTOP # ESTOP_RPT                   → bool
+      - REMOTE_STOP_COMMAND # REMOTE_STOP_RPT             → enum
+      - ENGINE_CHECK_LIGHT # VEHICLE_FAULT_RPT           → bool
+      - BRAKE_FAULT # VEHICLE_FAULT_RPT           → bool
+      - STEERING_LOSS_STOP_SAFELY # VEHICLE_FAULT_RPT           → bool
+      - XMSN_FAULT_SERVICE_NOW # VEHICLE_FAULT_RPT           → bool
+      - ANTILOCK_BRAKE_FAULT_LIGHT # VEHICLE_FAULT_RPT           → bool
+      - TRC_FAULT_LIGHT # VEHICLE_FAULT_RPT           → bool
+      - AIR_BAGS_FAULT_LIGHT # VEHICLE_FAULT_RPT           → bool
+      - TIRE_FAULT_LIGHT # VEHICLE_FAULT_RPT           → bool
+      # location
+      - LATITUDE_DEGREES # LAT_LON_HEADING_RPT         → deg
+      - LONGITUDE_DEGREES # LAT_LON_HEADING_RPT         → deg
+      - HEADING # LAT_LON_HEADING_RPT         → deg
+      - DATE_YEAR # DATE_TIME_RPT               → yr
+      - DATE_MONTH # DATE_TIME_RPT               → mon
+      - DATE_DAY # DATE_TIME_RPT               → dy
+      - TIME_HOUR # DATE_TIME_RPT               → hr
+      - TIME_MINUTE # DATE_TIME_RPT               → min
+      - TIME_SECOND # DATE_TIME_RPT               → sec
+
+    # Simple aliases (unique signal names)
+    aliases.POSITION: operation.steering.command.angle
+    aliases.ROTATION_RATE: operation.steering.command.rate
+    aliases.STEERING_TORQUE: operation.steering.report.torque
+    aliases.ACCEL_CMD: operation.throttle.command.position
+    aliases.BRAKE_CMD: operation.brake.command.position
+    aliases.BRAKE_DECEL_CMD: operation.brake.decel_command
+    aliases.PARKING_BRAKE_CMD: operation.parking_brake.command
+    aliases.PARKING_BRAKE_STATUS: operation.parking_brake.report
+    aliases.SYSTEM_ENABLED: operation.engaged
+    aliases.VEHICLE_SPEED: dynamics.speed.longitudinal
+    aliases.WHEEL_SPD_AXLE_1_LEFT: dynamics.wheel_speed.front_left
+    aliases.WHEEL_SPD_AXLE_1_RIGHT: dynamics.wheel_speed.front_right
+    aliases.WHEEL_SPD_AXLE_2_LEFT: dynamics.wheel_speed.rear_left
+    aliases.WHEEL_SPD_AXLE_2_RIGHT: dynamics.wheel_speed.rear_right
+    aliases.LONGITUDINAL_ACCEL: dynamics.accel.longitudinal
+    aliases.LATERAL_ACCEL: dynamics.accel.lateral
+    aliases.VERTICAL_ACCEL: dynamics.accel.vertical
+    aliases.YAW_VEL: dynamics.angular_vel.yaw
+    aliases.PITCH_VEL: dynamics.angular_vel.pitch
+    aliases.ROLL_VEL: dynamics.angular_vel.roll
+    aliases.ENGINE_SPEED: powertrain.engine.rpm
+    aliases.ENGINE_TORQUE: powertrain.engine.torque_actual
+    aliases.DRVR_DEMANDED_ENG_TORQUE: powertrain.engine.torque_demanded
+    aliases.ENG_LOAD_AT_CURRENT_SPEED: powertrain.engine.load
+    aliases.ENGINE_COOLANT_TEMP: powertrain.engine.coolant_temp
+    aliases.FUEL_LEVEL: powertrain.fuel.level
+    aliases.FUEL_RATE: powertrain.fuel.consumption_rate
+    aliases.OIL_LEVEL: powertrain.oil.level
+    aliases.OIL_PRESSURE: powertrain.oil.pressure
+    aliases.GEAR_NUMBER: powertrain.transmission.gear_actual
+    aliases.ACTUAL_GEAR_RATIO: powertrain.transmission.gear_ratio
+    aliases.BATTERY_VOLTAGE_1: powertrain.battery.voltage_12v
+    aliases.FRONT_LEFT_TIRE_PRESSURE: chassis.tire_pressure.front_left
+    aliases.FRONT_RIGHT_TIRE_PRESSURE: chassis.tire_pressure.front_right
+    aliases.REAR_LEFT_TIRE_PRESSURE: chassis.tire_pressure.rear_left
+    aliases.REAR_RIGHT_TIRE_PRESSURE: chassis.tire_pressure.rear_right
+    aliases.BRAKE_CIRCUIT_1_PRESSURE: chassis.brake_pressure.circuit_1
+    aliases.BRAKE_CIRCUIT_2_PRESSURE: chassis.brake_pressure.circuit_2
+    aliases.PNEUMATIC_SUPPLY_PRESSURE: chassis.air_pressure.supply
+    aliases.ANTILOCK_BRAKE_ACTIVE: chassis.safety.abs_active
+    aliases.TRACTION_CONTROL_ACTIVE: chassis.safety.tcs_active
+    aliases.ANTILOCK_BRAKE_DISABLED: chassis.safety.abs_disabled
+    aliases.DRIVER_DOOR_OPEN: body.door.driver_open
+    aliases.PASS_DOOR_OPEN: body.door.passenger_open
+    aliases.REAR_DRIVER_DOOR_OPEN: body.door.rear_driver_open
+    aliases.REAR_PASS_DOOR_OPEN: body.door.rear_passenger_open
+    aliases.HOOD_OPEN: body.door.hood_open
+    aliases.TRUNK_OPEN: body.door.trunk_open
+    aliases.FUEL_DOOR_OPEN: body.door.fuel_door_open
+    aliases.DRIVER_SEATBELT_BUCKLED: body.seatbelt.driver
+    aliases.PASS_SEATBELT_BUCKLED: body.seatbelt.passenger
+    aliases.DRVR_REAR_SEATBELT_BUCKLED: body.seatbelt.rear_driver
+    aliases.PASS_REAR_SEATBELT_BUCKLED: body.seatbelt.rear_passenger
+    aliases.DRIVER_SEAT_OCCUPIED: body.occupancy.driver_seat
+    aliases.PASS_SEAT_OCCUPIED: body.occupancy.passenger_seat
+    aliases.REAR_SEAT_OCCUPIED: body.occupancy.rear_seat
+    aliases.HEADLIGHTS_ON: body.lights.headlight_mode
+    aliases.FOG_LIGHTS_ON: body.lights.fog_lights_front
+    aliases.BRAKE_LIGHTS_ON: body.lights.brake_lights
+    aliases.REVERSE_LIGHTS_ON: body.lights.reverse_lights
+    aliases.INTERIOR_AMBIENT_TEMP: body.climate.interior_temp
+    aliases.CMD_DEFROST_OFF_ON: body.climate.defrost_on
+    aliases.SYSTEM_READY: system.autonomy.enabled
+    aliases.SYSTEM_OVERRIDE_ACTIVE: system.autonomy.override_active
+    aliases.SYSTEM_FAULT_ACTIVE: system.autonomy.fault_active
+    aliases.STATE: system.safety_function.state
+    aliases.ESTOP: system.estop.active
+    aliases.REMOTE_STOP_COMMAND: system.remote_stop.active
+    aliases.ENGINE_CHECK_LIGHT: system.fault.engine
+    aliases.BRAKE_FAULT: system.fault.brake
+    aliases.STEERING_LOSS_STOP_SAFELY: system.fault.steering
+    aliases.XMSN_FAULT_SERVICE_NOW: system.fault.transmission
+    aliases.ANTILOCK_BRAKE_FAULT_LIGHT: system.fault.abs
+    aliases.TRC_FAULT_LIGHT: system.fault.traction_control
+    aliases.AIR_BAGS_FAULT_LIGHT: system.fault.airbag
+    aliases.TIRE_FAULT_LIGHT: system.fault.tire_pressure
+    aliases.LATITUDE_DEGREES: location.gnss.latitude
+    aliases.LONGITUDE_DEGREES: location.gnss.longitude
+    aliases.HEADING: location.gnss.heading
+    aliases.DATE_YEAR: location.time.year
+    aliases.DATE_MONTH: location.time.month
+    aliases.DATE_DAY: location.time.day
+    aliases.TIME_HOUR: location.time.hour
+    aliases.TIME_MINUTE: location.time.minute
+    aliases.TIME_SECOND: location.time.second
+
+    # Compound aliases: disambiguate signals with the same DBC name
+    # Format: CAN{decimal_id}_{SIGNAL_NAME}
+    aliases.CAN556_OUTPUT_VALUE: operation.steering.report.angle
+    aliases.CAN556_MANUAL_INPUT: operation.steering.manual_input
+    aliases.CAN512_OUTPUT_VALUE: operation.throttle.report.position
+    aliases.CAN512_MANUAL_INPUT: operation.throttle.manual_input
+    aliases.CAN516_OUTPUT_VALUE: operation.brake.report.position
+    aliases.CAN516_MANUAL_INPUT: operation.brake.manual_input
+    aliases.CAN296_SHIFT_CMD: operation.shift.command
+    aliases.CAN552_OUTPUT_VALUE: operation.shift.report
+    aliases.CAN552_MANUAL_INPUT: operation.shift.manual_input
+    aliases.CAN560_OUTPUT_VALUE: body.lights.turn_signal
+    aliases.CAN588_OUTPUT_VALUE: body.climate.set_point
+
+    # ── Transforms ────────────────────────────────────────────────────────────
+    # Expressions use 'x' for the raw DBC physical value.
+    transform_names:
+      # Wheel speeds: PACMod reports rad/s; convert to m/s using ~0.3m wheel radius
+      # Adjust WHEEL_RADIUS_M for the specific vehicle platform.
+      - dynamics.wheel_speed.front_left
+      - dynamics.wheel_speed.front_right
+      - dynamics.wheel_speed.rear_left
+      - dynamics.wheel_speed.rear_right
+      # Shift gear enum: PACMod(0=PARK,1=REV,2=NEU,3=DRV,4=LOW) → canonical(1,2,3,4,5)
+      - operation.shift.command
+      - operation.shift.report
+      - operation.shift.manual_input
+      - powertrain.transmission.gear_actual
+      # Headlight: PACMod HEADLIGHTS_ON (bool) → headlight_mode enum (0=OFF,2=LOW,3=HIGH)
+      - body.lights.headlight_mode
+      # Remote stop: command enum > 0 means active
+      - system.remote_stop.active
+
+    transforms.dynamics.wheel_speed.front_left.expression: x * 0.3
+    transforms.dynamics.wheel_speed.front_left.unit: m/s
+    transforms.dynamics.wheel_speed.front_right.expression: x * 0.3
+    transforms.dynamics.wheel_speed.front_right.unit: m/s
+    transforms.dynamics.wheel_speed.rear_left.expression: x * 0.3
+    transforms.dynamics.wheel_speed.rear_left.unit: m/s
+    transforms.dynamics.wheel_speed.rear_right.expression: x * 0.3
+    transforms.dynamics.wheel_speed.rear_right.unit: m/s
+
+    # PACMod gear: 0→1(P), 1→2(R), 2→3(N), 3→4(D), 4→5(L), else→0(UNKNOWN)
+    transforms.operation.shift.command.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.command.unit: ""
+    transforms.operation.shift.report.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.report.unit: ""
+    transforms.operation.shift.manual_input.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.manual_input.unit: ""
+    transforms.powertrain.transmission.gear_actual.expression: (x<0||x>4)?0:x+1
+    transforms.powertrain.transmission.gear_actual.unit: ""
+
+    # HEADLIGHTS_ON (bool 0/1) → approximate mode (0=OFF, 2=LOW_BEAM)
+    transforms.body.lights.headlight_mode.expression: x>0?2:0
+    transforms.body.lights.headlight_mode.unit: ""
+
+    # REMOTE_STOP_COMMAND: 0=no stop, >0=stop commanded → bool
+    transforms.system.remote_stop.active.expression: x>0?1:0
+    transforms.system.remote_stop.active.unit: ""

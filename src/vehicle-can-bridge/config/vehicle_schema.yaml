@@ -1,0 +1,250 @@
+# =============================================================================
+# Vehicle CAN Bridge - Universal Vehicle Signal Schema (ROS2 parameter format)
+# =============================================================================
+#
+# Load this file alongside a per-DBC config in your launch file:
+#
+#   Node(
+#     package='vehicle_can_bridge',
+#     executable='vehicle_can_node',
+#     parameters=[
+#       vehicle_schema_yaml,   # this file  (common across all DBCs)
+#       pacmod_v3_yaml,        # DBC-specific aliases + transforms
+#     ]
+#   )
+#
+# When schema_domain_names is non-empty, the node operates in schema mode:
+#   - Routing is by canonical signal name (not CAN ID).
+#   - Every domain publishes a full SignalGroup every tick.
+#   - Signals absent from the loaded DBC are published as STATUS_INITIAL (3).
+#
+# Signal naming: <domain>.<subsystem>.<attribute>
+#   Domain prefix guarantees global uniqueness in the firehose topic.
+#
+# Coordinate system: ISO 8855
+#   +X = forward, +Y = left, +Z = up
+#   Positive yaw = left turn (CCW from above)
+#
+# Shared enum values (documented in docs/abstracted_schema.md):
+#   Gear:         UNKNOWN=0, PARK=1, REVERSE=2, NEUTRAL=3, DRIVE=4, LOW=5
+#   Turn signal:  OFF=0, LEFT=1, RIGHT=2, HAZARD=3
+#   Headlight:    OFF=0, POSITION=1, LOW_BEAM=2, HIGH_BEAM=3, AUTO=4
+#   Safety state: MANUAL=0, MANUAL_READY=1, AUTO_READY=2, AUTO=3,
+#                 CRITICAL_STOP_1=4, CRITICAL_STOP_2=5
+# =============================================================================
+
+vehicle_can_node:
+  ros__parameters:
+    schema_domain_names:
+      - operation
+      - dynamics
+      - powertrain
+      - chassis
+      - body
+      - adas
+      - system
+      - location
+
+    # -------------------------------------------------------------------------
+    # 1. OPERATION — Actuator commands and reports
+    # -------------------------------------------------------------------------
+    schema.operation.topic: /vehicle/operation
+    schema.operation.signals:
+      # Steering (rad, left-positive)
+      - operation.steering.command.angle
+      - operation.steering.command.rate
+      - operation.steering.report.angle
+      - operation.steering.report.torque
+      - operation.steering.manual_input
+      # Throttle (ratio 0..1)
+      - operation.throttle.command.position
+      - operation.throttle.report.position
+      - operation.throttle.manual_input
+      # Brake (ratio 0..1; decel_command in m/s^2)
+      - operation.brake.command.position
+      - operation.brake.report.position
+      - operation.brake.manual_input
+      - operation.brake.decel_command
+      - operation.brake.pressed
+      # Gear (enum: UNKNOWN=0, PARK=1, REVERSE=2, NEUTRAL=3, DRIVE=4, LOW=5)
+      - operation.shift.command
+      - operation.shift.report
+      - operation.shift.manual_input
+      # Parking brake (command: bool; report: 0=released,1=applied,2=transitioning)
+      - operation.parking_brake.command
+      - operation.parking_brake.report
+      # Autonomy engage (bool)
+      - operation.engaged
+
+    # -------------------------------------------------------------------------
+    # 2. DYNAMICS — Vehicle motion state (all SI units, ISO 8855 signs)
+    # -------------------------------------------------------------------------
+    schema.dynamics.topic: /vehicle/dynamics
+    schema.dynamics.signals:
+      # Body speed (m/s)
+      - dynamics.speed.longitudinal
+      - dynamics.speed.lateral
+      # Wheel speeds (m/s)
+      - dynamics.wheel_speed.front_left
+      - dynamics.wheel_speed.front_right
+      - dynamics.wheel_speed.rear_left
+      - dynamics.wheel_speed.rear_right
+      # Linear acceleration (m/s^2)
+      - dynamics.accel.longitudinal
+      - dynamics.accel.lateral
+      - dynamics.accel.vertical
+      # Angular velocity (rad/s)
+      - dynamics.angular_vel.yaw
+      - dynamics.angular_vel.pitch
+      - dynamics.angular_vel.roll
+      # Steering column sensor (rad, rad/s, Nm)
+      - dynamics.steering.angle
+      - dynamics.steering.rate
+      - dynamics.steering.torque_driver
+      - dynamics.steering.torque_eps
+
+    # -------------------------------------------------------------------------
+    # 3. POWERTRAIN — Engine, fuel, oil, transmission, battery
+    # -------------------------------------------------------------------------
+    schema.powertrain.topic: /vehicle/powertrain
+    schema.powertrain.signals:
+      - powertrain.engine.running
+      - powertrain.engine.rpm
+      - powertrain.engine.torque_actual
+      - powertrain.engine.torque_demanded
+      - powertrain.engine.load
+      - powertrain.engine.coolant_temp
+      - powertrain.fuel.level
+      - powertrain.fuel.consumption_rate
+      - powertrain.oil.level
+      - powertrain.oil.pressure
+      - powertrain.transmission.gear_actual
+      - powertrain.transmission.gear_ratio
+      - powertrain.battery.voltage_12v
+
+    # -------------------------------------------------------------------------
+    # 4. CHASSIS — Tire pressure, brake pressure, active safety
+    # -------------------------------------------------------------------------
+    schema.chassis.topic: /vehicle/chassis
+    schema.chassis.signals:
+      # Tire pressure (kPa)
+      - chassis.tire_pressure.front_left
+      - chassis.tire_pressure.front_right
+      - chassis.tire_pressure.rear_left
+      - chassis.tire_pressure.rear_right
+      # Brake system pressure (kPa)
+      - chassis.brake_pressure.circuit_1
+      - chassis.brake_pressure.circuit_2
+      # Pneumatic supply (kPa, trucks/buses)
+      - chassis.air_pressure.supply
+      # Active safety (bool)
+      - chassis.safety.abs_active
+      - chassis.safety.tcs_active
+      - chassis.safety.esc_active
+      - chassis.safety.abs_disabled
+      - chassis.safety.tcs_disabled
+      - chassis.safety.vsc_disabled
+
+    # -------------------------------------------------------------------------
+    # 5. BODY — Doors, seatbelts, occupancy, lighting, climate
+    # -------------------------------------------------------------------------
+    schema.body.topic: /vehicle/body
+    schema.body.signals:
+      # Doors (bool: 1=open)
+      - body.door.driver_open
+      - body.door.passenger_open
+      - body.door.rear_driver_open
+      - body.door.rear_passenger_open
+      - body.door.hood_open
+      - body.door.trunk_open
+      - body.door.fuel_door_open
+      # Seatbelts (bool: 1=buckled)
+      - body.seatbelt.driver
+      - body.seatbelt.passenger
+      - body.seatbelt.rear_driver
+      - body.seatbelt.rear_passenger
+      # Occupancy (bool: 1=occupied)
+      - body.occupancy.driver_seat
+      - body.occupancy.passenger_seat
+      - body.occupancy.rear_seat
+      # Lighting (enums documented above)
+      - body.lights.turn_signal
+      - body.lights.headlight_mode
+      - body.lights.fog_lights_front
+      - body.lights.brake_lights
+      - body.lights.reverse_lights
+      - body.lights.daytime_running
+      # Climate
+      - body.climate.interior_temp
+      - body.climate.set_point
+      - body.climate.ac_on
+      - body.climate.defrost_on
+
+    # -------------------------------------------------------------------------
+    # 6. ADAS — Cruise, ACC, lane keeping, collision warning, road signs
+    # -------------------------------------------------------------------------
+    schema.adas.topic: /vehicle/adas
+    schema.adas.signals:
+      # Cruise control
+      - adas.cruise.main_on
+      - adas.cruise.state
+      - adas.cruise.set_speed
+      # Adaptive cruise control
+      - adas.acc.distance_setting
+      - adas.acc.lead_vehicle.speed
+      - adas.acc.lead_vehicle.distance
+      - adas.acc.lead_vehicle.detected
+      - adas.acc.accel_command
+      # Lane keeping
+      - adas.lane_keeping.active
+      - adas.lane_keeping.lda_state
+      # Collision warning
+      - adas.collision.fcw_active
+      - adas.collision.pcs_braking
+      - adas.collision.front_object_distance
+      # Road sign recognition
+      - adas.road_sign.speed_limit
+
+    # -------------------------------------------------------------------------
+    # 7. SYSTEM — Autonomy state, safety FSM, vehicle fault lamps
+    # -------------------------------------------------------------------------
+    schema.system.topic: /vehicle/system
+    schema.system.signals:
+      # Autonomy state (bool)
+      - system.autonomy.enabled
+      - system.autonomy.engaged
+      - system.autonomy.override_active
+      - system.autonomy.fault_active
+      # Safety FSM (enum: see Safety state above)
+      - system.safety_function.state
+      # Emergency stop (bool)
+      - system.estop.active
+      - system.remote_stop.active
+      # Vehicle fault indicator lamps (bool: 1=lamp on)
+      - system.fault.engine
+      - system.fault.brake
+      - system.fault.steering
+      - system.fault.transmission
+      - system.fault.abs
+      - system.fault.traction_control
+      - system.fault.airbag
+      - system.fault.tire_pressure
+
+    # -------------------------------------------------------------------------
+    # 8. LOCATION — GNSS position and time
+    # -------------------------------------------------------------------------
+    schema.location.topic: /vehicle/location
+    schema.location.signals:
+      # GNSS (degrees, WGS84)
+      - location.gnss.latitude
+      - location.gnss.longitude
+      - location.gnss.heading
+      # UTC time
+      - location.time.year
+      - location.time.month
+      - location.time.day
+      - location.time.hour
+      - location.time.minute
+      - location.time.second
+      # Odometer
+      - location.odometer

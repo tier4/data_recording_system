@@ -1,0 +1,17 @@
+# Minimal schema for schema pre-population unit tests.
+# Uses only two domains and a small signal set drawn from test_vehicle.dbc.
+vehicle_can_node:
+  ros__parameters:
+    schema_domain_names: [dynamics, status]
+
+    schema.dynamics.topic: /vehicle/dynamics
+    schema.dynamics.signals:
+      - dynamics.speed.longitudinal
+      - dynamics.angular_vel.yaw
+      - dynamics.steering.angle
+      - dynamics.steering.torque
+
+    schema.status.topic: /vehicle/status
+    schema.status.signals:
+      - status.gear
+      - status.turn_signal

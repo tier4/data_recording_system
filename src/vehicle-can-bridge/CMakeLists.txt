@@ -115,11 +115,17 @@ if(BUILD_TESTING)
   )
   target_link_libraries(test_integration ${PROJECT_NAME}_lib)
 
+  ament_add_gtest(test_schema_pre_population
+    test/test_schema_pre_population.cpp
+  )
+  target_link_libraries(test_schema_pre_population ${PROJECT_NAME}_lib)
+
   # Make test data (DBC file, YAML config) accessible to tests
   set(TEST_DATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/test_data")
-  target_compile_definitions(test_dbc_decoder    PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
-  target_compile_definitions(test_signal_router  PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
-  target_compile_definitions(test_integration    PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
+  target_compile_definitions(test_dbc_decoder           PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
+  target_compile_definitions(test_signal_router         PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
+  target_compile_definitions(test_integration           PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
+  target_compile_definitions(test_schema_pre_population PRIVATE TEST_DATA_DIR="${TEST_DATA_DIR}")
 endif()
 
 # ── Install ───────────────────────────────────────────────────────────────────
