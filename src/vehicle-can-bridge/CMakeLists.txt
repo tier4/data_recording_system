@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(can_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 # ── Message generation ───────────────────────────────────────────────────────
@@ -77,6 +78,7 @@ target_link_libraries(${PROJECT_NAME}_lib
 ament_target_dependencies(${PROJECT_NAME}_lib
   rclcpp
   std_msgs
+  can_msgs
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")

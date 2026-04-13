@@ -22,6 +22,7 @@
   <exec_depend>multi_transform_publisher</exec_depend>
   <exec_depend>pointcloud_concatenate</exec_depend>
   <exec_depend>nebula_decoder</exec_depend>
+  <exec_depend>vehicle_can_bridge</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

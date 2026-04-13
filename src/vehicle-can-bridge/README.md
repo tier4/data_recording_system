@@ -455,6 +455,172 @@ source install/setup.bash
 
 ---
 
+## Offline MCAP Conversion (Building a Converter Tool)
+
+This section describes how to build a standalone tool that converts an MCAP file containing
+raw CAN frames (`can_msgs/Frame`) into a new MCAP file containing the abstracted vehicle
+signal topics (`vehicle_can_bridge/msg/SignalGroup`), without a running ROS runtime.
+
+### Core Library Reusability
+
+The conversion components are implemented as a **ROS-independent C++ library**
+(`vehicle_can_bridge_lib`) and can be linked from any standalone executable.
+
+| Component           | ROS dependency | Role in conversion pipeline             |
+| ------------------- | -------------- | --------------------------------------- |
+| `DbcDecoder`        | None           | CAN frame → raw signal name-value pairs |
+| `SignalTransformer` | None           | Raw value → transformed value + unit    |
+| `SignalRouter`      | None           | Signal name aliasing and domain lookup  |
+| `CanFrame`          | None           | Input struct (id, data, dlc, timestamp) |
+| `VehicleCanNode`    | rclcpp         | **Not reusable** — ROS node only        |
+
+### Conversion Pipeline
+
+The per-frame conversion follows the same path as the live node:
+
+```text
+can_msgs/Frame (from MCAP)
+    │  CDR deserialize
+    ▼
+CanFrame { id, data, dlc, timestamp }
+    │  DbcDecoder::decode()
+    ▼
+vector<RawSignal> { name, value, can_id }
+    │  SignalRouter::apply_alias()
+    │  SignalRouter::domain_for_id()
+    │  SignalTransformer::transform()
+    ▼
+per-domain SignalGroup (vehicle_can_bridge/msg/SignalGroup)
+    │  CDR serialize
+    ▼
+output MCAP (original timestamp preserved)
+```
+
+### Code Example
+
+```cpp
+#include "vehicle_can_bridge/dbc_decoder.hpp"
+#include "vehicle_can_bridge/signal_transformer.hpp"
+#include "vehicle_can_bridge/signal_router.hpp"
+#include "vehicle_can_bridge/can_reader.hpp"  // for CanFrame struct
+
+using namespace vehicle_can_bridge;
+
+// ── 1. Setup (once at startup) ──────────────────────────────────────────────
+
+DbcDecoder decoder;
+if (!decoder.load("/path/to/vehicle.dbc")) {
+    throw std::runtime_error("Failed to load DBC");
+}
+
+SignalTransformer transformer;
+transformer.configure({
+    {"VehicleSpeed",   {"x / 3.6",           "m/s"}},
+    {"SteeringAngle",  {"x * 3.14159 / 180", "rad"}},
+});
+
+SignalRouter router;
+std::vector<DomainConfig> domains = {
+    {"dynamics", "/vehicle/dynamics", {0x100, 0x101}},
+    {"chassis",  "/vehicle/chassis",  {0x200, 0x201}},
+};
+std::unordered_map<std::string, std::string> aliases = {
+    {"VEH_SPD", "VehicleSpeed"},
+    {"STR_ANG", "SteeringAngle"},
+};
+router.configure(domains, aliases);
+
+// ── 2. Per-frame conversion (called for each can_msgs/Frame in the MCAP) ───
+
+// frame.id, frame.data, frame.dlc, frame.timestamp are populated from the
+// deserialized can_msgs/Frame message. The timestamp comes directly from
+// msg.header.stamp to preserve the original recording time.
+auto convert_frame(
+    const CanFrame & frame,
+    const DbcDecoder & decoder,
+    const SignalTransformer & transformer,
+    const SignalRouter & router)
+    -> std::unordered_map<std::string, std::vector</* Signal */>>
+{
+    auto raw_signals = decoder.decode(frame.id, frame.data, frame.dlc);
+    if (!raw_signals) return {};  // unknown CAN ID — skip
+
+    std::unordered_map<std::string, std::vector</* Signal */>> by_domain;
+
+    for (const RawSignal & raw : *raw_signals) {
+        const std::string compound_key =
+            "CAN" + std::to_string(frame.id) + "_" + raw.name;
+        const std::string & aliased =
+            (router.apply_alias(compound_key) != compound_key)
+                ? router.apply_alias(compound_key)
+                : router.apply_alias(raw.name);
+
+        const std::string & domain = router.domain_for_id(frame.id);
+        const TransformResult tr = transformer.transform(aliased, raw.value);
+
+        // Build Signal message and accumulate into the domain group.
+        // Serialize to SignalGroup and write to the output MCAP with
+        // the original frame.timestamp as the message timestamp.
+        by_domain[domain].push_back(/* build Signal from aliased, tr, frame */);
+    }
+    return by_domain;
+}
+```
+
+### Recommended MCAP I/O
+
+Use the **`rosbag2_cpp` reader/writer API** for reading and writing MCAP files.
+It handles CDR serialization of ROS message types automatically and does not
+require `rclcpp::init` or a running ROS executor.
+
+```cpp
+#include <rosbag2_cpp/reader.hpp>
+#include <rosbag2_cpp/writer.hpp>
+
+// Read
+rosbag2_cpp::Reader reader;
+reader.open("input.mcap");
+while (reader.has_next()) {
+    auto msg = reader.read_next();
+    // msg->topic_name, msg->time_stamp (nanoseconds), msg->serialized_data (CDR)
+}
+
+// Write (preserve original timestamps from msg->time_stamp)
+rosbag2_cpp::Writer writer;
+writer.open("output.mcap");
+writer.write(serialized_signal_group_msg, "/vehicle/dynamics", rclcpp::Time{msg->time_stamp});
+```
+
+Non-CAN topics in the input MCAP can be copied verbatim by passing their
+serialized data directly to the writer without deserialization.
+
+### CMakeLists.txt for the Converter Executable
+
+```cmake
+find_package(vehicle_can_bridge REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
+find_package(can_msgs REQUIRED)
+
+add_executable(mcap_converter src/mcap_converter.cpp)
+target_link_libraries(mcap_converter vehicle_can_bridge::vehicle_can_bridge_lib)
+ament_target_dependencies(mcap_converter rosbag2_cpp can_msgs)
+```
+
+### Timestamp Handling
+
+The converter must preserve the original recording timestamps end-to-end:
+
+| Source                     | How to obtain                                                  |
+| -------------------------- | -------------------------------------------------------------- |
+| Input CAN frame time       | `rosbag2` message `time_stamp` field (nanoseconds since epoch) |
+| `SignalGroup.header.stamp` | Set from the same `time_stamp` — do **not** use wall clock     |
+| MCAP write time            | Pass the same `time_stamp` to `writer.write()`                 |
+
+This ensures the output MCAP is fully reproducible regardless of the
+processing environment or machine speed.
+
+---
+
 ## License
 
 Apache License 2.0

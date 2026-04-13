@@ -4,6 +4,7 @@
 
 #include "vehicle_can_bridge/msg/signal.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstring>
 #include <stdexcept>
@@ -22,22 +23,30 @@ VehicleCanNode::VehicleCanNode(const rclcpp::NodeOptions & options)
   load_parameters();
   setup_publishers();
 
-  // Open the CAN interface; log a warning but continue if it fails so the
-  // node can still be launched in simulation environments without CAN hardware.
-  if (!open_can_interface()) {
-    RCLCPP_WARN(
-      get_logger(),
-      "Could not open CAN interface '%s'. Frames will not be received. "
-      "Use vcan for simulation: 'sudo modprobe vcan && sudo ip link add dev vcan0 type vcan && "
-      "sudo ip link set up vcan0'",
-      can_interface_.c_str());
+  if (use_can_topic_) {
+    can_sub_ = create_subscription<can_msgs::msg::Frame>(
+      can_topic_, rclcpp::SensorDataQoS(),
+      std::bind(&VehicleCanNode::on_can_frame, this, std::placeholders::_1));
+    RCLCPP_INFO(
+      get_logger(), "vehicle_can_node started in topic mode [vehicle=%s, topic=%s, dbc=%s]",
+      vehicle_id_.c_str(), can_topic_.c_str(), dbc_file_.c_str());
+  } else {
+    // Open the CAN interface; log a warning but continue if it fails so the
+    // node can still be launched in simulation environments without CAN hardware.
+    if (!open_can_interface()) {
+      RCLCPP_WARN(
+        get_logger(),
+        "Could not open CAN interface '%s'. Frames will not be received. "
+        "Use vcan for simulation: 'sudo modprobe vcan && sudo ip link add dev vcan0 type vcan && "
+        "sudo ip link set up vcan0'",
+        can_interface_.c_str());
+    }
+    RCLCPP_INFO(
+      get_logger(), "vehicle_can_node started [vehicle=%s, interface=%s, dbc=%s]",
+      vehicle_id_.c_str(), can_interface_.c_str(), dbc_file_.c_str());
   }
 
   setup_timer();
-
-  RCLCPP_INFO(
-    get_logger(), "vehicle_can_node started [vehicle=%s, interface=%s, dbc=%s]",
-    vehicle_id_.c_str(), can_interface_.c_str(), dbc_file_.c_str());
 }
 
 VehicleCanNode::~VehicleCanNode() = default;
@@ -48,6 +57,8 @@ void VehicleCanNode::declare_parameters()
 {
   declare_parameter("vehicle_id", "unknown_vehicle");
   declare_parameter("can_interface", "can0");
+  declare_parameter("use_can_topic", false);
+  declare_parameter("can_topic", "/vehicle/from_can_bus");
   declare_parameter("dbc_file", "");
   declare_parameter("loop_rate_hz", 100.0);
   declare_parameter("signal_timeout_ms", 500);
@@ -64,6 +75,8 @@ void VehicleCanNode::load_parameters()
 {
   vehicle_id_ = get_parameter("vehicle_id").as_string();
   can_interface_ = get_parameter("can_interface").as_string();
+  use_can_topic_ = get_parameter("use_can_topic").as_bool();
+  can_topic_ = get_parameter("can_topic").as_string();
   dbc_file_ = get_parameter("dbc_file").as_string();
   loop_rate_hz_ = get_parameter("loop_rate_hz").as_double();
   diagnostics_rate_hz_ = get_parameter("diagnostics_rate_hz").as_double();
@@ -271,24 +284,26 @@ bool VehicleCanNode::open_can_interface() { return can_reader_.open(can_interfac
 
 void VehicleCanNode::on_timer()
 {
-  // Drain all available CAN frames in this tick
-  while (true) {
-    const auto frame = can_reader_.read_frame();
-    if (!frame.has_value()) {
-      // Distinguish real socket errors from an empty buffer (CRITICAL-2 fix).
-      if (can_reader_.has_error()) {
-        RCLCPP_ERROR(
-          get_logger(),
-          "SocketCAN read error on '%s': %s (errno=%d). "
-          "CAN data loss until the interface recovers.",
-          can_interface_.c_str(), std::strerror(can_reader_.last_error()),
-          can_reader_.last_error());
-        ++decode_errors_;
-        can_reader_.clear_error();
+  if (!use_can_topic_) {
+    // Drain all available CAN frames in this tick
+    while (true) {
+      const auto frame = can_reader_.read_frame();
+      if (!frame.has_value()) {
+        // Distinguish real socket errors from an empty buffer (CRITICAL-2 fix).
+        if (can_reader_.has_error()) {
+          RCLCPP_ERROR(
+            get_logger(),
+            "SocketCAN read error on '%s': %s (errno=%d). "
+            "CAN data loss until the interface recovers.",
+            can_interface_.c_str(), std::strerror(can_reader_.last_error()),
+            can_reader_.last_error());
+          ++decode_errors_;
+          can_reader_.clear_error();
+        }
+        break;
       }
-      break;
+      process_frame(*frame);
     }
-    process_frame(*frame);
   }
 
   // Publish accumulated per-domain signal groups
@@ -477,6 +492,19 @@ void VehicleCanNode::flush_pending_groups()
 
     signals.clear();
   }
+}
+
+// ── can_msgs topic callback ───────────────────────────────────────────────────
+
+void VehicleCanNode::on_can_frame(const can_msgs::msg::Frame::SharedPtr msg)
+{
+  CanFrame frame{};
+  frame.id = msg->id;
+  frame.dlc = msg->dlc;
+  std::copy(msg->data.begin(), msg->data.end(), frame.data.begin());
+  frame.timestamp = static_cast<double>(msg->header.stamp.sec) +
+                    static_cast<double>(msg->header.stamp.nanosec) * 1e-9;
+  process_frame(frame);
 }
 
 // ── Diagnostics timer callback ────────────────────────────────────────────────

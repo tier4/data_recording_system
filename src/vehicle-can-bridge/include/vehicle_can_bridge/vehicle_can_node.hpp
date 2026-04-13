@@ -12,6 +12,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <can_msgs/msg/frame.hpp>
 #include <std_msgs/msg/float64.hpp>
 
 #include <memory>
@@ -53,6 +54,7 @@ private:
   // ── Runtime callbacks ───────────────────────────────────────────────────────
   void on_timer();
   void on_diagnostics_timer();
+  void on_can_frame(const can_msgs::msg::Frame::SharedPtr msg);
 
   // ── Per-frame processing ────────────────────────────────────────────────────
   void process_frame(const CanFrame & frame);
@@ -65,6 +67,8 @@ private:
   std::string vehicle_id_;
   std::string can_interface_;
   std::string dbc_file_;
+  bool use_can_topic_{false};
+  std::string can_topic_;
   double loop_rate_hz_;
   uint64_t signal_timeout_ms_;
   bool publish_all_signals_;
@@ -113,6 +117,9 @@ private:
 
   // Diagnostics publisher
   rclcpp::Publisher<msg::SignalDiagnostic>::SharedPtr diagnostics_pub_;
+
+  // ── Subscriber (can_msgs mode) ────────────────────────────────────────────
+  rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr can_sub_;
 
   // ── Timers ───────────────────────────────────────────────────────────────────
   rclcpp::TimerBase::SharedPtr spin_timer_;
