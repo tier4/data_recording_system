@@ -26,15 +26,21 @@ include(FetchContent)
 FetchContent_Declare(
   dbcppp
   GIT_REPOSITORY https://github.com/xR3b0rn/dbcppp.git
-  # Pin to a specific commit for reproducible builds.
+  # Pin to a release tag for reproducible builds.
   # Update intentionally when a new release is vetted.
-  GIT_TAG        8c2020929e7e03dd7e8e1fb6f2c5bab2c4a5eabf
-  GIT_SHALLOW    FALSE
+  GIT_TAG        v3.2.6
+  GIT_SHALLOW    TRUE
 )
 # dbcppp uses its own CMakeLists; set options before MakeAvailable
 set(dbcppp_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(dbcppp_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(dbcppp)
+
+# dbcppp v3.x only exports INSTALL_INTERFACE include paths on the library
+# target. Patch the BUILD_INTERFACE so dependents can find <dbcppp/Network.h>.
+target_include_directories(libdbcppp PUBLIC
+  $<BUILD_INTERFACE:${dbcppp_SOURCE_DIR}/include>
+)
 
 # ── Third-party: exprtk (header-only) ────────────────────────────────────────
 FetchContent_Declare(
@@ -71,7 +77,7 @@ target_compile_options(${PROJECT_NAME}_lib PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME}_lib
-  dbcppp
+  libdbcppp
   exprtk
 )
 

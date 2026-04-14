@@ -13,4 +13,4 @@ string domain
 # Vehicle identifier from the vehicle_id parameter.
 string vehicle_id
 
-vehicle_can_conv/Signal[] signals
+vehicle_can_bridge/Signal[] signals

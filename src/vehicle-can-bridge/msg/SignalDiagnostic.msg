@@ -1,4 +1,4 @@
-# Health and diagnostic information for the vehicle_can_conv node.
+# Health and diagnostic information for the vehicle_can_bridge node.
 # Published at a low rate (default 1 Hz) on /vehicle/diagnostics.
 
 std_msgs/Header header

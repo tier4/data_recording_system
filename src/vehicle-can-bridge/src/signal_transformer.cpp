@@ -50,7 +50,7 @@ struct CompiledExpr
 
 struct SignalTransformer::Impl
 {
-  std::unordered_map<std::string, CompiledExpr> exprs;
+  std::unordered_map<std::string, std::unique_ptr<CompiledExpr>> exprs;
 };
 
 // ── Constructors / destructor ─────────────────────────────────────────────────
@@ -75,9 +75,9 @@ void SignalTransformer::configure(const std::unordered_map<std::string, Transfor
       continue;
     }
 
-    CompiledExpr compiled;
+    auto compiled = std::make_unique<CompiledExpr>();
     // compile() throws std::invalid_argument on error
-    compiled.compile(cfg.expression, cfg.unit);
+    compiled->compile(cfg.expression, cfg.unit);
     impl_->exprs.emplace(signal_name, std::move(compiled));
   }
 }
@@ -95,9 +95,9 @@ TransformResult SignalTransformer::transform(
 
   // x and expression are mutable so this const method can update the
   // symbol table variable before calling expression.value().
-  const double transformed = it->second.evaluate(raw_value);
+  const double transformed = it->second->evaluate(raw_value);
 
-  return TransformResult{transformed, raw_value, it->second.unit};
+  return TransformResult{transformed, raw_value, it->second->unit};
 }
 
 }  // namespace vehicle_can_bridge
