@@ -137,6 +137,11 @@ if(BUILD_TESTING)
 endif()
 
 # ── Install ───────────────────────────────────────────────────────────────────
+install(TARGETS ${PROJECT_NAME}_lib
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
 install(TARGETS vehicle_can_node
   DESTINATION lib/${PROJECT_NAME}
 )

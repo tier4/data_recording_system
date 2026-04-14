@@ -280,13 +280,13 @@ vehicle_can_node:
     transforms.dynamics.wheel_speed.rear_right.unit: m/s
 
     # PACMod gear: 0→1(P), 1→2(R), 2→3(N), 3→4(D), 4→5(L), else→0(UNKNOWN)
-    transforms.operation.shift.command.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.command.expression: (x<0 or x>4)?0:x+1
     transforms.operation.shift.command.unit: ""
-    transforms.operation.shift.report.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.report.expression: (x<0 or x>4)?0:x+1
     transforms.operation.shift.report.unit: ""
-    transforms.operation.shift.manual_input.expression: (x<0||x>4)?0:x+1
+    transforms.operation.shift.manual_input.expression: (x<0 or x>4)?0:x+1
     transforms.operation.shift.manual_input.unit: ""
-    transforms.powertrain.transmission.gear_actual.expression: (x<0||x>4)?0:x+1
+    transforms.powertrain.transmission.gear_actual.expression: (x<0 or x>4)?0:x+1
     transforms.powertrain.transmission.gear_actual.unit: ""
 
     # HEADLIGHTS_ON (bool 0/1) → approximate mode (0=OFF, 2=LOW_BEAM)
