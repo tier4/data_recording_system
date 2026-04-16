@@ -57,10 +57,10 @@ void VehicleCanNode::declare_parameters()
 {
   declare_parameter("vehicle_id", "unknown_vehicle");
   declare_parameter("can_interface", "can0");
-  declare_parameter("use_can_topic", false);
+  declare_parameter("use_can_topic", true);
   declare_parameter("can_topic", "/vehicle/from_can_bus");
   declare_parameter("dbc_file", "");
-  declare_parameter("loop_rate_hz", 100.0);
+  declare_parameter("loop_rate_hz", 20.0);
   declare_parameter("signal_timeout_ms", 500);
   declare_parameter("publish_all_signals", true);
   declare_parameter("all_signals_topic", "/vehicle/signals/all");
