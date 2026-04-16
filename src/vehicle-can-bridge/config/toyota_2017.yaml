@@ -17,6 +17,10 @@
 #
 # Compound aliases: Toyota signal names are mostly unique per message, so few
 # compound keys are needed. The exceptions are noted inline.
+#
+# Phase 1 scope: dynamics + operation + body (minimal: turn_signal, headlight_mode)
+# See docs/initial_adoption_scope.md for rationale.
+# Note: brake_lights (body.lights.brake_lights) is PACMod-only; not available in this DBC.
 # =============================================================================
 
 vehicle_can_node:
@@ -55,43 +59,9 @@ vehicle_can_node:
       # dynamics.steering (sensor-side, distinct from operation.steering.report)
       - STEER_TORQUE_DRIVER # STEER_TORQUE_SENSOR         → driver torque (raw)
       - STEER_TORQUE_EPS # STEER_TORQUE_SENSOR         → EPS torque (raw)
-      # powertrain
-      - RPM # ENGINE_RPM                  → engine RPM
-      - ENGINE_RUNNING # ENGINE_RPM                  → bool
-      - GEAR_2 # GEAR_PACKET.GEAR (also used for powertrain)
-      # chassis.safety
-      - TC_DISABLED # ESP_CONTROL                 → TCS disabled bool
-      - VSC_DISABLED # ESP_CONTROL                 → VSC disabled bool
-      # body.door
-      - DOOR_OPEN_FL # BODY_CONTROL_STATE          → driver door open
-      - DOOR_OPEN_FR # BODY_CONTROL_STATE          → passenger door open
-      - DOOR_OPEN_RL # BODY_CONTROL_STATE          → rear driver open
-      - DOOR_OPEN_RR # BODY_CONTROL_STATE          → rear passenger open
-      # body.lights
+      # body.lights (Phase 1 minimal subset)
       - TURN_SIGNALS # BLINKERS_STATE              → turn signal enum
-      - HEADLIGHT_MODE # LIGHT_STALK                 → headlight mode
-      - FRONT_FOG # LIGHT_STALK                 → fog lights bool
-      - DAYTIME_RUNNING_LIGHT # LIGHT_STALK                 → DRL bool
-      # body.climate
-      - CLIMATE_SET_POINT # AIR_CONDITIONER             → set point (deg_C)
-      - AIR_CONDITIONER_STATE # AIR_CONDITIONER             → AC on (bool derived)
-      - WINDSCREEN_DEFOG # AIR_CONDITIONER_2           → defrost bool
-      # adas.cruise
-      - MAIN_ON # PCM_CRUISE_2                → cruise main on bool
-      - SET_SPEED # PCM_CRUISE_2.SET_SPEED      → cruise set speed (km/h→m/s)
-      - PCM_FOLLOW_DISTANCE # PCM_CRUISE_2                → ACC distance enum
-      - CRUISE_CONTROL_STATE # PCM_CRUISE_SM               → cruise state enum
-      # adas.acc
-      - LEAD_REL_SPEED # LEAD_INFO                   → lead vehicle speed (m/s)
-      - LEAD_LONG_DIST # LEAD_INFO                   → lead distance (m)
-      - ACCEL_CMD # ACC_CONTROL                 → ACC accel demand (m/s^2)
-      # adas.lane_keeping
-      - FCW # PCS_HUD                     → FCW active bool
-      - PCS_INDICATOR # PCS_HUD                     → PCS braking enum
-      # adas.road_sign
-      - SPDVAL1 # RSA1                        → speed limit (km/h)
-      # location
-      - ODOMETER # UI_SETTING                  → total distance (km)
+      - HEADLIGHT_MODE # LIGHT_STALK                 → headlight mode enum
 
     # Simple aliases
     aliases.STEER_ANGLE: dynamics.steering.angle
@@ -110,33 +80,8 @@ vehicle_can_node:
     aliases.YAW_RATE: dynamics.angular_vel.yaw
     aliases.STEER_TORQUE_DRIVER: dynamics.steering.torque_driver
     aliases.STEER_TORQUE_EPS: dynamics.steering.torque_eps
-    aliases.RPM: powertrain.engine.rpm
-    aliases.ENGINE_RUNNING: powertrain.engine.running
-    aliases.GEAR_2: powertrain.transmission.gear_actual
-    aliases.TC_DISABLED: chassis.safety.tcs_disabled
-    aliases.VSC_DISABLED: chassis.safety.vsc_disabled
-    aliases.DOOR_OPEN_FL: body.door.driver_open
-    aliases.DOOR_OPEN_FR: body.door.passenger_open
-    aliases.DOOR_OPEN_RL: body.door.rear_driver_open
-    aliases.DOOR_OPEN_RR: body.door.rear_passenger_open
     aliases.TURN_SIGNALS: body.lights.turn_signal
     aliases.HEADLIGHT_MODE: body.lights.headlight_mode
-    aliases.FRONT_FOG: body.lights.fog_lights_front
-    aliases.DAYTIME_RUNNING_LIGHT: body.lights.daytime_running
-    aliases.CLIMATE_SET_POINT: body.climate.set_point
-    aliases.AIR_CONDITIONER_STATE: body.climate.ac_on
-    aliases.WINDSCREEN_DEFOG: body.climate.defrost_on
-    aliases.MAIN_ON: adas.cruise.main_on
-    aliases.SET_SPEED: adas.cruise.set_speed
-    aliases.PCM_FOLLOW_DISTANCE: adas.acc.distance_setting
-    aliases.CRUISE_CONTROL_STATE: adas.cruise.state
-    aliases.LEAD_REL_SPEED: adas.acc.lead_vehicle.speed
-    aliases.LEAD_LONG_DIST: adas.acc.lead_vehicle.distance
-    aliases.ACCEL_CMD: adas.acc.accel_command
-    aliases.FCW: adas.collision.fcw_active
-    aliases.PCS_INDICATOR: adas.collision.pcs_braking
-    aliases.SPDVAL1: adas.road_sign.speed_limit
-    aliases.ODOMETER: location.odometer
 
     # ── Transforms ────────────────────────────────────────────────────────────
     transform_names:
@@ -153,17 +98,10 @@ vehicle_can_node:
       - dynamics.angular_vel.yaw
       # Brake: raw 0..255 → ratio 0..1
       - operation.brake.report.position
-      # AC on: state > 0 → bool
-      - body.climate.ac_on
-      # Cruise set speed: km/h → m/s
-      - adas.cruise.set_speed
       # Gear enum: Toyota → canonical
       # Toyota GEAR: 0=no data, 1=D, 2=N, 8=P, 16=R, 32=B
       # Canonical:             4       3     1      2      5
       - operation.shift.report
-      - powertrain.transmission.gear_actual
-      # Odometer: raw units (may vary; Toyota typically km → convert to m)
-      - location.odometer
 
     transforms.dynamics.steering.angle.expression: x * 0.017453293
     transforms.dynamics.steering.angle.unit: rad
@@ -190,21 +128,7 @@ vehicle_can_node:
     transforms.operation.brake.report.position.expression: x / 255.0
     transforms.operation.brake.report.position.unit: ""
 
-    # AC state: >0 → 1 (on), 0 → 0 (off)
-    transforms.body.climate.ac_on.expression: x>0?1:0
-    transforms.body.climate.ac_on.unit: ""
-
-    # Cruise set speed: km/h → m/s
-    transforms.adas.cruise.set_speed.expression: x * 0.277778
-    transforms.adas.cruise.set_speed.unit: m/s
-
     # Toyota gear enum → canonical gear enum
     # Toyota: 1=D(4), 2=N(3), 8=P(1), 16=R(2), 32=B(5), else=0(UNKNOWN)
     transforms.operation.shift.report.expression: (x==1)?4:(x==2)?3:(x==8)?1:(x==16)?2:(x==32)?5:0
     transforms.operation.shift.report.unit: ""
-    transforms.powertrain.transmission.gear_actual.expression: (x==1)?4:(x==2)?3:(x==8)?1:(x==16)?2:(x==32)?5:0
-    transforms.powertrain.transmission.gear_actual.unit: ""
-
-    # Odometer: assume raw value is in km, convert to m
-    transforms.location.odometer.expression: x * 1000.0
-    transforms.location.odometer.unit: m
