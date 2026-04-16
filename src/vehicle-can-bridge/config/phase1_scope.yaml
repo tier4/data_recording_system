@@ -1,0 +1,40 @@
+# =============================================================================
+# Vehicle CAN Bridge — Phase 1 スコープ上書きファイル
+# =============================================================================
+#
+# 目的:
+#   vehicle_schema.yaml が定義する全 8 ドメインのうち、Phase 1 対象の
+#   3 ドメインのみに絞り込む。
+#
+# 使い方:
+#   launch ファイルで vehicle_schema.yaml および DBC config の後に読み込む。
+#   後から読み込まれた値が上書きされるため、このファイルを最後に指定すること。
+#
+#   Node(
+#     package='vehicle_can_bridge',
+#     executable='vehicle_can_node',
+#     parameters=[
+#       vehicle_schema_yaml,   # 共通スキーマ定義（全ドメイン）
+#       pacmod_v3_yaml,        # DBC 固有の alias / transform
+#       phase1_scope_yaml,     # ← このファイル（ドメインを Phase 1 に絞る）
+#     ]
+#   )
+#
+# 参照: docs/initial_adoption_scope.md
+# =============================================================================
+
+vehicle_can_node:
+  ros__parameters:
+    # Phase 1 で有効化するドメインのみを列挙する。
+    # ここに含まれないドメインのトピックは発行されない。
+    schema_domain_names:
+      - dynamics
+      - operation
+      - body
+
+    # body ドメインは Phase 1 対象の最小サブセットに絞る。
+    # vehicle_schema.yaml の schema.body.signals を上書きする。
+    schema.body.signals:
+      - body.lights.turn_signal # 車線変更・右左折イベント（ドライバー意図）
+      - body.lights.headlight_mode # 夜間・トンネル区間のタグ付け
+      - body.lights.brake_lights # ブレーキランプ実挙動（PACMod のみ有効）
