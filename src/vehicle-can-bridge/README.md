@@ -29,8 +29,8 @@ CAN Interface → DbcDecoder → SignalTransformer → SignalRouter → ROS2 Top
 
 ### Output Topics
 
-- **Domain-grouped**: `/vehicle/<domain>` (e.g., `/vehicle/chassis`) — `vehicle_can_bridge/msg/SignalGroup`
-- **Firehose**: `/vehicle/signals/all` — all decoded signals in one message
+- **Decoded CAN**: `/vehicle/decoded_can` — all schema-assigned signals in one `SignalGroup` per tick
+- **Domain-grouped** (optional): `/vehicle/<domain>` — per-domain `SignalGroup` (enabled by `schema_publish_per_domain: true`)
 - **Promoted signals**: `/vehicle/signals/<suffix>` — individual signals as `std_msgs/Float64`
 - **Diagnostics**: `/vehicle/diagnostics` — frame counts, timeouts, errors
 
@@ -178,7 +178,7 @@ vehicle_can_node:
 
     # ── Topics ────────────────────────────────────────────
     publish_all_signals: true # Publish firehose topic?
-    all_signals_topic: "/vehicle/signals/all" # Firehose topic name
+    all_signals_topic: "/vehicle/decoded_can" # Decoded CAN topic name
     diagnostics_topic: "/vehicle/diagnostics" # Diagnostics topic name
 ```
 

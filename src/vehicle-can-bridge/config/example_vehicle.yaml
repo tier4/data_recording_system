@@ -82,7 +82,7 @@ vehicle_can_node:
     # ── Firehose topic ────────────────────────────────────────────────────────
     # All decoded signals in one SignalGroup message (useful for logging).
     publish_all_signals: true
-    all_signals_topic: /vehicle/signals/all
+    all_signals_topic: /vehicle/decoded_can
 
     # ── Promoted signals ──────────────────────────────────────────────────────
     # Publish selected signals as std_msgs/Float64 for simple downstream nodes.

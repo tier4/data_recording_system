@@ -31,7 +31,7 @@ vehicle_can_node:
     transforms.brake_pedal.unit: ""
 
     publish_all_signals: true
-    all_signals_topic: /vehicle/signals/all
+    all_signals_topic: /vehicle/decoded_can
 
     promoted_signal_names: [vehicle_speed]
     promoted_signals.vehicle_speed.topic_suffix: vehicle_speed

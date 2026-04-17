@@ -11,16 +11,10 @@
 #
 #   dbc_file: /path/to/_toyota_2017.dbc
 #
-# Note: Toyota 2017 is a read-mostly OEM DBC. Command signals (throttle
-# command, brake command, steering command) are NOT available. Those canonical
-# fields will be published as STATUS_INITIAL automatically.
-#
-# Compound aliases: Toyota signal names are mostly unique per message, so few
-# compound keys are needed. The exceptions are noted inline.
-#
-# Phase 1 scope: dynamics + operation + body (minimal: turn_signal, headlight_mode)
-# See docs/initial_adoption_scope.md for rationale.
-# Note: brake_lights (body.lights.brake_lights) is PACMod-only; not available in this DBC.
+# Note: Toyota 2017 is a read-mostly OEM DBC. operation.steering.report.angle
+# is not available; the steering angle from the column sensor is not mapped to
+# the current schema and will be published as STATUS_INITIAL.
+# dynamics.angular_vel.pitch / roll are also not available in this DBC.
 # =============================================================================
 
 vehicle_can_node:
@@ -30,64 +24,37 @@ vehicle_can_node:
     dbc_file: /path/to/_toyota_2017.dbc
     loop_rate_hz: 100.0
     signal_timeout_ms: 500
-    publish_all_signals: true
-    all_signals_topic: /vehicle/signals/all
     diagnostics_topic: /vehicle/diagnostics
     diagnostics_rate_hz: 1.0
 
     # ── Aliases ────────────────────────────────────────────────────────────────
     alias_names:
-      # operation.steering (report only — no command signals in OEM Toyota DBC)
-      - STEER_ANGLE # STEER_ANGLE_SENSOR          → report angle (deg→rad)
-      - STEER_RATE # STEER_ANGLE_SENSOR          → steering rate (deg/s→rad/s)
       # operation.throttle (report only)
-      - GAS_PEDAL # GAS_PEDAL_HYBRID            → report position (0..1)
+      - GAS_PEDAL # GAS_PEDAL_HYBRID  → report position (0..1)
       # operation.brake (report only)
-      - BRAKE_AMOUNT # BRAKE                       → report position (0..255)
-      - BRAKE_PRESSED # BRAKE_2                     → pressed bool
-      # operation.shift (report only)
-      - GEAR # GEAR_PACKET                 → report gear (enum remap)
+      - BRAKE_AMOUNT # BRAKE             → report position (0..255, converted below)
       # dynamics
-      - SPEED # SPEED.SPEED                 → longitudinal (km/h→m/s)
-      - WHEEL_SPEED_FL # WHEEL_SPEEDS                → front left (km/h→m/s)
-      - WHEEL_SPEED_FR # WHEEL_SPEEDS                → front right
-      - WHEEL_SPEED_RL # WHEEL_SPEEDS                → rear left
-      - WHEEL_SPEED_RR # WHEEL_SPEEDS                → rear right
-      - ACCEL_X # KINEMATICS                  → longitudinal accel (m/s^2)
-      - ACCEL_Y # KINEMATICS                  → lateral accel (m/s^2)
-      - YAW_RATE # KINEMATICS                  → yaw rate (deg/s→rad/s)
-      # dynamics.steering (sensor-side, distinct from operation.steering.report)
-      - STEER_TORQUE_DRIVER # STEER_TORQUE_SENSOR         → driver torque (raw)
-      - STEER_TORQUE_EPS # STEER_TORQUE_SENSOR         → EPS torque (raw)
-      # body.lights (Phase 1 minimal subset)
-      - TURN_SIGNALS # BLINKERS_STATE              → turn signal enum
-      - HEADLIGHT_MODE # LIGHT_STALK                 → headlight mode enum
+      - SPEED # SPEED.SPEED       → longitudinal (km/h→m/s)
+      - WHEEL_SPEED_FL # WHEEL_SPEEDS      → front left  (km/h→m/s)
+      - WHEEL_SPEED_FR # WHEEL_SPEEDS      → front right
+      - WHEEL_SPEED_RL # WHEEL_SPEEDS      → rear left
+      - WHEEL_SPEED_RR # WHEEL_SPEEDS      → rear right
+      - YAW_RATE # KINEMATICS        → yaw rate (deg/s→rad/s)
+      # body.lights
+      - TURN_SIGNALS # BLINKERS_STATE    → turn signal enum
 
-    # Simple aliases
-    aliases.STEER_ANGLE: dynamics.steering.angle
-    aliases.STEER_RATE: dynamics.steering.rate
     aliases.GAS_PEDAL: operation.throttle.report.position
     aliases.BRAKE_AMOUNT: operation.brake.report.position
-    aliases.BRAKE_PRESSED: operation.brake.pressed
-    aliases.GEAR: operation.shift.report
     aliases.SPEED: dynamics.speed.longitudinal
     aliases.WHEEL_SPEED_FL: dynamics.wheel_speed.front_left
     aliases.WHEEL_SPEED_FR: dynamics.wheel_speed.front_right
     aliases.WHEEL_SPEED_RL: dynamics.wheel_speed.rear_left
     aliases.WHEEL_SPEED_RR: dynamics.wheel_speed.rear_right
-    aliases.ACCEL_X: dynamics.accel.longitudinal
-    aliases.ACCEL_Y: dynamics.accel.lateral
     aliases.YAW_RATE: dynamics.angular_vel.yaw
-    aliases.STEER_TORQUE_DRIVER: dynamics.steering.torque_driver
-    aliases.STEER_TORQUE_EPS: dynamics.steering.torque_eps
     aliases.TURN_SIGNALS: body.lights.turn_signal
-    aliases.HEADLIGHT_MODE: body.lights.headlight_mode
 
     # ── Transforms ────────────────────────────────────────────────────────────
     transform_names:
-      # Steering angle: deg → rad (left-positive: sign preserved)
-      - dynamics.steering.angle
-      - dynamics.steering.rate
       # Vehicle / wheel speed: km/h → m/s
       - dynamics.speed.longitudinal
       - dynamics.wheel_speed.front_left
@@ -98,16 +65,6 @@ vehicle_can_node:
       - dynamics.angular_vel.yaw
       # Brake: raw 0..255 → ratio 0..1
       - operation.brake.report.position
-      # Gear enum: Toyota → canonical
-      # Toyota GEAR: 0=no data, 1=D, 2=N, 8=P, 16=R, 32=B
-      # Canonical:             4       3     1      2      5
-      - operation.shift.report
-
-    transforms.dynamics.steering.angle.expression: x * 0.017453293
-    transforms.dynamics.steering.angle.unit: rad
-
-    transforms.dynamics.steering.rate.expression: x * 0.017453293
-    transforms.dynamics.steering.rate.unit: rad/s
 
     transforms.dynamics.speed.longitudinal.expression: x * 0.277778
     transforms.dynamics.speed.longitudinal.unit: m/s
@@ -127,8 +84,3 @@ vehicle_can_node:
     # BRAKE_AMOUNT: raw 0..255 → ratio 0..1
     transforms.operation.brake.report.position.expression: x / 255.0
     transforms.operation.brake.report.position.unit: ""
-
-    # Toyota gear enum → canonical gear enum
-    # Toyota: 1=D(4), 2=N(3), 8=P(1), 16=R(2), 32=B(5), else=0(UNKNOWN)
-    transforms.operation.shift.report.expression: (x==1)?4:(x==2)?3:(x==8)?1:(x==16)?2:(x==32)?5:0
-    transforms.operation.shift.report.unit: ""

@@ -75,6 +75,7 @@ private:
   std::string all_signals_topic_;
   std::string diagnostics_topic_;
   double diagnostics_rate_hz_;
+  bool schema_publish_per_domain_{true};
   std::vector<PromotedSignalConfig> promoted_signals_;
 
   // ── Vehicle schema (optional) ────────────────────────────────────────────────

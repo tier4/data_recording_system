@@ -1,7 +1,11 @@
 # Vehicle Signal Schema — Canonical Field Catalog
 
-This document defines every canonical signal in `config/vehicle_schema.yaml`.  
-It serves as the single source of truth for units, sign conventions, enum mappings, and DBC coverage.
+This document defines the canonical signal set used by the vehicle CAN bridge.
+
+- **Part 1** — Active Signal Catalog: the signals currently defined in
+  `config/vehicle_schema.yaml` and published on `/vehicle/decoded_can`.
+- **Part 2** — Full Signal Reference: the complete set of canonical signal
+  names across all domains, retained for future expansion reference.
 
 ---
 
@@ -29,24 +33,12 @@ It serves as the single source of truth for units, sign conventions, enum mappin
 | P+T    | Both DBCs                                |
 | \*     | Not available in either DBC              |
 
-Signals without coverage for a loaded DBC are output with `status = STATUS_INITIAL`.
+Signals without coverage for a loaded DBC are output with `status = STATUS_INITIAL`
+in per-domain publishers. They are omitted from the firehose (`/vehicle/decoded_can`).
 
 ---
 
 ## Shared Enum Definitions
-
-These enum values are used consistently across all domains.
-
-### Gear
-
-| Value | Meaning                |
-| ----- | ---------------------- |
-| 0     | UNKNOWN                |
-| 1     | PARK                   |
-| 2     | REVERSE                |
-| 3     | NEUTRAL                |
-| 4     | DRIVE                  |
-| 5     | LOW / B (engine brake) |
 
 ### Turn Signal
 
@@ -57,7 +49,66 @@ These enum values are used consistently across all domains.
 | 2     | RIGHT   |
 | 3     | HAZARD  |
 
-### Headlight Mode
+---
+
+## Part 1: Active Signal Catalog
+
+Signals published on `/vehicle/decoded_can`.  
+Source of truth: `config/vehicle_schema.yaml`.
+
+## Domain: `dynamics` — Vehicle Motion State
+
+| Canonical Name                     | Unit  | Range            | Sign        | DBC | Notes                                            |
+| ---------------------------------- | ----- | ---------------- | ----------- | --- | ------------------------------------------------ |
+| `dynamics.speed.longitudinal`      | m/s   | [-327, +327]     | forward+    | P+T | Toyota: `SPEED.SPEED` km/h → m/s                 |
+| `dynamics.speed.lateral`           | m/s   | —                | left+       | \*  | Rarely available in OEM DBCs                     |
+| `dynamics.wheel_speed.front_left`  | m/s   | [0, +90]         | —           | P+T | PACMod: rad/s × wheel_radius; Toyota: km/h → m/s |
+| `dynamics.wheel_speed.front_right` | m/s   | [0, +90]         | —           | P+T |                                                  |
+| `dynamics.wheel_speed.rear_left`   | m/s   | [0, +90]         | —           | P+T |                                                  |
+| `dynamics.wheel_speed.rear_right`  | m/s   | [0, +90]         | —           | P+T |                                                  |
+| `dynamics.angular_vel.yaw`         | rad/s | [-32.77, +32.77] | CCW+        | P+T | Toyota: `KINEMATICS.YAW_RATE` deg/s → rad/s      |
+| `dynamics.angular_vel.pitch`       | rad/s | [-32.77, +32.77] | nose-up+    | P   | `ANG_VEL_RPT.PITCH_VEL`                          |
+| `dynamics.angular_vel.roll`        | rad/s | [-32.77, +32.77] | right-down+ | P   | `ANG_VEL_RPT.ROLL_VEL`                           |
+
+## Domain: `operation` — Actuator Reports
+
+| Canonical Name                       | Unit  | Range            | Sign  | DBC | Notes                                         |
+| ------------------------------------ | ----- | ---------------- | ----- | --- | --------------------------------------------- |
+| `operation.steering.report.angle`    | rad   | [-32.77, +32.77] | left+ | P+T | Reported output angle from DBW or sensor      |
+| `operation.throttle.report.position` | ratio | [0, 1]           | —     | P+T | Toyota: `GAS_PEDAL_HYBRID.GAS_PEDAL`          |
+| `operation.brake.report.position`    | ratio | [0, 1]           | —     | P+T | Toyota: normalized `BRAKE.BRAKE_AMOUNT / 255` |
+
+## Domain: `body` — Driver Intent
+
+| Canonical Name            | Unit | DBC | Notes                                                       |
+| ------------------------- | ---- | --- | ----------------------------------------------------------- |
+| `body.lights.turn_signal` | enum | P+T | See Turn Signal enum; Toyota: `BLINKERS_STATE.TURN_SIGNALS` |
+
+---
+
+## Part 2: Full Signal Reference
+
+Complete canonical signal catalog for all domains.  
+Signals not in Part 1 are available for future expansion.
+
+## Coordinate System and Enums
+
+Coordinate system and enums are common to all domains (see top of document).
+
+### Additional Enums
+
+#### Gear
+
+| Value | Meaning                |
+| ----- | ---------------------- |
+| 0     | UNKNOWN                |
+| 1     | PARK                   |
+| 2     | REVERSE                |
+| 3     | NEUTRAL                |
+| 4     | DRIVE                  |
+| 5     | LOW / B (engine brake) |
+
+#### Headlight Mode
 
 | Value | Meaning                   |
 | ----- | ------------------------- |
@@ -67,7 +118,7 @@ These enum values are used consistently across all domains.
 | 3     | HIGH BEAM                 |
 | 4     | AUTO                      |
 
-### Safety Function State (PACMod)
+#### Safety Function State (PACMod)
 
 | Value | Meaning           |
 | ----- | ----------------- |
@@ -78,7 +129,7 @@ These enum values are used consistently across all domains.
 | 4     | CRITICAL_STOP_1   |
 | 5     | CRITICAL_STOP_2   |
 
-### Cruise State
+#### Cruise State
 
 | Value | Meaning                     |
 | ----- | --------------------------- |
@@ -90,7 +141,7 @@ These enum values are used consistently across all domains.
 
 ---
 
-## Domain: `operation` — Actuator Commands and Reports
+### Domain: `operation` — Actuator Commands and Reports
 
 Topic: `/vehicle/operation`
 
@@ -139,7 +190,7 @@ Topic: `/vehicle/operation`
 
 ---
 
-## Domain: `dynamics` — Vehicle Motion State
+### Domain: `dynamics` — Vehicle Motion State
 
 Topic: `/vehicle/dynamics`
 
@@ -169,7 +220,7 @@ Topic: `/vehicle/dynamics`
 
 ---
 
-## Domain: `powertrain` — Engine and Drivetrain State
+### Domain: `powertrain` — Engine and Drivetrain State
 
 Topic: `/vehicle/powertrain`
 
@@ -191,7 +242,7 @@ Topic: `/vehicle/powertrain`
 
 ---
 
-## Domain: `chassis` — Mechanical and Active Safety State
+### Domain: `chassis` — Mechanical and Active Safety State
 
 Topic: `/vehicle/chassis`
 
@@ -213,7 +264,7 @@ Topic: `/vehicle/chassis`
 
 ---
 
-## Domain: `body` — Body, Cabin, Lighting, Climate
+### Domain: `body` — Body, Cabin, Lighting, Climate
 
 Topic: `/vehicle/body`
 
@@ -246,7 +297,7 @@ Topic: `/vehicle/body`
 
 ---
 
-## Domain: `adas` — Advanced Driver Assistance Features
+### Domain: `adas` — Advanced Driver Assistance Features
 
 Topic: `/vehicle/adas`
 
@@ -269,7 +320,7 @@ Topic: `/vehicle/adas`
 
 ---
 
-## Domain: `system` — Autonomy and Safety System Health
+### Domain: `system` — Autonomy and Safety System Health
 
 Topic: `/vehicle/system`
 
@@ -293,7 +344,7 @@ Topic: `/vehicle/system`
 
 ---
 
-## Domain: `location` — GNSS Position and Time
+### Domain: `location` — GNSS Position and Time
 
 Topic: `/vehicle/location`
 

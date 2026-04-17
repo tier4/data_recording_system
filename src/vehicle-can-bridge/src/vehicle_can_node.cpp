@@ -63,10 +63,11 @@ void VehicleCanNode::declare_parameters()
   declare_parameter("loop_rate_hz", 20.0);
   declare_parameter("signal_timeout_ms", 500);
   declare_parameter("publish_all_signals", true);
-  declare_parameter("all_signals_topic", "/vehicle/signals/all");
+  declare_parameter("all_signals_topic", "/vehicle/decoded_can");
   declare_parameter("diagnostics_topic", "/vehicle/diagnostics");
   declare_parameter("diagnostics_rate_hz", 1.0);
   declare_parameter("schema_domain_names", std::vector<std::string>{});
+  declare_parameter("schema_publish_per_domain", true);
 }
 
 // ── Parameter loading ─────────────────────────────────────────────────────────
@@ -103,6 +104,7 @@ void VehicleCanNode::load_parameters()
   publish_all_signals_ = get_parameter("publish_all_signals").as_bool();
   all_signals_topic_ = get_parameter("all_signals_topic").as_string();
   diagnostics_topic_ = get_parameter("diagnostics_topic").as_string();
+  schema_publish_per_domain_ = get_parameter("schema_publish_per_domain").as_bool();
 
   // ── DBC file ────────────────────────────────────────────────────────────────
   if (dbc_file_.empty()) {
@@ -246,9 +248,12 @@ void VehicleCanNode::setup_publishers()
     }
   }
 
-  // Schema domain publishers (may overlap with legacy; overwrite is harmless)
-  for (const auto & [name, topic] : schema_domain_topics_) {
-    domain_pubs_[name] = create_publisher<msg::SignalGroup>(topic, 10);
+  // Schema domain publishers — skipped when schema_publish_per_domain is false
+  // (all schema signals are instead published on the firehose topic)
+  if (schema_publish_per_domain_) {
+    for (const auto & [name, topic] : schema_domain_topics_) {
+      domain_pubs_[name] = create_publisher<msg::SignalGroup>(topic, 10);
+    }
   }
 
   // Promoted signal publishers
@@ -374,10 +379,16 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
     sig_msg.status = msg::Signal::STATUS_OK;
     sig_msg.timestamp_can = frame.timestamp;
 
-    // Accumulate into domain batch (skip unassigned to avoid silent accumulation
-    // of signals that have no publisher — they still go to the firehose below)
+    // Accumulate domain-assigned signals into the domain batch and firehose.
+    // Unassigned signals (not in the schema) are discarded — they are not
+    // forwarded to the firehose so that /vehicle/decoded_can only contains
+    // the canonical signals defined in vehicle_schema.yaml.
     if (domain != SignalRouter::kUnassignedDomain) {
       pending_signals_[domain].push_back(sig_msg);
+
+      if (publish_all_signals_) {
+        pending_signals_["__all__"].push_back(sig_msg);
+      }
     }
 
     // Publish promoted signal if configured
@@ -388,11 +399,6 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
         f64.data = tr.value;
         it->second->publish(f64);
       }
-    }
-
-    // Accumulate into firehose batch as well (domain "all")
-    if (publish_all_signals_) {
-      pending_signals_["__all__"].push_back(sig_msg);
     }
   }
 }
