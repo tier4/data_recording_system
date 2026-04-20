@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch arguments -->
+  <arg name="udp_port" default="5004" description="UDP port for RTP stream"/>
+  <arg name="jpeg_quality" default="80" description="JPEG compression quality (0-100)"/>
+  <arg name="buffer_size" default="8388608" description="Buffer size in bytes"/>
+  <arg name="max_buffers" default="3" description="Maximum number of buffers"/>
+  <arg name="width" default="1920" description="Video width in pixels"/>
+  <arg name="height" default="1280" description="Video height in pixels"/>
+  <arg name="publish_raw" default="false" description="Publish raw images"/>
+  <arg name="publish_compressed" default="true" description="Publish compressed images"/>
+  <arg name="frame_id" default="camera" description="Frame ID for published images"/>
+  <arg name="namespace" default="rtp_receiver" description="Namespace for the node"/>
+  <arg name="name" default="rtp_receiver_node" description="Node name"/>
+  <arg name="camera_info_url" default="package://gst_rtp_image_receiver/config/camera_info.yaml" description="URL for camera calibration file"/>
+
+  <!-- RTP Image Receiver Node -->
+  <node pkg="gst_rtp_image_receiver" exec="rtp_image_receiver_node"
+        name="$(var name)" namespace="$(var namespace)" output="screen">
+    <param name="udp_port" value="$(var udp_port)"/>
+    <param name="jpeg_quality" value="$(var jpeg_quality)"/>
+    <param name="buffer_size" value="$(var buffer_size)"/>
+    <param name="max_buffers" value="$(var max_buffers)"/>
+    <param name="width" value="$(var width)"/>
+    <param name="height" value="$(var height)"/>
+    <param name="publish_raw" value="$(var publish_raw)"/>
+    <param name="publish_compressed" value="$(var publish_compressed)"/>
+    <param name="frame_id" value="$(var frame_id)"/>
+    <param name="camera_info_url" value="$(var camera_info_url)"/>
+  </node>
+</launch>
