@@ -9,6 +9,7 @@ sync_to_x_hostname: "{{ ansible_hostname }}"
 sync_to_x_rsync_bw_limit: 100m
 sync_to_x_timer_interval: 1min
 sync_to_x_free_space_limit_gb: 10
+sync_to_x_active_file_threshold_sec: 30
 
 # System paths
 sync_to_x_script_path: /opt/drs/service/sync_to_x/sync_to_x.sh
