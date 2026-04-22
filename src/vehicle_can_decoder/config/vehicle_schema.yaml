@@ -1,0 +1,91 @@
+# =============================================================================
+# Vehicle CAN Bridge — Vehicle Signal Schema (ROS2 parameter format)
+# =============================================================================
+#
+# Load this file alongside a per-DBC config in your launch file:
+#
+#   Node(
+#     package='vehicle_can_decoder',
+#     executable='vehicle_can_node',
+#     parameters=[
+#       vehicle_schema_yaml,   # this file  (schema + output config)
+#       pacmod_v3_yaml,        # DBC-specific aliases + transforms
+#     ]
+#   )
+#
+# Output:
+#   /vehicle/decoded_can — SignalGroup containing all schema-defined signals
+#                          received in the current tick (schema-unassigned
+#                          signals from the DBC are discarded).
+#
+# Schema mode (schema_domain_names non-empty):
+#   - Routing is by canonical signal name (not CAN ID).
+#   - schema_publish_per_domain: false suppresses per-domain topics; all
+#     schema-assigned signals are published on the firehose topic only.
+#   - Signals absent from the loaded DBC are published as STATUS_INITIAL (3)
+#     in per-domain output; they are omitted from the firehose.
+#
+# Signal naming: <domain>.<subsystem>.<attribute>
+#
+# Coordinate system: ISO 8855
+#   +X = forward, +Y = left, +Z = up
+#   Positive yaw = left turn (CCW from above)
+#
+# Shared enum values:
+#   Turn signal: OFF=0, LEFT=1, RIGHT=2, HAZARD=3
+#
+# DBC coverage notation used in comments:
+#   P   — AStuff PACMod v3 (as_pacmod.dbc)
+#   T   — commaai Toyota 2017 (_toyota_2017.dbc)
+#   P+T — both DBCs
+#   *   — not available in either DBC (STATUS_INITIAL)
+#
+# Full signal reference (all canonical signals across all domains):
+#   docs/abstracted_schema.md
+# =============================================================================
+
+vehicle_can_node:
+  ros__parameters:
+    # Output topic: all schema-assigned signals go here as a SignalGroup.
+    all_signals_topic: /vehicle/decoded_can
+    publish_all_signals: true
+
+    # Suppress per-domain topics (/vehicle/dynamics, /vehicle/operation, etc.).
+    # Set to true only when per-domain breakdown is needed for debugging.
+    schema_publish_per_domain: false
+
+    schema_domain_names:
+      - dynamics
+      - operation
+      - body
+
+    # -------------------------------------------------------------------------
+    # 1. DYNAMICS — Vehicle motion state (SI units, ISO 8855 signs)
+    # -------------------------------------------------------------------------
+    schema.dynamics.topic: /vehicle/decoded_can
+    schema.dynamics.signals:
+      - dynamics.speed.longitudinal # [m/s] forward+    P+T
+      - dynamics.speed.lateral # [m/s] left+       *  (STATUS_INITIAL for both DBCs)
+      - dynamics.wheel_speed.front_left # [m/s]             P+T
+      - dynamics.wheel_speed.front_right # [m/s]             P+T
+      - dynamics.wheel_speed.rear_left # [m/s]             P+T
+      - dynamics.wheel_speed.rear_right # [m/s]             P+T
+      - dynamics.angular_vel.yaw # [rad/s] CCW+      P+T
+      - dynamics.angular_vel.pitch # [rad/s] nose-up+  P
+      - dynamics.angular_vel.roll # [rad/s] r-down+   P
+
+    # -------------------------------------------------------------------------
+    # 2. OPERATION — Actuator reports
+    # -------------------------------------------------------------------------
+    schema.operation.topic: /vehicle/decoded_can
+    schema.operation.signals:
+      - operation.steering.report.angle # [rad]   left+  P+T
+      - operation.throttle.report.position # [0..1]        P+T
+      - operation.brake.report.position # [0..1]        P+T
+
+    # -------------------------------------------------------------------------
+    # 3. BODY — Driver intent signals
+    # -------------------------------------------------------------------------
+    schema.body.topic: /vehicle/decoded_can
+    schema.body.signals:
+      - body.lights.turn_signal # enum OFF=0,LEFT=1,RIGHT=2,HAZARD=3  P+T
