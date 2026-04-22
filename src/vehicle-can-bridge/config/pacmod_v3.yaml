@@ -68,7 +68,7 @@ vehicle_can_node:
     aliases.CAN560_OUTPUT_VALUE: body.lights.turn_signal
 
     # ── Transforms ────────────────────────────────────────────────────────────
-    # Wheel speeds: PACMod reports rad/s; convert to m/s using ~0.3m wheel radius.
+    # Wheel speeds: PACMod reports rad/s; convert to m/s using wheel radius.
     # Adjust WHEEL_RADIUS_M for the specific vehicle platform.
     transform_names:
       - dynamics.wheel_speed.front_left
@@ -76,11 +76,11 @@ vehicle_can_node:
       - dynamics.wheel_speed.rear_left
       - dynamics.wheel_speed.rear_right
 
-    transforms.dynamics.wheel_speed.front_left.expression: x * 0.3
+    transforms.dynamics.wheel_speed.front_left.expression: x * 0.31
     transforms.dynamics.wheel_speed.front_left.unit: m/s
-    transforms.dynamics.wheel_speed.front_right.expression: x * 0.3
+    transforms.dynamics.wheel_speed.front_right.expression: x * 0.31
     transforms.dynamics.wheel_speed.front_right.unit: m/s
-    transforms.dynamics.wheel_speed.rear_left.expression: x * 0.3
+    transforms.dynamics.wheel_speed.rear_left.expression: x * 0.31
     transforms.dynamics.wheel_speed.rear_left.unit: m/s
-    transforms.dynamics.wheel_speed.rear_right.expression: x * 0.3
+    transforms.dynamics.wheel_speed.rear_right.expression: x * 0.31
     transforms.dynamics.wheel_speed.rear_right.unit: m/s
