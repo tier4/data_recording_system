@@ -23,27 +23,27 @@ namespace vehicle_can_decoder
 
 // ── Helper: mirrors flush_pending_groups() schema-mode merge logic ─────────────
 //
-// Given the ordered list of expected canonical signal names and a (possibly
+// Given the ordered list of expected signal IDs (name_ids) and a (possibly
 // partial) vector of received signals, produce the merged output that the node
 // would publish.  Absent signals are filled with STATUS_INITIAL.
 
 static std::vector<msg::Signal> merge_with_schema(
-  const std::vector<std::string> & expected, const std::vector<msg::Signal> & received)
+  const std::vector<uint16_t> & expected_ids, const std::vector<msg::Signal> & received)
 {
-  std::unordered_map<std::string, const msg::Signal *> rx;
+  std::unordered_map<uint16_t, const msg::Signal *> rx;
   for (const auto & s : received) {
-    rx[s.name] = &s;
+    rx[s.name_id] = &s;
   }
 
   std::vector<msg::Signal> result;
-  result.reserve(expected.size());
-  for (const auto & name : expected) {
-    auto it = rx.find(name);
+  result.reserve(expected_ids.size());
+  for (const uint16_t id : expected_ids) {
+    auto it = rx.find(id);
     if (it != rx.end()) {
       result.push_back(*it->second);
     } else {
       msg::Signal init;
-      init.name = name;
+      init.name_id = id;
       init.value = 0.0;
       init.status = msg::Signal::STATUS_INITIAL;
       init.timestamp_can = 0.0;
@@ -58,20 +58,25 @@ static std::vector<msg::Signal> merge_with_schema(
 class SchemaMergeTest : public ::testing::Test
 {
 protected:
-  // Canonical signal list for a hypothetical "dynamics" domain
-  const std::vector<std::string> kDynamicsSchema = {
-    "dynamics.speed.longitudinal",
-    "dynamics.angular_vel.yaw",
-    "dynamics.steering.angle",
-    "dynamics.steering.torque",
+  // IDs for the hypothetical "dynamics" domain used in these tests.
+  // Values chosen to be non-contiguous to verify ID-based (not index-based) lookup.
+  static constexpr uint16_t kIdSpeedLongitudinal = 1;
+  static constexpr uint16_t kIdAngularVelYaw = 7;
+  static constexpr uint16_t kIdSteeringAngle = 10;
+  static constexpr uint16_t kIdSteeringTorque = 20;  // hypothetical extra signal
+
+  const std::vector<uint16_t> kDynamicsSchemaIds = {
+    kIdSpeedLongitudinal,
+    kIdAngularVelYaw,
+    kIdSteeringAngle,
+    kIdSteeringTorque,
   };
 
-  msg::Signal make_signal(
-    const std::string & name, double value, uint8_t status = msg::Signal::STATUS_OK)
+  msg::Signal make_signal(uint16_t name_id, double value, uint8_t status = msg::Signal::STATUS_OK)
   {
     msg::Signal s;
-    s.name = name;
-    s.value = value;
+    s.name_id = name_id;
+    s.value = static_cast<float>(value);
     s.status = status;
     s.timestamp_can = 0.0;
     return s;
@@ -82,12 +87,12 @@ protected:
 
 TEST_F(SchemaMergeTest, AllAbsentSignalsAreStatusInitial)
 {
-  const auto result = merge_with_schema(kDynamicsSchema, {});
+  const auto result = merge_with_schema(kDynamicsSchemaIds, {});
 
-  ASSERT_EQ(result.size(), kDynamicsSchema.size());
+  ASSERT_EQ(result.size(), kDynamicsSchemaIds.size());
   for (std::size_t i = 0; i < result.size(); ++i) {
-    EXPECT_EQ(result[i].name, kDynamicsSchema[i]) << "wrong name at index " << i;
-    EXPECT_EQ(result[i].status, msg::Signal::STATUS_INITIAL) << "signal: " << result[i].name;
+    EXPECT_EQ(result[i].name_id, kDynamicsSchemaIds[i]) << "wrong name_id at index " << i;
+    EXPECT_EQ(result[i].status, msg::Signal::STATUS_INITIAL) << "name_id=" << result[i].name_id;
     EXPECT_DOUBLE_EQ(result[i].value, 0.0);
   }
 }
@@ -97,16 +102,16 @@ TEST_F(SchemaMergeTest, AllAbsentSignalsAreStatusInitial)
 TEST_F(SchemaMergeTest, AllReceivedSignalsAreStatusOk)
 {
   std::vector<msg::Signal> received;
-  received.push_back(make_signal("dynamics.speed.longitudinal", 10.0));
-  received.push_back(make_signal("dynamics.angular_vel.yaw", 0.1));
-  received.push_back(make_signal("dynamics.steering.angle", -0.3));
-  received.push_back(make_signal("dynamics.steering.torque", 2.5));
+  received.push_back(make_signal(kIdSpeedLongitudinal, 10.0));
+  received.push_back(make_signal(kIdAngularVelYaw, 0.1));
+  received.push_back(make_signal(kIdSteeringAngle, -0.3));
+  received.push_back(make_signal(kIdSteeringTorque, 2.5));
 
-  const auto result = merge_with_schema(kDynamicsSchema, received);
+  const auto result = merge_with_schema(kDynamicsSchemaIds, received);
 
-  ASSERT_EQ(result.size(), kDynamicsSchema.size());
+  ASSERT_EQ(result.size(), kDynamicsSchemaIds.size());
   for (const auto & sig : result) {
-    EXPECT_EQ(sig.status, msg::Signal::STATUS_OK) << "signal: " << sig.name;
+    EXPECT_EQ(sig.status, msg::Signal::STATUS_OK) << "name_id=" << sig.name_id;
   }
 }
 
@@ -116,23 +121,23 @@ TEST_F(SchemaMergeTest, PartialReceiveProducesCorrectStatuses)
 {
   // Only speed and yaw are received (steering not available in this DBC)
   std::vector<msg::Signal> received;
-  received.push_back(make_signal("dynamics.speed.longitudinal", 15.0));
-  received.push_back(make_signal("dynamics.angular_vel.yaw", -0.2));
+  received.push_back(make_signal(kIdSpeedLongitudinal, 15.0));
+  received.push_back(make_signal(kIdAngularVelYaw, -0.2));
 
-  const auto result = merge_with_schema(kDynamicsSchema, received);
+  const auto result = merge_with_schema(kDynamicsSchemaIds, received);
 
-  ASSERT_EQ(result.size(), kDynamicsSchema.size());
+  ASSERT_EQ(result.size(), kDynamicsSchemaIds.size());
 
   for (const auto & sig : result) {
-    if (sig.name == "dynamics.speed.longitudinal") {
+    if (sig.name_id == kIdSpeedLongitudinal) {
       EXPECT_EQ(sig.status, msg::Signal::STATUS_OK);
-      EXPECT_DOUBLE_EQ(sig.value, 15.0);
-    } else if (sig.name == "dynamics.angular_vel.yaw") {
+      EXPECT_FLOAT_EQ(sig.value, 15.0f);
+    } else if (sig.name_id == kIdAngularVelYaw) {
       EXPECT_EQ(sig.status, msg::Signal::STATUS_OK);
-      EXPECT_DOUBLE_EQ(sig.value, -0.2);
+      EXPECT_FLOAT_EQ(sig.value, -0.2f);
     } else {
-      EXPECT_EQ(sig.status, msg::Signal::STATUS_INITIAL) << "signal: " << sig.name;
-      EXPECT_DOUBLE_EQ(sig.value, 0.0) << "signal: " << sig.name;
+      EXPECT_EQ(sig.status, msg::Signal::STATUS_INITIAL) << "name_id=" << sig.name_id;
+      EXPECT_FLOAT_EQ(sig.value, 0.0f) << "name_id=" << sig.name_id;
     }
   }
 }
@@ -143,16 +148,16 @@ TEST_F(SchemaMergeTest, OutputOrderMatchesSchemaDefinition)
 {
   std::vector<msg::Signal> received;
   // Insert in reverse order to verify ordering is driven by schema, not received order
-  received.push_back(make_signal("dynamics.steering.angle", 1.0));
-  received.push_back(make_signal("dynamics.speed.longitudinal", 2.0));
+  received.push_back(make_signal(kIdSteeringAngle, 1.0));
+  received.push_back(make_signal(kIdSpeedLongitudinal, 2.0));
 
-  const auto result = merge_with_schema(kDynamicsSchema, received);
+  const auto result = merge_with_schema(kDynamicsSchemaIds, received);
 
-  ASSERT_EQ(result.size(), kDynamicsSchema.size());
-  for (std::size_t i = 0; i < kDynamicsSchema.size(); ++i) {
-    EXPECT_EQ(result[i].name, kDynamicsSchema[i])
-      << "Position " << i << " should be '" << kDynamicsSchema[i] << "' but got '" << result[i].name
-      << "'";
+  ASSERT_EQ(result.size(), kDynamicsSchemaIds.size());
+  for (std::size_t i = 0; i < kDynamicsSchemaIds.size(); ++i) {
+    EXPECT_EQ(result[i].name_id, kDynamicsSchemaIds[i])
+      << "Position " << i << " should have name_id=" << kDynamicsSchemaIds[i]
+      << " but got name_id=" << result[i].name_id;
   }
 }
 
@@ -160,15 +165,17 @@ TEST_F(SchemaMergeTest, OutputOrderMatchesSchemaDefinition)
 
 TEST_F(SchemaMergeTest, ExtraSignalsNotInSchemaAreIgnored)
 {
+  constexpr uint16_t kUnknownId = 99;
+
   std::vector<msg::Signal> received;
-  received.push_back(make_signal("dynamics.speed.longitudinal", 5.0));
-  received.push_back(make_signal("unknown.signal.not_in_schema", 99.0));  // should be dropped
+  received.push_back(make_signal(kIdSpeedLongitudinal, 5.0));
+  received.push_back(make_signal(kUnknownId, 99.0));  // not in schema → should be dropped
 
-  const auto result = merge_with_schema(kDynamicsSchema, received);
+  const auto result = merge_with_schema(kDynamicsSchemaIds, received);
 
-  ASSERT_EQ(result.size(), kDynamicsSchema.size());
+  ASSERT_EQ(result.size(), kDynamicsSchemaIds.size());
   for (const auto & sig : result) {
-    EXPECT_NE(sig.name, "unknown.signal.not_in_schema");
+    EXPECT_NE(sig.name_id, kUnknownId);
   }
 }
 

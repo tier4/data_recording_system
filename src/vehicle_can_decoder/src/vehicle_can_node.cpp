@@ -22,6 +22,7 @@ VehicleCanNode::VehicleCanNode(const rclcpp::NodeOptions & options)
   declare_parameters();
   load_parameters();
   setup_publishers();
+  publish_schema();
 
   if (use_can_topic_) {
     can_sub_ = create_subscription<can_msgs::msg::Frame>(
@@ -68,6 +69,10 @@ void VehicleCanNode::declare_parameters()
   declare_parameter("diagnostics_rate_hz", 1.0);
   declare_parameter("schema_domain_names", std::vector<std::string>{});
   declare_parameter("schema_publish_per_domain", true);
+  declare_parameter("schema_version", std::string(""));
+  declare_parameter("signal_id_names", std::vector<std::string>{});
+  declare_parameter("signal_id_unit_names", std::vector<std::string>{});
+  declare_parameter("unit_id_names", std::vector<std::string>{});
 }
 
 // ── Parameter loading ─────────────────────────────────────────────────────────
@@ -228,6 +233,45 @@ void VehicleCanNode::load_parameters()
       get_logger(), "Schema mode active: %zu domains, %zu canonical signals", schema_names.size(),
       signal_to_domain_.size());
   }
+
+  // ── Signal / unit ID tables ───────────────────────────────────────────────────
+  schema_version_ = get_parameter("schema_version").as_string();
+
+  const auto signal_id_names_list = get_parameter("signal_id_names").as_string_array();
+  const auto signal_id_unit_names_list = get_parameter("signal_id_unit_names").as_string_array();
+  unit_id_names_ = get_parameter("unit_id_names").as_string_array();
+
+  if (
+    !signal_id_names_list.empty() &&
+    signal_id_unit_names_list.size() != signal_id_names_list.size()) {
+    throw std::runtime_error("signal_id_unit_names must have the same length as signal_id_names");
+  }
+
+  for (uint16_t i = 0; i < static_cast<uint16_t>(unit_id_names_.size()); ++i) {
+    unit_name_to_id_[unit_id_names_[i]] = static_cast<uint16_t>(i + 1);
+  }
+
+  for (uint16_t i = 0; i < static_cast<uint16_t>(signal_id_names_list.size()); ++i) {
+    const uint16_t signal_id = static_cast<uint16_t>(i + 1);
+    signal_name_to_id_[signal_id_names_list[i]] = signal_id;
+
+    if (!signal_id_unit_names_list.empty()) {
+      const auto unit_it = unit_name_to_id_.find(signal_id_unit_names_list[i]);
+      if (unit_it != unit_name_to_id_.end()) {
+        signal_id_to_unit_id_[signal_id] = unit_it->second;
+      } else {
+        RCLCPP_WARN(
+          get_logger(), "Unit '%s' for signal '%s' not in unit_id_names",
+          signal_id_unit_names_list[i].c_str(), signal_id_names_list[i].c_str());
+      }
+    }
+  }
+
+  if (!signal_id_names_list.empty()) {
+    RCLCPP_INFO(
+      get_logger(), "Signal ID table loaded: %zu signals, %zu units [schema %s]",
+      signal_name_to_id_.size(), unit_name_to_id_.size(), schema_version_.c_str());
+  }
 }
 
 // ── Publisher setup ───────────────────────────────────────────────────────────
@@ -264,6 +308,10 @@ void VehicleCanNode::setup_publishers()
 
   // Diagnostics
   diagnostics_pub_ = create_publisher<msg::SignalDiagnostic>(diagnostics_topic_, 10);
+
+  // Schema (transient_local: late subscribers always receive the current schema)
+  schema_pub_ =
+    create_publisher<msg::VehicleSchema>("/vehicle/schema", rclcpp::QoS(1).transient_local());
 }
 
 // ── Timer setup ──────────────────────────────────────────────────────────────
@@ -371,9 +419,11 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
 
     // Build Signal message
     msg::Signal sig_msg;
-    sig_msg.name = name;
+    {
+      const auto id_it = signal_name_to_id_.find(name);
+      sig_msg.name_id = (id_it != signal_name_to_id_.end()) ? id_it->second : 0;
+    }
     sig_msg.value = static_cast<float>(tr.value);
-    sig_msg.unit = tr.unit;
     sig_msg.status = msg::Signal::STATUS_OK;
     sig_msg.timestamp_can = frame.timestamp;
 
@@ -414,11 +464,11 @@ void VehicleCanNode::flush_pending_groups()
     // see the same SignalGroup structure regardless of which DBC is loaded.
 
     for (const auto & [domain, expected] : domain_schema_) {
-      // Index received signals by canonical name for O(1) overlay
-      std::unordered_map<std::string, msg::Signal> rx;
+      // Index received signals by name_id for O(1) overlay
+      std::unordered_map<uint16_t, msg::Signal> rx;
       if (auto it = pending_signals_.find(domain); it != pending_signals_.end()) {
         for (auto & s : it->second) {
-          rx[s.name] = std::move(s);
+          rx[s.name_id] = std::move(s);
         }
         it->second.clear();
       }
@@ -431,13 +481,19 @@ void VehicleCanNode::flush_pending_groups()
       group.signals.reserve(expected.size());
 
       for (const auto & sig_name : expected) {
-        auto rx_it = rx.find(sig_name);
+        const auto id_it = signal_name_to_id_.find(sig_name);
+        if (id_it == signal_name_to_id_.end()) {
+          RCLCPP_WARN_ONCE(get_logger(), "Schema signal '%s' has no ID entry", sig_name.c_str());
+          continue;
+        }
+        const uint16_t id = id_it->second;
+        auto rx_it = rx.find(id);
         if (rx_it != rx.end()) {
           group.signals.push_back(std::move(rx_it->second));
         } else {
           // Signal not present in this DBC: publish as STATUS_INITIAL
           msg::Signal init;
-          init.name = sig_name;
+          init.name_id = id;
           init.value = 0.0f;
           init.status = msg::Signal::STATUS_INITIAL;
           init.timestamp_can = 0.0;
@@ -526,6 +582,39 @@ void VehicleCanNode::on_diagnostics_timer()
   diag.timed_out_signals = ts;
 
   diagnostics_pub_->publish(diag);
+}
+
+// ── Schema publisher ──────────────────────────────────────────────────────────
+
+void VehicleCanNode::publish_schema()
+{
+  msg::VehicleSchema schema;
+  schema.header.stamp = now();
+  schema.vehicle_id = vehicle_id_;
+  schema.schema_version = schema_version_;
+
+  // Build signal_table sorted by id so signal_table[name_id-1] is valid.
+  std::vector<std::pair<uint16_t, std::string>> id_name_pairs;
+  id_name_pairs.reserve(signal_name_to_id_.size());
+  for (const auto & [name, id] : signal_name_to_id_) {
+    id_name_pairs.emplace_back(id, name);
+  }
+  std::sort(id_name_pairs.begin(), id_name_pairs.end());
+
+  schema.signal_table.reserve(id_name_pairs.size());
+  for (const auto & [id, name] : id_name_pairs) {
+    msg::SignalEntry entry;
+    entry.id = id;
+    entry.name = name;
+    const auto unit_it = signal_id_to_unit_id_.find(id);
+    entry.unit_id = (unit_it != signal_id_to_unit_id_.end()) ? unit_it->second : 0;
+    schema.signal_table.push_back(std::move(entry));
+  }
+
+  // Build unit_table: 1-indexed, so unit_table[unit_id-1] = unit string.
+  schema.unit_table = unit_id_names_;
+
+  schema_pub_->publish(schema);
 }
 
 // ── now_ms helper ─────────────────────────────────────────────────────────────

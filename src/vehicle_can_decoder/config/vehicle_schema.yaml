@@ -46,6 +46,65 @@
 
 vehicle_can_node:
   ros__parameters:
+    # -------------------------------------------------------------------------
+    # Schema identity
+    # -------------------------------------------------------------------------
+    # Semantic version.  Increment rules:
+    #   major — any name_id or unit_id changes (breaks bag/topic compatibility)
+    #   minor — new signals or units appended (backward compatible)
+    #   patch — comment/documentation changes only
+    schema_version: 1.0.0
+
+    # -------------------------------------------------------------------------
+    # Signal ID table
+    # -------------------------------------------------------------------------
+    # List position (1-indexed) becomes the signal's name_id in Signal.msg.
+    # NEVER reorder or remove entries — append only to preserve bag compatibility.
+    signal_id_names:
+      - dynamics.speed.longitudinal # id=1
+      - dynamics.speed.lateral # id=2
+      - dynamics.wheel_speed.front_left # id=3
+      - dynamics.wheel_speed.front_right # id=4
+      - dynamics.wheel_speed.rear_left # id=5
+      - dynamics.wheel_speed.rear_right # id=6
+      - dynamics.angular_vel.yaw # id=7
+      - dynamics.angular_vel.pitch # id=8
+      - dynamics.angular_vel.roll # id=9
+      - operation.steering.report.angle # id=10
+      - operation.throttle.report.position # id=11
+      - operation.brake.report.position # id=12
+      - body.lights.turn_signal # id=13
+
+    # Unit for each signal, parallel to signal_id_names.
+    # Values must appear in unit_id_names below.
+    signal_id_unit_names:
+      - m/s # id=1  dynamics.speed.longitudinal
+      - m/s # id=2  dynamics.speed.lateral
+      - m/s # id=3  dynamics.wheel_speed.front_left
+      - m/s # id=4  dynamics.wheel_speed.front_right
+      - m/s # id=5  dynamics.wheel_speed.rear_left
+      - m/s # id=6  dynamics.wheel_speed.rear_right
+      - rad/s # id=7  dynamics.angular_vel.yaw
+      - rad/s # id=8  dynamics.angular_vel.pitch
+      - rad/s # id=9  dynamics.angular_vel.roll
+      - rad # id=10 operation.steering.report.angle
+      - "" # id=11 operation.throttle.report.position (normalized 0..1)
+      - "" # id=12 operation.brake.report.position    (normalized 0..1)
+      - enum # id=13 body.lights.turn_signal (OFF=0,LEFT=1,RIGHT=2,HAZARD=3)
+
+    # -------------------------------------------------------------------------
+    # Unit ID table
+    # -------------------------------------------------------------------------
+    # List position (1-indexed) becomes the unit_id in SignalEntry.msg.
+    # NEVER reorder or remove entries — append only.
+    unit_id_names:
+      - "" # id=1  dimensionless / normalized
+      - m/s # id=2
+      - rad/s # id=3
+      - rad # id=4
+      - enum # id=5
+
+    # -------------------------------------------------------------------------
     # Output topic: all schema-assigned signals go here as a SignalGroup.
     all_signals_topic: /vehicle/decoded_can
     publish_all_signals: true

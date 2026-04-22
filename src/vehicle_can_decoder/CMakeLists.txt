@@ -15,8 +15,10 @@ find_package(rosidl_default_generators REQUIRED)
 # ── Message generation ───────────────────────────────────────────────────────
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Signal.msg"
+  "msg/SignalEntry.msg"
   "msg/SignalGroup.msg"
   "msg/SignalDiagnostic.msg"
+  "msg/VehicleSchema.msg"
   DEPENDENCIES std_msgs
 )
 

@@ -6,6 +6,7 @@
 #include "vehicle_can_decoder/dbc_decoder.hpp"
 #include "vehicle_can_decoder/msg/signal_diagnostic.hpp"
 #include "vehicle_can_decoder/msg/signal_group.hpp"
+#include "vehicle_can_decoder/msg/vehicle_schema.hpp"
 #include "vehicle_can_decoder/signal_router.hpp"
 #include "vehicle_can_decoder/signal_transformer.hpp"
 #include "vehicle_can_decoder/timeout_monitor.hpp"
@@ -50,6 +51,7 @@ private:
   void setup_publishers();
   void setup_timer();
   bool open_can_interface();
+  void publish_schema();
 
   // ── Runtime callbacks ───────────────────────────────────────────────────────
   void on_timer();
@@ -98,6 +100,13 @@ private:
   /// Domain name → ROS2 topic (from schema params, may differ from domains.*).
   std::unordered_map<std::string, std::string> schema_domain_topics_;
 
+  // ── Signal / unit ID tables ──────────────────────────────────────────────────
+  std::string schema_version_;
+  std::unordered_map<std::string, uint16_t> signal_name_to_id_;  ///< name → 1-indexed id
+  std::unordered_map<uint16_t, uint16_t> signal_id_to_unit_id_;  ///< signal_id → unit_id
+  std::unordered_map<std::string, uint16_t> unit_name_to_id_;    ///< unit string → 1-indexed id
+  std::vector<std::string> unit_id_names_;  ///< ordered unit strings (index=id-1)
+
   // ── Core components ─────────────────────────────────────────────────────────
   DbcDecoder decoder_;
   SignalTransformer transformer_;
@@ -118,6 +127,9 @@ private:
 
   // Diagnostics publisher
   rclcpp::Publisher<msg::SignalDiagnostic>::SharedPtr diagnostics_pub_;
+
+  // Schema publisher (transient_local; published once at startup)
+  rclcpp::Publisher<msg::VehicleSchema>::SharedPtr schema_pub_;
 
   // ── Subscriber (can_msgs mode) ────────────────────────────────────────────
   rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr can_sub_;
