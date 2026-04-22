@@ -3,12 +3,8 @@ vehicle_can_node:
     # ── Vehicle identity ──────────────────────────────────────────────────────
     vehicle_id: example_vehicle_01
 
-    # ── CAN interface ─────────────────────────────────────────────────────────
-    # Use "vcan0" for simulation:
-    #   sudo modprobe vcan
-    #   sudo ip link add dev vcan0 type vcan
-    #   sudo ip link set up vcan0
-    can_interface: can0
+    # ── CAN topic ─────────────────────────────────────────────────────────────
+    can_topic: /vehicle/from_can_bus
 
     # ── DBC file ──────────────────────────────────────────────────────────────
     # Absolute path or relative to the working directory.
@@ -16,7 +12,6 @@ vehicle_can_node:
     dbc_file: /path/to/your/vehicle.dbc
 
     # ── Timing ───────────────────────────────────────────────────────────────
-    loop_rate_hz: 100.0 # How often to drain the CAN socket and publish
     signal_timeout_ms: 500 # Signal considered stale after this many ms
 
     # ── Domain definitions ────────────────────────────────────────────────────

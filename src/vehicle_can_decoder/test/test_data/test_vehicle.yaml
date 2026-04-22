@@ -1,9 +1,8 @@
 vehicle_can_node:
   ros__parameters:
     vehicle_id: test_vehicle
-    can_interface: vcan0
+    can_topic: /vehicle/from_can_bus
     dbc_file: test/test_data/test_vehicle.dbc
-    loop_rate_hz: 100.0
     signal_timeout_ms: 500
 
     domain_names: [chassis, brake, status]

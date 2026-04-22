@@ -20,9 +20,8 @@
 vehicle_can_node:
   ros__parameters:
     vehicle_id: toyota_2017
-    can_interface: can0
+    can_topic: /vehicle/from_can_bus
     dbc_file: /path/to/_toyota_2017.dbc
-    loop_rate_hz: 100.0
     signal_timeout_ms: 500
     diagnostics_topic: /vehicle/diagnostics
     diagnostics_rate_hz: 1.0

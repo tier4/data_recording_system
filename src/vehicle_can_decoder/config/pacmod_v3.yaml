@@ -24,9 +24,8 @@
 vehicle_can_node:
   ros__parameters:
     vehicle_id: pacmod_vehicle
-    can_interface: can0
+    can_topic: /vehicle/from_can_bus
     dbc_file: /path/to/as_pacmod.dbc
-    loop_rate_hz: 100.0
     signal_timeout_ms: 500
     diagnostics_topic: /vehicle/diagnostics
     diagnostics_rate_hz: 1.0

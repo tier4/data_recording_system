@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <chrono>
-#include <cstring>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -24,30 +23,15 @@ VehicleCanNode::VehicleCanNode(const rclcpp::NodeOptions & options)
   setup_publishers();
   publish_schema();
 
-  if (use_can_topic_) {
-    can_sub_ = create_subscription<can_msgs::msg::Frame>(
-      can_topic_, rclcpp::SensorDataQoS(),
-      std::bind(&VehicleCanNode::on_can_frame, this, std::placeholders::_1));
-    RCLCPP_INFO(
-      get_logger(), "vehicle_can_node started in topic mode [vehicle=%s, topic=%s, dbc=%s]",
-      vehicle_id_.c_str(), can_topic_.c_str(), dbc_file_.c_str());
-  } else {
-    // Open the CAN interface; log a warning but continue if it fails so the
-    // node can still be launched in simulation environments without CAN hardware.
-    if (!open_can_interface()) {
-      RCLCPP_WARN(
-        get_logger(),
-        "Could not open CAN interface '%s'. Frames will not be received. "
-        "Use vcan for simulation: 'sudo modprobe vcan && sudo ip link add dev vcan0 type vcan && "
-        "sudo ip link set up vcan0'",
-        can_interface_.c_str());
-    }
-    RCLCPP_INFO(
-      get_logger(), "vehicle_can_node started [vehicle=%s, interface=%s, dbc=%s]",
-      vehicle_id_.c_str(), can_interface_.c_str(), dbc_file_.c_str());
-  }
+  can_sub_ = create_subscription<can_msgs::msg::Frame>(
+    can_topic_, rclcpp::SensorDataQoS(),
+    std::bind(&VehicleCanNode::on_can_frame, this, std::placeholders::_1));
 
-  setup_timer();
+  RCLCPP_INFO(
+    get_logger(), "vehicle_can_node started [vehicle=%s, topic=%s, dbc=%s]", vehicle_id_.c_str(),
+    can_topic_.c_str(), dbc_file_.c_str());
+
+  setup_diagnostics_timer();
 }
 
 VehicleCanNode::~VehicleCanNode() = default;
@@ -57,11 +41,8 @@ VehicleCanNode::~VehicleCanNode() = default;
 void VehicleCanNode::declare_parameters()
 {
   declare_parameter("vehicle_id", "unknown_vehicle");
-  declare_parameter("can_interface", "can0");
-  declare_parameter("use_can_topic", true);
   declare_parameter("can_topic", "/vehicle/from_can_bus");
   declare_parameter("dbc_file", "");
-  declare_parameter("loop_rate_hz", 20.0);
   declare_parameter("signal_timeout_ms", 500);
   declare_parameter("publish_all_signals", true);
   declare_parameter("all_signals_topic", "/vehicle/decoded_can");
@@ -80,19 +61,10 @@ void VehicleCanNode::declare_parameters()
 void VehicleCanNode::load_parameters()
 {
   vehicle_id_ = get_parameter("vehicle_id").as_string();
-  can_interface_ = get_parameter("can_interface").as_string();
-  use_can_topic_ = get_parameter("use_can_topic").as_bool();
   can_topic_ = get_parameter("can_topic").as_string();
   dbc_file_ = get_parameter("dbc_file").as_string();
-  loop_rate_hz_ = get_parameter("loop_rate_hz").as_double();
   diagnostics_rate_hz_ = get_parameter("diagnostics_rate_hz").as_double();
 
-  // Validate rates before using them in chrono arithmetic (zero/negative would
-  // produce infinity or a negative period, causing UB in duration_cast).
-  if (loop_rate_hz_ <= 0.0) {
-    throw std::runtime_error(
-      "Parameter 'loop_rate_hz' must be positive, got: " + std::to_string(loop_rate_hz_));
-  }
   if (diagnostics_rate_hz_ <= 0.0) {
     throw std::runtime_error(
       "Parameter 'diagnostics_rate_hz' must be positive, got: " +
@@ -122,12 +94,6 @@ void VehicleCanNode::load_parameters()
     get_logger(), "DBC loaded: %s (%zu messages)", dbc_file_.c_str(), decoder_.known_ids().size());
 
   // ── Domain config ────────────────────────────────────────────────────────────
-  // Domains are encoded as flat YAML parameter arrays:
-  //   domains.chassis.topic    : "/vehicle/chassis"
-  //   domains.chassis.can_ids  : [256, 257]
-  // We iterate by reading the domain names from a helper parameter.
-  // The user provides domain_names as a string array:
-  //   domain_names: ["chassis", "powertrain", "body"]
   declare_parameter("domain_names", std::vector<std::string>{});
   const auto domain_names = get_parameter("domain_names").as_string_array();
 
@@ -152,16 +118,13 @@ void VehicleCanNode::load_parameters()
   }
 
   // ── Aliases ──────────────────────────────────────────────────────────────────
-  // aliases are encoded as:
-  //   alias_names: ["StrAng_Sns", "WhlSpd_FL"]
-  //   aliases.StrAng_Sns: "steering_angle"
   declare_parameter("alias_names", std::vector<std::string>{});
   const auto alias_names = get_parameter("alias_names").as_string_array();
 
   std::unordered_map<std::string, std::string> aliases;
   for (const auto & src : alias_names) {
     const std::string param = "aliases." + src;
-    declare_parameter(param, src);  // default to same name
+    declare_parameter(param, src);
     aliases[src] = get_parameter(param).as_string();
   }
 
@@ -171,9 +134,6 @@ void VehicleCanNode::load_parameters()
   }
 
   // ── Transforms ───────────────────────────────────────────────────────────────
-  // transform_names: ["VehicleSpeed", "SteeringAngle"]
-  // transforms.VehicleSpeed.expression: "x / 3.6"
-  // transforms.VehicleSpeed.unit: "m/s"
   declare_parameter("transform_names", std::vector<std::string>{});
   const auto transform_names = get_parameter("transform_names").as_string_array();
 
@@ -190,11 +150,9 @@ void VehicleCanNode::load_parameters()
     transforms[sig] = std::move(cfg);
   }
 
-  transformer_.configure(transforms);  // throws on bad expression
+  transformer_.configure(transforms);
 
   // ── Promoted signals ─────────────────────────────────────────────────────────
-  // promoted_signal_names: ["VehicleSpeed", "SteeringAngle"]
-  // promoted_signals.VehicleSpeed.topic_suffix: "vehicle_speed"
   declare_parameter("promoted_signal_names", std::vector<std::string>{});
   const auto promoted_names = get_parameter("promoted_signal_names").as_string_array();
 
@@ -208,13 +166,6 @@ void VehicleCanNode::load_parameters()
   }
 
   // ── Vehicle schema (optional) ─────────────────────────────────────────────────
-  // schema_domain_names: [operation, dynamics, ...]
-  // schema.operation.topic: /vehicle/operation
-  // schema.operation.signals: [operation.steering.command.angle, ...]
-  //
-  // When schema_domain_names is non-empty, schema mode is active:
-  //   - Signals are routed by canonical name (signal_to_domain_) instead of CAN ID.
-  //   - Each domain always publishes a full SignalGroup; absent signals get STATUS_INITIAL.
   const auto schema_names = get_parameter("schema_domain_names").as_string_array();
   for (const auto & name : schema_names) {
     const std::string topic_param = "schema." + name + ".topic";
@@ -293,7 +244,6 @@ void VehicleCanNode::setup_publishers()
   }
 
   // Schema domain publishers — skipped when schema_publish_per_domain is false
-  // (all schema signals are instead published on the firehose topic)
   if (schema_publish_per_domain_) {
     for (const auto & [name, topic] : schema_domain_topics_) {
       domain_pubs_[name] = create_publisher<msg::SignalGroup>(topic, 10);
@@ -314,66 +264,33 @@ void VehicleCanNode::setup_publishers()
     create_publisher<msg::VehicleSchema>("/vehicle/schema", rclcpp::QoS(1).transient_local());
 }
 
-// ── Timer setup ──────────────────────────────────────────────────────────────
+// ── Diagnostics timer setup ───────────────────────────────────────────────────
 
-void VehicleCanNode::setup_timer()
+void VehicleCanNode::setup_diagnostics_timer()
 {
-  const auto period = std::chrono::duration<double>(1.0 / loop_rate_hz_);
-  spin_timer_ = create_wall_timer(
-    std::chrono::duration_cast<std::chrono::nanoseconds>(period),
-    std::bind(&VehicleCanNode::on_timer, this));
-
   const auto diag_period = std::chrono::duration<double>(1.0 / diagnostics_rate_hz_);
   diagnostics_timer_ = create_wall_timer(
     std::chrono::duration_cast<std::chrono::nanoseconds>(diag_period),
     std::bind(&VehicleCanNode::on_diagnostics_timer, this));
 }
 
-// ── CAN interface open ────────────────────────────────────────────────────────
+// ── CAN frame callback ────────────────────────────────────────────────────────
 
-bool VehicleCanNode::open_can_interface() { return can_reader_.open(can_interface_); }
-
-// ── Timer callback ────────────────────────────────────────────────────────────
-
-void VehicleCanNode::on_timer()
+void VehicleCanNode::on_can_frame(const can_msgs::msg::Frame::SharedPtr msg)
 {
-  if (!use_can_topic_) {
-    // Drain all available CAN frames in this tick
-    while (true) {
-      const auto frame = can_reader_.read_frame();
-      if (!frame.has_value()) {
-        // Distinguish real socket errors from an empty buffer (CRITICAL-2 fix).
-        if (can_reader_.has_error()) {
-          RCLCPP_ERROR(
-            get_logger(),
-            "SocketCAN read error on '%s': %s (errno=%d). "
-            "CAN data loss until the interface recovers.",
-            can_interface_.c_str(), std::strerror(can_reader_.last_error()),
-            can_reader_.last_error());
-          ++decode_errors_;
-          can_reader_.clear_error();
-        }
-        break;
-      }
-      process_frame(*frame);
-    }
-  }
-
-  // Publish accumulated per-domain signal groups
-  flush_pending_groups();
-
-  // Check for signal timeouts (newly timed-out names available if needed)
-  (void)timeout_monitor_.check_timeouts(now_ms(), signal_timeout_ms_);
+  CanFrame frame{};
+  frame.id = msg->id;
+  frame.dlc = msg->dlc;
+  std::copy(msg->data.begin(), msg->data.end(), frame.data.begin());
+  process_frame(frame, rclcpp::Time(msg->header.stamp));
 }
 
 // ── Process a single CAN frame ────────────────────────────────────────────────
 
-void VehicleCanNode::process_frame(const CanFrame & frame)
+void VehicleCanNode::process_frame(const CanFrame & frame, const rclcpp::Time & stamp)
 {
   ++frames_received_;
 
-  // Fast pre-filter: skip if ID is not in any domain (still try decode for
-  // the "unassigned" domain to capture unknowns in the firehose)
   const auto decoded = decoder_.decode(frame.id, frame.data, frame.dlc);
   if (!decoded.has_value()) {
     ++frames_unknown_;
@@ -382,19 +299,18 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
 
   ++frames_decoded_;
 
-  const rclcpp::Time stamp = now();
+  std::unordered_map<std::string, std::vector<msg::Signal>> frame_signals;
+  std::vector<msg::Signal> all_sigs;
 
   for (const RawSignal & raw_sig : *decoded) {
     // Apply alias: try compound key "CAN{id}_{signal}" first to disambiguate
-    // signals that share the same name across different CAN messages (e.g.,
-    // PACMod's OUTPUT_VALUE appearing in ACCEL_RPT, BRAKE_RPT, STEERING_RPT).
+    // signals that share the same name across different CAN messages.
     const std::string compound_key = "CAN" + std::to_string(frame.id) + "_" + raw_sig.name;
     const std::string & compound_alias = router_.apply_alias(compound_key);
     const std::string & name =
       (compound_alias != compound_key) ? compound_alias : router_.apply_alias(raw_sig.name);
 
-    // Determine domain: schema-based routing by canonical signal name takes
-    // precedence over legacy CAN-ID-based routing.
+    // Determine domain: schema-based routing takes precedence over CAN-ID-based.
     std::string domain;
     if (!signal_to_domain_.empty()) {
       const auto it = signal_to_domain_.find(name);
@@ -404,7 +320,6 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
       domain = router_.domain_for_id(frame.id);
     }
 
-    // Apply transform; catch expression evaluation errors (MEDIUM-3)
     TransformResult tr;
     try {
       tr = transformer_.transform(name, raw_sig.value);
@@ -414,28 +329,20 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
       continue;
     }
 
-    // Update timeout monitor
     timeout_monitor_.signal_received(name, now_ms());
 
-    // Build Signal message
     msg::Signal sig_msg;
     {
       const auto id_it = signal_name_to_id_.find(name);
       sig_msg.name_id = (id_it != signal_name_to_id_.end()) ? id_it->second : 0;
     }
     sig_msg.value = static_cast<float>(tr.value);
-    sig_msg.status = msg::Signal::STATUS_OK;
-    sig_msg.timestamp_can = frame.timestamp;
 
-    // Accumulate domain-assigned signals into the domain batch and firehose.
-    // Unassigned signals (not in the schema) are discarded — they are not
-    // forwarded to the firehose so that /vehicle/decoded_can only contains
-    // the canonical signals defined in vehicle_schema.yaml.
+    // Unassigned signals (not in the schema) are discarded.
     if (domain != SignalRouter::kUnassignedDomain) {
-      pending_signals_[domain].push_back(sig_msg);
-
+      frame_signals[domain].push_back(sig_msg);
       if (publish_all_signals_) {
-        pending_signals_["__all__"].push_back(sig_msg);
+        all_sigs.push_back(sig_msg);
       }
     }
 
@@ -449,120 +356,36 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
       }
     }
   }
-}
 
-// ── Flush pending domain groups ───────────────────────────────────────────────
-
-void VehicleCanNode::flush_pending_groups()
-{
-  const rclcpp::Time stamp = now();
-
-  if (!domain_schema_.empty()) {
-    // ── Schema mode ─────────────────────────────────────────────────────────────
-    // Every schema-defined domain is published every tick. Signals not received
-    // from the DBC are pre-filled with STATUS_INITIAL so downstream nodes always
-    // see the same SignalGroup structure regardless of which DBC is loaded.
-
-    for (const auto & [domain, expected] : domain_schema_) {
-      // Index received signals by name_id for O(1) overlay
-      std::unordered_map<uint16_t, msg::Signal> rx;
-      if (auto it = pending_signals_.find(domain); it != pending_signals_.end()) {
-        for (auto & s : it->second) {
-          rx[s.name_id] = std::move(s);
-        }
-        it->second.clear();
-      }
-
-      msg::SignalGroup group;
-      group.header.stamp = stamp;
-      group.header.frame_id = "";
-      group.vehicle_id = vehicle_id_;
-      group.domain = domain;
-      group.signals.reserve(expected.size());
-
-      for (const auto & sig_name : expected) {
-        const auto id_it = signal_name_to_id_.find(sig_name);
-        if (id_it == signal_name_to_id_.end()) {
-          RCLCPP_WARN_ONCE(get_logger(), "Schema signal '%s' has no ID entry", sig_name.c_str());
-          continue;
-        }
-        const uint16_t id = id_it->second;
-        auto rx_it = rx.find(id);
-        if (rx_it != rx.end()) {
-          group.signals.push_back(std::move(rx_it->second));
-        } else {
-          // Signal not present in this DBC: publish as STATUS_INITIAL
-          msg::Signal init;
-          init.name_id = id;
-          init.value = 0.0f;
-          init.status = msg::Signal::STATUS_INITIAL;
-          init.timestamp_can = 0.0;
-          group.signals.push_back(std::move(init));
-        }
-      }
-
-      if (auto pub_it = domain_pubs_.find(domain); pub_it != domain_pubs_.end()) {
-        pub_it->second->publish(group);
-      }
-    }
-
-    // Firehose: publish all received signals (only actually-received ones)
-    auto & all_batch = pending_signals_["__all__"];
-    if (publish_all_signals_ && all_signals_pub_ && !all_batch.empty()) {
-      msg::SignalGroup all_group;
-      all_group.header.stamp = stamp;
-      all_group.header.frame_id = "";
-      all_group.vehicle_id = vehicle_id_;
-      all_group.domain = "all";
-      all_group.signals = std::move(all_batch);
-      all_signals_pub_->publish(all_group);
-    }
-    all_batch.clear();
-    return;
-  }
-
-  // ── Legacy mode (CAN-ID-routed domains) ─────────────────────────────────────
-  for (auto & [domain, signals] : pending_signals_) {
-    if (signals.empty()) {
-      continue;
-    }
-
+  // Publish one SignalGroup per domain immediately
+  for (auto & [domain, signals] : frame_signals) {
     msg::SignalGroup group;
     group.header.stamp = stamp;
     group.header.frame_id = "";
     group.vehicle_id = vehicle_id_;
-    group.signals = signals;
+    group.domain = domain;
+    group.signals = std::move(signals);
 
-    if (domain == "__all__") {
-      group.domain = "all";
-      if (all_signals_pub_) {
-        all_signals_pub_->publish(group);
-      }
-    } else {
-      group.domain = domain;
-      auto pub_it = domain_pubs_.find(domain);
-      if (pub_it != domain_pubs_.end()) {
-        pub_it->second->publish(group);
-      } else if (domain == SignalRouter::kUnassignedDomain) {
-        // Unassigned signals: only publish on firehose, not a separate topic
-      }
+    if (auto pub_it = domain_pubs_.find(domain); pub_it != domain_pubs_.end()) {
+      pub_it->second->publish(group);
     }
-
-    signals.clear();
   }
-}
 
-// ── can_msgs topic callback ───────────────────────────────────────────────────
+  // Firehose: all received signals from this frame
+  if (publish_all_signals_ && all_signals_pub_ && !all_sigs.empty()) {
+    msg::SignalGroup all_group;
+    all_group.header.stamp = stamp;
+    all_group.header.frame_id = "";
+    all_group.vehicle_id = vehicle_id_;
+    all_group.domain = "all";
+    all_group.signals = std::move(all_sigs);
+    all_signals_pub_->publish(all_group);
+  }
 
-void VehicleCanNode::on_can_frame(const can_msgs::msg::Frame::SharedPtr msg)
-{
-  CanFrame frame{};
-  frame.id = msg->id;
-  frame.dlc = msg->dlc;
-  std::copy(msg->data.begin(), msg->data.end(), frame.data.begin());
-  frame.timestamp = static_cast<double>(msg->header.stamp.sec) +
-                    static_cast<double>(msg->header.stamp.nanosec) * 1e-9;
-  process_frame(frame);
+  // Check for signal timeouts and log newly-timed-out signals
+  for (const auto & name : timeout_monitor_.check_timeouts(now_ms(), signal_timeout_ms_)) {
+    RCLCPP_WARN(get_logger(), "Signal timeout: '%s'", name.c_str());
+  }
 }
 
 // ── Diagnostics timer callback ────────────────────────────────────────────────
@@ -572,7 +395,7 @@ void VehicleCanNode::on_diagnostics_timer()
   msg::SignalDiagnostic diag;
   diag.header.stamp = now();
   diag.vehicle_id = vehicle_id_;
-  diag.can_interface = can_interface_;
+  diag.can_topic = can_topic_;
   diag.frames_received = frames_received_;
   diag.frames_decoded = frames_decoded_;
   diag.frames_unknown = frames_unknown_;
@@ -593,7 +416,6 @@ void VehicleCanNode::publish_schema()
   schema.vehicle_id = vehicle_id_;
   schema.schema_version = schema_version_;
 
-  // Build signal_table sorted by id so signal_table[name_id-1] is valid.
   std::vector<std::pair<uint16_t, std::string>> id_name_pairs;
   id_name_pairs.reserve(signal_name_to_id_.size());
   for (const auto & [name, id] : signal_name_to_id_) {
@@ -611,7 +433,6 @@ void VehicleCanNode::publish_schema()
     schema.signal_table.push_back(std::move(entry));
   }
 
-  // Build unit_table: 1-indexed, so unit_table[unit_id-1] = unit string.
   schema.unit_table = unit_id_names_;
 
   schema_pub_->publish(schema);
@@ -622,8 +443,6 @@ void VehicleCanNode::publish_schema()
 uint64_t VehicleCanNode::now_ms() const
 {
   const int64_t ns = now().nanoseconds();
-  // nanoseconds() is int64_t; cast to uint64_t before division to avoid the
-  // implicit signed→unsigned conversion that would wrap negative values.
   return (ns >= 0) ? (static_cast<uint64_t>(ns) / 1'000'000ULL) : 0ULL;
 }
 

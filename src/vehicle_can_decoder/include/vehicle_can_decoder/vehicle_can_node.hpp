@@ -32,7 +32,7 @@ struct PromotedSignalConfig
 };
 
 /// ROS2 node that:
-///   1. Opens a SocketCAN interface
+///   1. Subscribes to a can_msgs/Frame topic
 ///   2. Decodes CAN frames using a DBC file (dbcppp)
 ///   3. Transforms signals via exprtk expressions
 ///   4. Routes signals to domain-grouped SignalGroup topics
@@ -49,29 +49,23 @@ private:
   void declare_parameters();
   void load_parameters();
   void setup_publishers();
-  void setup_timer();
-  bool open_can_interface();
+  void setup_diagnostics_timer();
   void publish_schema();
 
   // ── Runtime callbacks ───────────────────────────────────────────────────────
-  void on_timer();
   void on_diagnostics_timer();
   void on_can_frame(const can_msgs::msg::Frame::SharedPtr msg);
 
   // ── Per-frame processing ────────────────────────────────────────────────────
-  void process_frame(const CanFrame & frame);
-  void flush_pending_groups();
+  void process_frame(const CanFrame & frame, const rclcpp::Time & stamp);
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
   uint64_t now_ms() const;
 
   // ── Parameters ──────────────────────────────────────────────────────────────
   std::string vehicle_id_;
-  std::string can_interface_;
-  std::string dbc_file_;
-  bool use_can_topic_{false};
   std::string can_topic_;
-  double loop_rate_hz_;
+  std::string dbc_file_;
   uint64_t signal_timeout_ms_;
   bool publish_all_signals_;
   std::string all_signals_topic_;
@@ -84,8 +78,7 @@ private:
   // Loaded from schema_domain_names + schema.<name>.{topic,signals} parameters.
   // When non-empty, enables schema mode:
   //   - Routing is by canonical signal name (not CAN ID)
-  //   - Every domain always publishes a full SignalGroup; signals not received
-  //     from the DBC are included with status = STATUS_INITIAL.
+  //   - Signals not in the schema are discarded (not forwarded to any topic)
   //
   // Compound alias keys: when two DBC messages share the same signal name,
   // use "CAN{decimal_id}_{signal_name}" as the alias_names key to disambiguate.
@@ -112,7 +105,6 @@ private:
   SignalTransformer transformer_;
   SignalRouter router_;
   TimeoutMonitor timeout_monitor_;
-  CanReader can_reader_;
 
   // ── Publishers ──────────────────────────────────────────────────────────────
   // Domain name → publisher
@@ -131,16 +123,11 @@ private:
   // Schema publisher (transient_local; published once at startup)
   rclcpp::Publisher<msg::VehicleSchema>::SharedPtr schema_pub_;
 
-  // ── Subscriber (can_msgs mode) ────────────────────────────────────────────
+  // ── Subscriber ────────────────────────────────────────────────────────────
   rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr can_sub_;
 
-  // ── Timers ───────────────────────────────────────────────────────────────────
-  rclcpp::TimerBase::SharedPtr spin_timer_;
+  // ── Timer ────────────────────────────────────────────────────────────────────
   rclcpp::TimerBase::SharedPtr diagnostics_timer_;
-
-  // ── Pending signal batches ────────────────────────────────────────────────
-  // Accumulated per domain within one timer tick
-  std::unordered_map<std::string, std::vector<msg::Signal>> pending_signals_;
 
   // ── Diagnostic counters ───────────────────────────────────────────────────
   uint64_t frames_received_{0};
