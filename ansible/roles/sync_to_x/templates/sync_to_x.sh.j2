@@ -97,7 +97,11 @@ error_exit() {
         # Skip files modified within the threshold (i.e., recording is still active or
         # just finished). Avoids fuser/lsof which cause excessive NFS stat() calls when
         # SOURCE_DIR or DEST is on a NAS mount, leading to severe slowdowns.
-        file_mtime=$(stat -c %Y "$mcap_file" 2>/dev/null || echo 0)
+        # On stat failure, skip rather than proceeding — the file will be retried next tick.
+        if ! file_mtime=$(stat -c %Y "$mcap_file" 2>/dev/null); then
+            echo "Skipping (stat failed): $mcap_file"
+            continue
+        fi
         now=$(date +%s)
         if [ $((now - file_mtime)) -lt {{ sync_to_x_active_file_threshold_sec }} ]; then
             echo "Skipping recently modified file (active within {{ sync_to_x_active_file_threshold_sec }}s): $mcap_file"
