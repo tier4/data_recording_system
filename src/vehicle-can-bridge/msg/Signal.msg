@@ -4,17 +4,11 @@
 string name
 
 # Decoded value after applying the configured transform expression.
-float64 value
-
-# Raw decoded value before any transform (direct DBC physical value).
-float64 raw_value
+float32 value
 
 # Physical unit string (e.g. "m/s", "rad", "degC", "%").
 # Set from the YAML config transforms section; empty if not configured.
 string unit
-
-# Source CAN message ID (as received on the bus).
-uint32 can_id
 
 # Signal status.
 uint8 STATUS_OK      = 0  # Value is fresh and valid

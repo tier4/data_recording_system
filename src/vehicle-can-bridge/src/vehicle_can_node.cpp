@@ -372,10 +372,8 @@ void VehicleCanNode::process_frame(const CanFrame & frame)
     // Build Signal message
     msg::Signal sig_msg;
     sig_msg.name = name;
-    sig_msg.value = tr.value;
-    sig_msg.raw_value = tr.raw_value;
+    sig_msg.value = static_cast<float>(tr.value);
     sig_msg.unit = tr.unit;
-    sig_msg.can_id = frame.id;
     sig_msg.status = msg::Signal::STATUS_OK;
     sig_msg.timestamp_can = frame.timestamp;
 
@@ -440,10 +438,8 @@ void VehicleCanNode::flush_pending_groups()
           // Signal not present in this DBC: publish as STATUS_INITIAL
           msg::Signal init;
           init.name = sig_name;
-          init.value = 0.0;
-          init.raw_value = 0.0;
+          init.value = 0.0f;
           init.status = msg::Signal::STATUS_INITIAL;
-          init.can_id = 0;
           init.timestamp_can = 0.0;
           group.signals.push_back(std::move(init));
         }

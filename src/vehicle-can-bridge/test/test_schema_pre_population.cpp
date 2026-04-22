@@ -45,9 +45,7 @@ static std::vector<msg::Signal> merge_with_schema(
       msg::Signal init;
       init.name = name;
       init.value = 0.0;
-      init.raw_value = 0.0;
       init.status = msg::Signal::STATUS_INITIAL;
-      init.can_id = 0;
       init.timestamp_can = 0.0;
       result.push_back(init);
     }
@@ -74,9 +72,7 @@ protected:
     msg::Signal s;
     s.name = name;
     s.value = value;
-    s.raw_value = value;
     s.status = status;
-    s.can_id = 0;
     s.timestamp_can = 0.0;
     return s;
   }

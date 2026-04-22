@@ -134,9 +134,7 @@ ros2 topic echo /vehicle/diagnostics
 
 - `name` — Signal name (after alias substitution)
 - `value` — Transformed value
-- `raw_value` — Value before transform
 - `unit` — Physical unit (e.g., "m/s", "rad")
-- `can_id` — Source CAN message ID
 - `status` — `STATUS_OK`, `STATUS_TIMEOUT`, `STATUS_ERROR`, or `STATUS_INITIAL`
 - `timestamp_can` — Hardware CAN timestamp (if available)
 
