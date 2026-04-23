@@ -74,6 +74,7 @@ vehicle_can_node:
       - dynamics.wheel_speed.front_right
       - dynamics.wheel_speed.rear_left
       - dynamics.wheel_speed.rear_right
+      - body.lights.turn_signal
 
     transforms.dynamics.wheel_speed.front_left.expression: x * 0.31
     transforms.dynamics.wheel_speed.front_left.unit: m/s
@@ -83,3 +84,7 @@ vehicle_can_node:
     transforms.dynamics.wheel_speed.rear_left.unit: m/s
     transforms.dynamics.wheel_speed.rear_right.expression: x * 0.31
     transforms.dynamics.wheel_speed.rear_right.unit: m/s
+
+    # PACMod enum: 0=RIGHT,1=NONE,2=LEFT,3=HAZARD → canonical: OFF=0,LEFT=1,RIGHT=2,HAZARD=3
+    transforms.body.lights.turn_signal.expression: "x == 0 ? 2 : x == 1 ? 0 : x == 2 ? 1 : 3"
+    transforms.body.lights.turn_signal.unit: enum
