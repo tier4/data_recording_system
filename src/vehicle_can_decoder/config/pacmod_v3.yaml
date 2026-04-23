@@ -15,7 +15,7 @@
 #   Simple:   aliases.SIGNAL_NAME: canonical.name
 #   Compound: aliases.CAN{decimal_id}_SIGNAL_NAME: canonical.name
 #             Used when the same signal name appears in multiple CAN messages.
-#             Example: OUTPUT_VALUE appears in ACCEL_RPT(512), BRAKE_RPT(516),
+#             Example: OUTPUT_VALUE appears in ACCEL_RPT(512),
 #             STEERING_RPT(556) → disambiguated by CAN ID prefix.
 #
 # Transforms: exprtk expressions where 'x' is the raw DBC physical value.
@@ -37,8 +37,6 @@ vehicle_can_node:
       - CAN556_OUTPUT_VALUE # STEERING_RPT(556)      → report angle (rad)
       # operation.throttle
       - CAN512_OUTPUT_VALUE # ACCEL_RPT(512)         → report position (ratio)
-      # operation.brake
-      - CAN516_OUTPUT_VALUE # BRAKE_RPT(516)         → report position (ratio)
       # dynamics
       - VEHICLE_SPEED # VEHICLE_SPEED_RPT      → m/s
       - WHEEL_SPD_AXLE_1_LEFT # WHEEL_SPEED_RPT     → rad/s (converted below)
@@ -52,10 +50,10 @@ vehicle_can_node:
       - CAN560_OUTPUT_VALUE # TURN_RPT(560)          → turn signal enum
 
     aliases.VEHICLE_SPEED: dynamics.speed.longitudinal
-    aliases.WHEEL_SPD_AXLE_1_LEFT: dynamics.wheel_speed.front_left
-    aliases.WHEEL_SPD_AXLE_1_RIGHT: dynamics.wheel_speed.front_right
-    aliases.WHEEL_SPD_AXLE_2_LEFT: dynamics.wheel_speed.rear_left
-    aliases.WHEEL_SPD_AXLE_2_RIGHT: dynamics.wheel_speed.rear_right
+    aliases.WHEEL_SPD_AXLE_1_LEFT: dynamics.wheel_speed.rear_left
+    aliases.WHEEL_SPD_AXLE_1_RIGHT: dynamics.wheel_speed.rear_right
+    aliases.WHEEL_SPD_AXLE_2_LEFT: dynamics.wheel_speed.front_left
+    aliases.WHEEL_SPD_AXLE_2_RIGHT: dynamics.wheel_speed.front_right
     aliases.YAW_VEL: dynamics.angular_vel.yaw
     aliases.PITCH_VEL: dynamics.angular_vel.pitch
     aliases.ROLL_VEL: dynamics.angular_vel.roll
@@ -63,7 +61,6 @@ vehicle_can_node:
     # Compound aliases
     aliases.CAN556_OUTPUT_VALUE: operation.steering.report.angle
     aliases.CAN512_OUTPUT_VALUE: operation.throttle.report.position
-    aliases.CAN516_OUTPUT_VALUE: operation.brake.report.position
     aliases.CAN560_OUTPUT_VALUE: body.lights.turn_signal
 
     # ── Transforms ────────────────────────────────────────────────────────────
