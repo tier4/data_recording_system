@@ -50,10 +50,10 @@ vehicle_can_node:
       - CAN560_OUTPUT_VALUE # TURN_RPT(560)          → turn signal enum
 
     aliases.VEHICLE_SPEED: dynamics.speed.longitudinal
-    aliases.WHEEL_SPD_AXLE_1_LEFT: dynamics.wheel_speed.rear_left
-    aliases.WHEEL_SPD_AXLE_1_RIGHT: dynamics.wheel_speed.rear_right
-    aliases.WHEEL_SPD_AXLE_2_LEFT: dynamics.wheel_speed.front_left
-    aliases.WHEEL_SPD_AXLE_2_RIGHT: dynamics.wheel_speed.front_right
+    aliases.WHEEL_SPD_AXLE_1_LEFT: dynamics.wheel_speed.front_right
+    aliases.WHEEL_SPD_AXLE_1_RIGHT: dynamics.wheel_speed.front_left
+    aliases.WHEEL_SPD_AXLE_2_LEFT: dynamics.wheel_speed.rear_right
+    aliases.WHEEL_SPD_AXLE_2_RIGHT: dynamics.wheel_speed.rear_left
     aliases.YAW_VEL: dynamics.angular_vel.yaw
     aliases.PITCH_VEL: dynamics.angular_vel.pitch
     aliases.ROLL_VEL: dynamics.angular_vel.roll
