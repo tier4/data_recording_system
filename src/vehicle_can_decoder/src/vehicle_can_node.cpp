@@ -347,8 +347,6 @@ void VehicleCanNode::process_frame(const CanFrame & frame, const rclcpp::Time & 
       continue;
     }
 
-    timeout_monitor_.signal_received(name, now_ms());
-
     msg::Signal sig_msg;
     {
       const auto id_it = signal_name_to_id_.find(name);
@@ -358,6 +356,7 @@ void VehicleCanNode::process_frame(const CanFrame & frame, const rclcpp::Time & 
 
     // Unassigned signals (not in the schema) are discarded.
     if (domain != SignalRouter::kUnassignedDomain) {
+      timeout_monitor_.signal_received(name, now_ms());
       frame_signals[domain].push_back(sig_msg);
       if (publish_all_signals_) {
         all_sigs.push_back(sig_msg);
