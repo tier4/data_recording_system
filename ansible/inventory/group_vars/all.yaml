@@ -37,7 +37,7 @@ sync_to_x_source_dir: /mnt/ssd/data
 sync_to_x_destinations:
   - /mnt/external/data
   - /mnt/nas/data
-sync_to_x_rsync_bw_limit: 100m
+sync_to_x_rsync_bw_limit: 200m
 sync_to_x_timer_interval: 1min
 
 # Journald Configuration

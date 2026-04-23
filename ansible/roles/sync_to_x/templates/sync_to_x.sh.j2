@@ -94,10 +94,18 @@ error_exit() {
     # Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
     find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do
 
-        # Check if file is currently open by any process (e.g., recording is still active)
-        if fuser "$mcap_file" > /dev/null 2>&1; then
-             echo "Skipping active file (in use): $mcap_file"
-             continue
+        # Skip files modified within the threshold (i.e., recording is still active or
+        # just finished). Avoids fuser/lsof which cause excessive NFS stat() calls when
+        # SOURCE_DIR or DEST is on a NAS mount, leading to severe slowdowns.
+        # On stat failure, skip rather than proceeding — the file will be retried next tick.
+        if ! file_mtime=$(stat -c %Y "$mcap_file" 2>/dev/null); then
+            echo "Skipping (stat failed): $mcap_file"
+            continue
+        fi
+        now=$(date +%s)
+        if [ $((now - file_mtime)) -lt {{ sync_to_x_active_file_threshold_sec }} ]; then
+            echo "Skipping recently modified file (active within {{ sync_to_x_active_file_threshold_sec }}s): $mcap_file"
+            continue
         fi
 
         # Get relative path (to preserve directory structure)
