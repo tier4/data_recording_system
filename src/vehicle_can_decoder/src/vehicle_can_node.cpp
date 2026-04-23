@@ -32,6 +32,7 @@ VehicleCanNode::VehicleCanNode(const rclcpp::NodeOptions & options)
     can_topic_.c_str(), dbc_file_.c_str());
 
   setup_diagnostics_timer();
+  setup_schema_timer();
 }
 
 VehicleCanNode::~VehicleCanNode() = default;
@@ -50,6 +51,7 @@ void VehicleCanNode::declare_parameters()
   declare_parameter("diagnostics_rate_hz", 1.0);
   declare_parameter("schema_domain_names", std::vector<std::string>{});
   declare_parameter("schema_publish_per_domain", true);
+  declare_parameter("schema_republish_interval_s", 1.0);
   declare_parameter("schema_version", std::string(""));
   declare_parameter("signal_id_names", std::vector<std::string>{});
   declare_parameter("signal_id_unit_names", std::vector<std::string>{});
@@ -82,6 +84,12 @@ void VehicleCanNode::load_parameters()
   all_signals_topic_ = get_parameter("all_signals_topic").as_string();
   diagnostics_topic_ = get_parameter("diagnostics_topic").as_string();
   schema_publish_per_domain_ = get_parameter("schema_publish_per_domain").as_bool();
+  schema_republish_interval_s_ = get_parameter("schema_republish_interval_s").as_double();
+  if (schema_republish_interval_s_ <= 0.0) {
+    throw std::runtime_error(
+      "Parameter 'schema_republish_interval_s' must be positive, got: " +
+      std::to_string(schema_republish_interval_s_));
+  }
 
   // ── DBC file ────────────────────────────────────────────────────────────────
   if (dbc_file_.empty()) {
@@ -272,6 +280,16 @@ void VehicleCanNode::setup_diagnostics_timer()
   diagnostics_timer_ = create_wall_timer(
     std::chrono::duration_cast<std::chrono::nanoseconds>(diag_period),
     std::bind(&VehicleCanNode::on_diagnostics_timer, this));
+}
+
+// ── Schema timer setup ────────────────────────────────────────────────────────
+
+void VehicleCanNode::setup_schema_timer()
+{
+  const auto period = std::chrono::duration<double>(schema_republish_interval_s_);
+  schema_timer_ = create_wall_timer(
+    std::chrono::duration_cast<std::chrono::nanoseconds>(period),
+    std::bind(&VehicleCanNode::publish_schema, this));
 }
 
 // ── CAN frame callback ────────────────────────────────────────────────────────

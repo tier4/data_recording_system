@@ -50,6 +50,7 @@ private:
   void load_parameters();
   void setup_publishers();
   void setup_diagnostics_timer();
+  void setup_schema_timer();
   void publish_schema();
 
   // ── Runtime callbacks ───────────────────────────────────────────────────────
@@ -72,6 +73,7 @@ private:
   std::string diagnostics_topic_;
   double diagnostics_rate_hz_;
   bool schema_publish_per_domain_{true};
+  double schema_republish_interval_s_{1.0};
   std::vector<PromotedSignalConfig> promoted_signals_;
 
   // ── Vehicle schema (optional) ────────────────────────────────────────────────
@@ -126,8 +128,9 @@ private:
   // ── Subscriber ────────────────────────────────────────────────────────────
   rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr can_sub_;
 
-  // ── Timer ────────────────────────────────────────────────────────────────────
+  // ── Timers ───────────────────────────────────────────────────────────────────
   rclcpp::TimerBase::SharedPtr diagnostics_timer_;
+  rclcpp::TimerBase::SharedPtr schema_timer_;
 
   // ── Diagnostic counters ───────────────────────────────────────────────────
   uint64_t frames_received_{0};
