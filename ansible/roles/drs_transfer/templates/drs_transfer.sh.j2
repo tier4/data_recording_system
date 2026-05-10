@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# sync_to_x.sh - Synchronize sensor data to storage (NAS or External SSD)
+# drs_transfer.sh - Synchronize sensor data to storage (NAS or External SSD)
 
 # Set umask to 000 to ensure created directories are fully writable
 umask 000
 
 # Configuration
-SOURCE_DIR="{{ sync_to_x_source_dir }}"
-HOSTNAME="{{ sync_to_x_hostname }}"
-LOCK_FILE="{{ sync_to_x_lock_file }}"
-RSYNC_BW_LIMIT="{{ sync_to_x_rsync_bw_limit }}"  # rsync bandwidth limit
-FREE_SPACE_LIMIT_GB={{ sync_to_x_free_space_limit_gb }}
+SOURCE_DIR="{{ drs_transfer_source_dir }}"
+HOSTNAME="{{ drs_transfer_hostname }}"
+LOCK_FILE="{{ drs_transfer_lock_file }}"
+RSYNC_BW_LIMIT="{{ drs_transfer_rsync_bw_limit }}"  # rsync bandwidth limit
+FREE_SPACE_LIMIT_GB={{ drs_transfer_free_space_limit_gb }}
 
 # Destinations (Priority order)
 # Ansible will expand the list here
 DESTINATIONS=(
-{% for dest in sync_to_x_destinations %}
+{% for dest in drs_transfer_destinations %}
     "{{ dest }}"
 {% endfor %}
 )
@@ -103,8 +103,8 @@ error_exit() {
             continue
         fi
         now=$(date +%s)
-        if [ $((now - file_mtime)) -lt {{ sync_to_x_active_file_threshold_sec }} ]; then
-            echo "Skipping recently modified file (active within {{ sync_to_x_active_file_threshold_sec }}s): $mcap_file"
+        if [ $((now - file_mtime)) -lt {{ drs_transfer_active_file_threshold_sec }} ]; then
+            echo "Skipping recently modified file (active within {{ drs_transfer_active_file_threshold_sec }}s): $mcap_file"
             continue
         fi
 

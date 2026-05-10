@@ -32,13 +32,13 @@ cyclonedds:
   rmem_max: 2147483647
   rmem_default: 8388608
 
-# Sync to X Configuration
-sync_to_x_source_dir: /mnt/ssd/data
-sync_to_x_destinations:
+# DRS Transfer Configuration
+drs_transfer_source_dir: /mnt/ssd/data
+drs_transfer_destinations:
   - /mnt/external/data
   - /mnt/nas/data
-sync_to_x_rsync_bw_limit: 200m
-sync_to_x_timer_interval: 1min
+drs_transfer_rsync_bw_limit: 200m
+drs_transfer_timer_interval: 1min
 
 # Journald Configuration
 journald_system_max_use: 500M

@@ -169,7 +169,7 @@
       tags: [external_storage]
       when: nas_address is defined
 
-    - role: sync_to_x
+    - role: drs_transfer
       tags: [external_storage]
 
     - role: extra_apps
