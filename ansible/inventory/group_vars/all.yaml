@@ -37,7 +37,7 @@ drs_transfer_source_dir: /mnt/ssd/data
 drs_transfer_destinations:
   - /mnt/external/data
   - /mnt/nas/data
-drs_transfer_rsync_bw_limit: 200m
+drs_transfer_rsync_bw_limit: 200m # Override role default (100m) for production throughput
 drs_transfer_timer_interval: 1min
 
 # Journald Configuration
