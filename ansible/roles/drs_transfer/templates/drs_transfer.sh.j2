@@ -37,13 +37,15 @@ install -m 0600 /dev/null "$LOCK_FILE" || error_exit "Cannot create lock file: $
     # Select Destination
     TARGET_BASE_DIR=""
 
-    # Trigger automounts for all destinations first
+    # Trigger automounts for all destinations in parallel.
+    # Each trigger is bounded by a timeout so unavailable mounts do not block
+    # the script beyond the timer interval (DefaultDeviceTimeoutSec / NFS TCP
+    # timeouts can far exceed the configured x-systemd.mount-timeout values).
     echo "Triggering automounts..."
     for dest in "${DESTINATIONS[@]}"; do
-        if [ -n "$dest" ]; then
-            ls "$dest" > /dev/null 2>&1
-        fi
+        [ -n "$dest" ] && timeout {{ drs_transfer_automount_trigger_timeout_sec | int }} ls "$dest" > /dev/null 2>&1 &
     done
+    wait
 
     for dest in "${DESTINATIONS[@]}"; do
         # Skip empty entries

@@ -8,6 +8,7 @@ drs_transfer_hostname: "{{ ansible_hostname }}"
 # Timing and performance settings
 drs_transfer_rsync_bw_limit: 100m
 drs_transfer_timer_interval: 1min
+drs_transfer_automount_trigger_timeout_sec: 8
 drs_transfer_free_space_limit_gb: 10
 drs_transfer_active_file_threshold_sec: 30
 
