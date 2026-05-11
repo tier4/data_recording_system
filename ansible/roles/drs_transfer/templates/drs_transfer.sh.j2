@@ -24,7 +24,7 @@ error_exit() {
 }
 
 # Pre-create lock file with restrictive permissions so umask does not make it world-writable
-install -m 0600 /dev/null "$LOCK_FILE" 2>/dev/null || true
+install -m 0600 /dev/null "$LOCK_FILE" || error_exit "Cannot create lock file: $LOCK_FILE"
 
 # Main execution block with flock
 (
@@ -88,8 +88,9 @@ install -m 0600 /dev/null "$LOCK_FILE" 2>/dev/null || true
 
     DEST_DIR="${TARGET_BASE_DIR}/${HOSTNAME}"
 
-    # Create destination directory with broad permissions for multi-user data access
-    mkdir -m 777 -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
+    # Create destination directory with broad permissions for multi-user data access.
+    # chmod after mkdir because -m only applies to the leaf when using -p.
+    mkdir -p "$DEST_DIR" && chmod 777 "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
 
     # Process files for transfer
     echo "Starting backup process to $DEST_DIR"
@@ -119,8 +120,9 @@ install -m 0600 /dev/null "$LOCK_FILE" 2>/dev/null || true
         dest_file="$DEST_DIR/$relative_path"
         dest_dir=$(dirname "$dest_file")
 
-        # Create destination directory with broad permissions for multi-user data access
-        mkdir -m 777 -p "$dest_dir"
+        # Create destination directory with broad permissions for multi-user data access.
+        # chmod after mkdir because -m only applies to the leaf when using -p.
+        mkdir -p "$dest_dir" && chmod 777 "$dest_dir"
 
         # Get file size (for logging)
         file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
@@ -180,7 +182,8 @@ install -m 0600 /dev/null "$LOCK_FILE" 2>/dev/null || true
         if [ $mcap_count -eq 0 ]; then
             # No mcap files present
             if [ -f "$dir/metadata.yaml" ]; then
-                # Symlink guard: skip symlinks to prevent TOCTOU-based path traversal as root
+                # Symlink guard: check at rm-time since find -type d doesn't follow symlinks,
+                # but a directory can be replaced with a symlink between find and rm -rf (TOCTOU).
                 [ ! -L "$dir" ] || { echo "Skipping symlink (safety): $dir"; continue; }
                 echo "Removing directory with only metadata.yaml: $(basename "$dir")"
                 rm -rf "$dir"

@@ -1,7 +1,6 @@
 # /etc/systemd/system/drs-transfer.timer
 [Unit]
 Description=Run sync to storage every {{ drs_transfer_timer_interval }}
-Requires=drs-transfer.service
 
 [Timer]
 OnBootSec={{ drs_transfer_timer_interval }}

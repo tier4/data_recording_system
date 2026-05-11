@@ -16,9 +16,5 @@ CPUQuota={{ drs_transfer_cpu_quota }}
 IOWeight={{ drs_transfer_io_weight }}
 Nice=19
 
-# Retry on failure
-Restart=on-failure
-RestartSec=300
-
 [Install]
 WantedBy=multi-user.target
