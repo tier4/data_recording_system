@@ -17,6 +17,7 @@
   ansible.builtin.shell: |
     find "{{ playbook_dir }}/../src/drs-api" \
       -not -path "*/bin/*" \
+      -not -path "*/.git/*" \
       -type f \
       -printf '%T@\n' | sort -rn | head -1
   register: newest_source_mtime
