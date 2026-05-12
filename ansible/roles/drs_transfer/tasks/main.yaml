@@ -15,7 +15,7 @@
     mode: "0755"
   become: true
 
-- name: Create sync script from template
+- name: Create transfer script from template
   ansible.builtin.template:
     src: drs_transfer.sh.j2
     dest: "{{ drs_transfer_script_path }}"

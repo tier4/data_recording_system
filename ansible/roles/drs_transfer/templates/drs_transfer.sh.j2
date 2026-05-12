@@ -177,7 +177,7 @@ install -m 0600 /dev/null "$LOCK_FILE" || error_exit "Cannot create lock file: $
 
     # Cleanup directories with only metadata.yaml
     echo "Starting empty directory cleanup"
-    find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
+    find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while IFS= read -r dir; do
         # Count files in directory (excluding metadata.yaml)
         mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
 
