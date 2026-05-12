@@ -199,4 +199,4 @@ install -m 0600 /dev/null "$LOCK_FILE" || error_exit "Cannot create lock file: $
 
     echo "Backup process completed"
 
-) {fd}>"$LOCK_FILE"
+) {fd}>"$LOCK_FILE" || exit 1
