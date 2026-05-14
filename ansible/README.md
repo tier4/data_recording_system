@@ -67,7 +67,6 @@ ansible-playbook -i inventory/localhost.yaml -e @inventory/host_vars/ecu1.yaml s
 - `c2`: C2 readout delay setter utilities
 - `trigger`: Sensor trigger configuration
 - `nas`: NAS mounting
-- `sync`: Data synchronization to NAS
 
 ### Skip specific roles
 
@@ -124,7 +123,7 @@ The playbook executes roles in this order based on dependencies:
 6. **DRS Build**: `drs`
 7. **Services**: `drs_recorder_service`, `drs_sensor_service`
 8. **Additional Components**: `tier4_hdr_camera_driver`, `sensor_trigger`
-9. **Data Management**: `nas_mount`, `sync_to_nas`
+9. **Data Management**: `nas_mount`, `drs_transfer`
 
 ## Environment Variables
 

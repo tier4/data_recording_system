@@ -12,6 +12,7 @@ Thumbs.db
 *.code-workspace
 # Claude Code
 .claude/
+CLAUDE.local.md
 # Cursor
 .cursor/
 # Windsurf

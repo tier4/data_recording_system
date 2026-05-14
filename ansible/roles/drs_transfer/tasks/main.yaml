@@ -1,35 +1,33 @@
-- name: Install dependencies for sync_to_x
+- name: Install dependencies for drs_transfer
   ansible.builtin.apt:
     name:
-      - psmisc # For fuser command
       - util-linux # For flock command
     state: present
     update_cache: true
   become: true
 
-- name: Create sync_to_x directory
+- name: Create drs_transfer directory
   ansible.builtin.file:
-    path: "{{ sync_to_x_script_path | dirname }}"
+    path: "{{ drs_transfer_script_path | dirname }}"
     state: directory
     owner: root
     group: root
     mode: "0755"
   become: true
 
-- name: Create sync script from template
+- name: Create transfer script from template
   ansible.builtin.template:
-    src: sync_to_x.sh.j2
-    dest: "{{ sync_to_x_script_path }}"
+    src: drs_transfer.sh.j2
+    dest: "{{ drs_transfer_script_path }}"
     owner: root
     group: root
     mode: "0755"
-  register: sync_script
   become: true
 
 - name: Create systemd service file
   ansible.builtin.template:
-    src: sync-to-x.service.j2
-    dest: /etc/systemd/system/sync-to-x.service
+    src: drs-transfer.service.j2
+    dest: /etc/systemd/system/drs-transfer.service
     owner: root
     group: root
     mode: "0644"
@@ -38,8 +36,8 @@
 
 - name: Create systemd timer file
   ansible.builtin.template:
-    src: sync-to-x.timer.j2
-    dest: /etc/systemd/system/sync-to-x.timer
+    src: drs-transfer.timer.j2
+    dest: /etc/systemd/system/drs-transfer.timer
     owner: root
     group: root
     mode: "0644"
@@ -52,9 +50,9 @@
   when: systemd_service.changed or systemd_timer.changed
   become: true
 
-- name: Enable and start sync-to-x timer
+- name: Enable and start drs-transfer timer
   ansible.builtin.systemd:
-    name: sync-to-x.timer
+    name: drs-transfer.timer
     state: started
     enabled: true
   become: true

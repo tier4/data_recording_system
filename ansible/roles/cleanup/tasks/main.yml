@@ -149,6 +149,40 @@
   tags: [external_storage]
 
 # ------------------------------------------------------------------------------
+# Cleanup drs_transfer artifacts (Unconditional)
+# ------------------------------------------------------------------------------
+
+- name: Stop and disable drs-transfer timer/service
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  ignore_errors: true
+  loop:
+    - drs-transfer.timer
+    - drs-transfer.service
+  become: true
+  tags: [external_storage]
+
+- name: Remove drs-transfer systemd files
+  ansible.builtin.file:
+    path: /etc/systemd/system/{{ item }}
+    state: absent
+  loop:
+    - drs-transfer.timer
+    - drs-transfer.service
+  become: true
+  notify: Reload systemd
+  tags: [external_storage]
+
+- name: Remove drs-transfer directory
+  ansible.builtin.file:
+    path: /opt/drs/service/drs_transfer
+    state: absent
+  become: true
+  tags: [external_storage]
+
+# ------------------------------------------------------------------------------
 # Cleanup Mounts (Unconditional)
 # ------------------------------------------------------------------------------
 

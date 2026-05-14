@@ -1,21 +1,18 @@
 #!/bin/bash
 
-# sync_to_x.sh - Synchronize sensor data to storage (NAS or External SSD)
-
-# Set umask to 000 to ensure created directories are fully writable
-umask 000
+# drs_transfer.sh - Synchronize sensor data to storage (NAS or External SSD)
 
 # Configuration
-SOURCE_DIR="{{ sync_to_x_source_dir }}"
-HOSTNAME="{{ sync_to_x_hostname }}"
-LOCK_FILE="{{ sync_to_x_lock_file }}"
-RSYNC_BW_LIMIT="{{ sync_to_x_rsync_bw_limit }}"  # rsync bandwidth limit
-FREE_SPACE_LIMIT_GB={{ sync_to_x_free_space_limit_gb }}
+SOURCE_DIR="{{ drs_transfer_source_dir }}"
+HOSTNAME="{{ drs_transfer_hostname }}"
+LOCK_FILE="{{ drs_transfer_lock_file }}"
+RSYNC_BW_LIMIT="{{ drs_transfer_rsync_bw_limit }}"  # rsync bandwidth limit
+FREE_SPACE_LIMIT_GB={{ drs_transfer_free_space_limit_gb | int }}
 
 # Destinations (Priority order)
 # Ansible will expand the list here
 DESTINATIONS=(
-{% for dest in sync_to_x_destinations %}
+{% for dest in drs_transfer_destinations %}
     "{{ dest }}"
 {% endfor %}
 )
@@ -26,21 +23,29 @@ error_exit() {
     exit 1
 }
 
+# Pre-create lock file with restrictive permissions so umask does not make it world-writable
+install -m 0600 /dev/null "$LOCK_FILE" || error_exit "Cannot create lock file: $LOCK_FILE"
+
 # Main execution block with flock
 (
     # Exclusive lock with non-blocking check
     flock -n "$fd" || error_exit "Already running."
 
+    # Validate source directory exists before attempting any file operations
+    [ -d "$SOURCE_DIR" ] || error_exit "SOURCE_DIR does not exist or is not mounted: $SOURCE_DIR"
+
     # Select Destination
     TARGET_BASE_DIR=""
 
-    # Trigger automounts for all destinations first
+    # Trigger automounts for all destinations in parallel.
+    # Each trigger is bounded by a timeout so unavailable mounts do not block
+    # the script beyond the timer interval (DefaultDeviceTimeoutSec / NFS TCP
+    # timeouts can far exceed the configured x-systemd.mount-timeout values).
     echo "Triggering automounts..."
     for dest in "${DESTINATIONS[@]}"; do
-        if [ -n "$dest" ]; then
-            ls "$dest" > /dev/null 2>&1
-        fi
+        [ -n "$dest" ] && timeout {{ drs_transfer_automount_trigger_timeout_sec | int }} ls "$dest" > /dev/null 2>&1 &
     done
+    wait
 
     for dest in "${DESTINATIONS[@]}"; do
         # Skip empty entries
@@ -85,14 +90,18 @@ error_exit() {
 
     DEST_DIR="${TARGET_BASE_DIR}/${HOSTNAME}"
 
-    # Create destination directory
-    mkdir -p "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
+    # Create destination directory with broad permissions for multi-user data access.
+    # chmod after mkdir because -m only applies to the leaf when using -p.
+    mkdir -p "$DEST_DIR" && chmod 777 "$DEST_DIR" || error_exit "Failed to create destination directory: $DEST_DIR"
 
     # Process files for transfer
     echo "Starting backup process to $DEST_DIR"
 
-    # Find mcap files (excluding metadata.yaml) and sort by modification time (oldest first)
-    find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read -r mcap_file; do
+    transfer_failed=0
+
+    # Find mcap files and sort by modification time (oldest first).
+    # Use process substitution so transfer_failed is visible after the loop.
+    while IFS= read -r mcap_file; do
 
         # Skip files modified within the threshold (i.e., recording is still active or
         # just finished). Avoids fuser/lsof which cause excessive NFS stat() calls when
@@ -103,8 +112,8 @@ error_exit() {
             continue
         fi
         now=$(date +%s)
-        if [ $((now - file_mtime)) -lt {{ sync_to_x_active_file_threshold_sec }} ]; then
-            echo "Skipping recently modified file (active within {{ sync_to_x_active_file_threshold_sec }}s): $mcap_file"
+        if [ $((now - file_mtime)) -lt {{ drs_transfer_active_file_threshold_sec | int }} ]; then
+            echo "Skipping recently modified file (active within {{ drs_transfer_active_file_threshold_sec | int }}s): $mcap_file"
             continue
         fi
 
@@ -113,8 +122,9 @@ error_exit() {
         dest_file="$DEST_DIR/$relative_path"
         dest_dir=$(dirname "$dest_file")
 
-        # Create destination directory
-        mkdir -p "$dest_dir"
+        # Create destination directory with broad permissions for multi-user data access.
+        # chmod after mkdir because -m only applies to the leaf when using -p.
+        mkdir -p "$dest_dir" && chmod 777 "$dest_dir"
 
         # Get file size (for logging)
         file_size=$(stat -c %s "$mcap_file" 2>/dev/null || echo "0")
@@ -145,8 +155,8 @@ error_exit() {
             fi
         else
             echo "ERROR: Transfer failed: $relative_path"
+            transfer_failed=1
         fi
-
 
         # Check free space again to stop if we are running low
         available_kb=$(df -k --output=avail "$TARGET_BASE_DIR" | tail -n 1)
@@ -159,17 +169,24 @@ error_exit() {
 
         # Short sleep to reduce CPU load
         sleep 0.1
-    done
+    done < <(find "$SOURCE_DIR" -name "*.mcap" -type f -printf '%T@ %p\n' | sort -n | cut -d' ' -f2-)
+
+    if [ "$transfer_failed" -ne 0 ]; then
+        error_exit "One or more file transfers failed. See logs above for details."
+    fi
 
     # Cleanup directories with only metadata.yaml
     echo "Starting empty directory cleanup"
-    find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
+    find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -type d | while IFS= read -r dir; do
         # Count files in directory (excluding metadata.yaml)
         mcap_count=$(find "$dir" -name "*.mcap" -type f | wc -l)
 
         if [ $mcap_count -eq 0 ]; then
             # No mcap files present
             if [ -f "$dir/metadata.yaml" ]; then
+                # Symlink guard: check at rm-time since find -type d doesn't follow symlinks,
+                # but a directory can be replaced with a symlink between find and rm -rf (TOCTOU).
+                [ ! -L "$dir" ] || { echo "Skipping symlink (safety): $dir"; continue; }
                 echo "Removing directory with only metadata.yaml: $(basename "$dir")"
                 rm -rf "$dir"
             elif [ -z "$(ls -A "$dir")" ]; then
@@ -182,4 +199,4 @@ error_exit() {
 
     echo "Backup process completed"
 
-) {fd}>"$LOCK_FILE"
+) {fd}>"$LOCK_FILE" || exit 1

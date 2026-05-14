@@ -13,12 +13,35 @@
     path: "{{ playbook_dir }}/../src/drs-api/tools/drs-cli/bin/drs-cli-arm64-static"
   register: drs_cli_binary
 
+- name: Get newest source file mtime in drs-api (excluding bin directories)
+  ansible.builtin.shell: |
+    find "{{ playbook_dir }}/../src/drs-api" \
+      -not -path "*/bin/*" \
+      -not -path "*/.git/*" \
+      -not -path "*/gen/*" \
+      -type f \
+      -printf '%T@\n' | sort -rn | head -1
+  register: newest_source_mtime
+  changed_when: false
+  when: drs_api_build_script.stat.exists
+
+- name: Set rebuild flag based on binary staleness
+  ansible.builtin.set_fact:
+    drs_api_needs_rebuild: >-
+      {{
+        not (module_manager_binary.stat.exists and drs_cli_binary.stat.exists)
+        or (newest_source_mtime.stdout | float) >
+           ([module_manager_binary.stat.mtime | default(0) | float,
+             drs_cli_binary.stat.mtime | default(0) | float] | min)
+      }}
+  when: drs_api_build_script.stat.exists
+
 - name: Build DRS API binary with Docker
   ansible.builtin.shell: |
     {{ playbook_dir }}/../src/drs-api/scripts/build-with-docker.sh all
   when:
     - drs_api_build_script.stat.exists
-    - not (module_manager_binary.stat.exists and drs_cli_binary.stat.exists)
+    - drs_api_needs_rebuild | default(false)
   register: build_result
   changed_when: true
 
