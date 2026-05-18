@@ -43,7 +43,7 @@ repositories:
   drs-api:
     type: git
     url: https://github.com/tier4/drs-api.git
-    version: a1f6884a2db8545d36ca2885444affe3c510b384  # develop
+    version: 89e49cbab4ba19f3c698057e1b35da04cccf8f27  # develop
   bag_converter:
     type: git
     url: https://github.com/tier4/bag_converter.git
