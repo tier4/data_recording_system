@@ -60,7 +60,7 @@
     cd {{ drs_src_dir }}
     source /opt/drs/config/drs.env
     source /opt/ros/humble/setup.bash
-    colcon build --merge-install --install-base {{ drs_install_dir }} --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} -DBUILD_TESTING=OFF --packages-up-to {{ drs_packages | join(' ') }}
+    colcon build --merge-install --symlink-install --install-base {{ drs_install_dir }} --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE={{ drs_build_type }} -DBUILD_TESTING=OFF --packages-up-to {{ drs_packages | join(' ') }}
   args:
     executable: /bin/bash
   changed_when: true

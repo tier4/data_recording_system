@@ -10,4 +10,4 @@ if ! command -v colcon &>/dev/null; then
     exit 1
 fi
 
-colcon build --merge-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to drs_launch proto_recorder ros2_bridge
+colcon build --merge-install --symlink-install --install-base /opt/drs/install --parallel-workers 4 --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to drs_launch proto_recorder ros2_bridge
