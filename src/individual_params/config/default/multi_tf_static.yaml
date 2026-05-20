@@ -11,7 +11,7 @@ base_link:
     pitch: 0.0
     yaw: 0.0
 
-# LiDAR transforms
+# LiDAR & INS transforms
 drs_base_link:
   lidar_left:
     x: 0.026968
@@ -38,6 +38,23 @@ drs_base_link:
     x: 1.022
     y: 0.0
     z: 0.033
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  oxts_link:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 3.141592653589793
+    pitch: 0.0
+    yaw: 0.0
+
+# Intra-INS transforms
+oxts_link:
+  imu_link:
+    x: 0.0
+    y: 0.0
+    z: 0.0
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
