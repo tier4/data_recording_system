@@ -1,15 +1,17 @@
-- name: Check if Docker build script exists
-  ansible.builtin.stat:
-    path: "{{ playbook_dir }}/../docker/ros2_bridge/build.sh"
-  register: docker_build_script
+- name: Assert github_pat is set (required for private drs-api artifacts)
+  ansible.builtin.assert:
+    that: github_pat != ""
+    fail_msg: github_pat must be set to access private drs-api artifacts on GitHub Releases and GHCR
 
-- name: Build DRS ROS 2 Bridge Docker image
-  ansible.builtin.shell: |
-    cd {{ playbook_dir }}/..
-    bash docker/ros2_bridge/build.sh --colcon-parallel-workers 2
-  when: docker_build_script.stat.exists
-  register: build_result
-  changed_when: true
+- name: Login to GHCR
+  ansible.builtin.include_tasks: ../../common/tasks/ghcr_login.yml
+
+- name: Pre-pull drs-ros2-bridge image
+  community.docker.docker_image:
+    name: "{{ drs_api_ros2bridge_image }}:{{ drs_api_version }}"
+    source: pull
+    state: present
+  become: true
 
 - name: Create DRS service directory for ros2_bridge
   ansible.builtin.file:
@@ -28,6 +30,7 @@
     group: root
     mode: "0644"
   become: true
+  notify: restart drs-ros2-bridge
 
 - name: Copy drs-ros2-bridge systemd service file
   ansible.builtin.copy:

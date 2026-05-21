@@ -2,14 +2,14 @@ version: "3.8"
 
 services:
   drs-api-gateway:
-    image: tier4/drs-api-gateway:latest
+    image: "{{ drs_api_gateway_image }}:{{ drs_api_version }}"
     container_name: drs-api-gateway
     network_mode: host
     volumes:
       - /opt/drs/service/drs_dashboard/api-gateway.yaml:/etc/api-gateway/config.yaml:ro
 
   drs-dashboard:
-    image: tier4/drs-dashboard:latest
+    image: "{{ drs_api_dashboard_image }}:{{ drs_api_version }}"
     container_name: drs-dashboard
     network_mode: host
     depends_on:

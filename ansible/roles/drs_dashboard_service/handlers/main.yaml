@@ -1,0 +1,6 @@
+- name: Restart drs-dashboard
+  become: true
+  ansible.builtin.systemd:
+    name: drs-dashboard
+    state: restarted
+  listen: restart drs-dashboard

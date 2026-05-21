@@ -1,6 +1,13 @@
 # Global variables for Data Recording System
 # These can be overridden in host_vars or at runtime
 
+# DRS API artifact version (GitHub Releases tag without 'v' prefix; used as Docker image tag)
+# GitHub Releases URL uses v{{ drs_api_version }}; Docker image tags use {{ drs_api_version }}
+drs_api_version: 0.2.0-rc3
+drs_api_gateway_image: ghcr.io/tier4/pkg-drs-api-gateway
+drs_api_dashboard_image: ghcr.io/tier4/pkg-drs-dashboard
+drs_api_ros2bridge_image: ghcr.io/tier4/pkg-drs-ros2-bridge
+
 # DRS Configuration
 drs_ecu_id: 0
 sensing_system_id: aabbccdd
