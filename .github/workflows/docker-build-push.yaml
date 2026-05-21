@@ -46,7 +46,7 @@ jobs:
             ghcr_image: ghcr.io/tier4/pkg-drs-ros2-bridge
             needs_vcs_import: true
             platform_tag: arm64
-            runner: ubuntu-22.04-arm64
+            runner: ubuntu-24.04-arm64
 
     steps:
       - name: Check out repository
