@@ -9,6 +9,7 @@ on:
       - develop/r36.4.0
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
