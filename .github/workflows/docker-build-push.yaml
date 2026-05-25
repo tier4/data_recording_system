@@ -123,7 +123,7 @@ jobs:
         with:
           images: ghcr.io/tier4/pkg-drs-ros2-bridge
           tags: |
-            type=semver,pattern={{version}}
+            type=semver,pattern=v{{version}}
             type=raw,value=latest,enable=${{ github.event_name != 'release' || !contains(github.ref_name, '-') }}
 
       - name: Build and push multi-arch image
