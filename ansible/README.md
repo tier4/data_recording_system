@@ -53,7 +53,7 @@ The script will:
 ./drs-setup.sh --tags ptp
 
 # Control module: install only network stack
-./drs-setup.sh --tags network,hostapd,dhcp
+./drs-setup.sh --tags network,hostapd,dhcp,iptables
 ```
 
 ### Environment Variables
