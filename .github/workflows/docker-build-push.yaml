@@ -9,6 +9,7 @@ on:
       - develop/r36.4.0
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -32,10 +33,6 @@ jobs:
             local_image: tier4/pkg-drs-calibration:latest
             ghcr_image: ghcr.io/tier4/pkg-drs-calibration
             needs_vcs_import: false
-          - build_dir: docker/ros2_bridge
-            local_image: tier4/drs-ros2-bridge:latest
-            ghcr_image: ghcr.io/tier4/pkg-drs-ros2-bridge
-            needs_vcs_import: true
 
     steps:
       - name: Check out repository
@@ -87,3 +84,58 @@ jobs:
             docker tag "${{ matrix.local_image }}" "${TAG}"
             docker push "${TAG}"
           done
+
+  build-and-push-ros2-bridge:
+    runs-on: ubuntu-22.04
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Import external repositories
+        run: |
+          pip install vcstool
+          # Remove extraheader set by actions/checkout (uses GITHUB_TOKEN which
+          # only has access to this repo, not external private repos)
+          git config --unset-all http.https://github.com/.extraheader || true
+          ./scripts/setup_repos.sh --token "${{ secrets.DRS_PAT }}"
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/tier4/pkg-drs-ros2-bridge
+          tags: |
+            type=semver,pattern=v{{version}}
+            type=raw,value=latest,enable=${{ github.event_name != 'release' || !contains(github.ref_name, '-') }}
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/ros2_bridge/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: COLCON_PARALLEL_WORKERS=2
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
