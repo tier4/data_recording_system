@@ -144,7 +144,7 @@ MODULE_ID=eeffgghh ./drs-setup.sh
 
 Edit `inventory/group_vars/all.yaml` to configure:
 
-- DRS IDs (sensing system, module)
+- DRS IDs (ECU, sensing system, module)
 - ROS 2 domain ID
 - CycloneDDS parameters
 - Data transfer settings
