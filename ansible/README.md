@@ -26,12 +26,13 @@ During execution you will be prompted for some or all of the following, dependin
 
 The script will:
 
-1. Install `pipx` if not already installed (via apt)
-2. Install `ansible-core` via pipx if not already installed
-3. Install Ansible Galaxy collections from `requirements.yml`
-4. Detect device type (Raspberry Pi → control module, Jetson/x86 → sensing module)
-5. Match the hostname exactly (`ecu0`, `ecu1`, or `raspi`) to select host variables
-6. Run the appropriate playbook locally
+1. Install `python3-pip` if needed (via apt)
+2. Install `pipx` if not already installed (via apt)
+3. Install `ansible-core` via pipx if not already installed
+4. Install Ansible Galaxy collections from `requirements.yml`
+5. Detect device type (Raspberry Pi → control module, Jetson/x86 → sensing module)
+6. Match the hostname exactly (`ecu0`, `ecu1`, or `raspi`) to select host variables
+7. Run the appropriate playbook locally
 
 ### Playbooks
 
