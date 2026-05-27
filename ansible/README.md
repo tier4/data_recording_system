@@ -8,10 +8,18 @@ This directory contains Ansible playbooks and roles for deploying the Data Recor
 
 This project is designed to be copied to each host and run locally.
 
+> **Before running:** Internet access is required for downloading packages and collections.
+> System time must be set correctly (certificate validation and package signing depend on it).
+
 ```bash
 # Run the installation (auto-detects device type and hostname)
 ./drs-setup.sh
 ```
+
+During execution you will be prompted for:
+
+- **sudo password** (`-K`) — required for system-level configuration
+- **GitHub Personal Access Token (classic)** — required to fetch private repositories (press Enter to skip if not needed); note that the handling of this token is still under consideration
 
 The script will:
 
@@ -45,17 +53,20 @@ The script will:
 ./drs-setup.sh --tags network,hostapd,dhcp
 ```
 
-### Manual execution
+### Environment Variables
 
 ```bash
-# ECU0 (sensing module)
-ansible-playbook -i inventory/localhost.yaml -K -e "target_host=ecu0" drs-sensing.yaml
+# Override target host (when hostname doesn't match ecu0/ecu1/raspi)
+DRS_TARGET_HOST=ecu0 ./drs-setup.sh
 
-# ECU1 (sensing module)
-ansible-playbook -i inventory/localhost.yaml -K -e "target_host=ecu1" drs-sensing.yaml
+# Override playbook selection
+DRS_PLAYBOOK=drs-sensing.yaml ./drs-setup.sh
 
-# Raspberry Pi (control module)
-ansible-playbook -i inventory/localhost.yaml -K -e "target_host=raspi" drs-control.yaml
+# Override sensing system ID
+SENSING_SYSTEM_ID=aabbccdd ./drs-setup.sh
+
+# Override module ID
+MODULE_ID=eeffgghh ./drs-setup.sh
 ```
 
 ### Dry run
@@ -181,22 +192,6 @@ These files contain network interface configs, PTP settings, NAS addresses, and 
 7. `tailscale` — VPN (optional)
 8. `drs_config` / `journald` / `cyclonedds` — DRS environment
 9. `drs_api_service` / `drs_ros2_bridge_service` / `drs_dashboard_service` — DRS services
-
-## Environment Variables
-
-```bash
-# Override target host (when hostname doesn't match ecu0/ecu1/raspi)
-DRS_TARGET_HOST=ecu0 ./drs-setup.sh
-
-# Override playbook selection
-DRS_PLAYBOOK=drs-sensing.yaml ./drs-setup.sh
-
-# Override sensing system ID
-SENSING_SYSTEM_ID=aabbccdd ./drs-setup.sh
-
-# Override module ID
-MODULE_ID=eeffgghh ./drs-setup.sh
-```
 
 ## Prerequisites
 
