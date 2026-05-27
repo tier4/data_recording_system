@@ -214,7 +214,7 @@ You only need:
 
 ### Hostname must match exactly
 
-The script requires the hostname to be exactly `ecu0`, `ecu1`, or `raspi`. To fix:
+The script matches the hostname against the host_vars keys (`ecu0`, `ecu1`, `raspi`). To fix a mismatch:
 
 ```bash
 sudo hostnamectl set-hostname ecu0  # or ecu1 / raspi
@@ -225,6 +225,14 @@ Or override at runtime:
 ```bash
 DRS_TARGET_HOST=ecu0 ./drs-setup.sh
 ```
+
+> **Note for Raspberry Pi reruns:** `drs-control.yaml` can rename the host via `custom_hostname` in
+> `inventory/host_vars/raspi.yaml`. After that rename, the actual hostname no longer matches `raspi`,
+> so subsequent runs require the override:
+>
+> ```bash
+> DRS_TARGET_HOST=raspi ./drs-setup.sh
+> ```
 
 ### Check service status
 
