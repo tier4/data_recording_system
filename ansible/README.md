@@ -16,10 +16,13 @@ This project is designed to be copied to each host and run locally.
 ./drs-setup.sh
 ```
 
-During execution you will be prompted for:
+During execution you will be prompted for some or all of the following, depending on the detected module type and whether placeholder/default values are still set:
 
 - **sudo password** (`-K`) — required for system-level configuration
 - **GitHub Personal Access Token (classic)** — required to fetch private repositories (press Enter to skip if not needed); note that the handling of this token is still under consideration
+- **`sensing_system_id` / `module_id`** — for sensing modules when default values are detected and must be customized
+- **WiFi AP password** — for control modules when configuring the access point
+- **custom hostname** *(optional)* — for control modules if you choose to override the default hostname
 
 The script will:
 
