@@ -1,7 +1,7 @@
-- name: Assert github_pat is set (required for private drs-api artifacts)
+- name: Assert github_pat is set (required for GHCR image pull)
   ansible.builtin.assert:
     that: github_pat != ""
-    fail_msg: github_pat must be set to access private drs-api artifacts on GitHub Releases and GHCR
+    fail_msg: github_pat must be set to pull images from GHCR
 
 - name: Login to GHCR
   ansible.builtin.include_tasks: ../../common/tasks/ghcr_login.yml
