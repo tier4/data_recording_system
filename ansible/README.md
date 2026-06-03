@@ -8,82 +8,134 @@ This directory contains Ansible playbooks and roles for deploying the Data Recor
 
 This project is designed to be copied to each host and run locally.
 
+> **Before running:** Internet access is required for downloading packages and collections.
+> System time must be set correctly (certificate validation and package signing depend on it).
+
 ```bash
-# Run the installation (auto-detects ECU from hostname)
-./run_local.sh
+# Run the installation (auto-detects device type and hostname)
+./drs-setup.sh
 ```
+
+During execution you will be prompted for some or all of the following, depending on the detected module type and whether placeholder/default values are still set:
+
+- **sudo password** (`-K`) — required for system-level configuration
+- **GitHub Personal Access Token (classic)** — required to fetch private repositories (press Enter to skip if not needed); note that the handling of this token is still under consideration
+- **`sensing_system_id` / `module_id`** — for sensing modules when default values are detected and must be customized
+- **WiFi AP password** — for control modules when configuring the access point
+- **custom hostname** _(optional)_ — for control modules if you choose to override the default hostname
 
 The script will:
 
-1. Install Ansible if not already installed (via pip3)
-2. Detect ECU ID from hostname (looks for 'ecu0' or 'ecu1' in hostname)
-3. Apply the appropriate ECU configuration
-4. Run the Ansible playbook locally
+1. Install `python3-pip` if needed (via apt)
+2. Install `pipx` if not already installed (via apt)
+3. Install `ansible-core` via pipx if not already installed
+4. Install Ansible Galaxy collections from `requirements.yml`
+5. Detect device type (Raspberry Pi → control module, Jetson/x86 → sensing module)
+6. Match the hostname exactly (`ecu0`, `ecu1`, or `raspi`) to select host variables
+7. Run the appropriate playbook locally
+
+### Playbooks
+
+| Playbook           | Target                  | Description                                       |
+| ------------------ | ----------------------- | ------------------------------------------------- |
+| `drs-sensing.yaml` | ECU0, ECU1 (Jetson/x86) | Sensing module — full DRS stack                   |
+| `drs-control.yaml` | Raspberry Pi (`raspi`)  | Control module — WiFi AP, DHCP, NAT, DRS services |
 
 ### Install with specific tags
 
-To install only specific components:
-
 ```bash
-# Install only storage components
-./run_local.sh --tags storage
+# Sensing module: install only storage components
+./drs-setup.sh --tags ssd_mount
 
-# Install only DRS components
-./run_local.sh --tags drs
+# Sensing module: install only DRS core
+./drs-setup.sh --tags drs
 
-# Install only time synchronization
-./run_local.sh --tags time
+# Sensing module: install only time synchronization
+./drs-setup.sh --tags ptp
+
+# Control module: install only network stack
+./drs-setup.sh --tags network,hostapd,dhcp,iptables
 ```
 
-### Manual execution
-
-If you need to run ansible-playbook manually:
+### Environment Variables
 
 ```bash
-# For ECU0
-ansible-playbook -i inventory/localhost.yaml -e @inventory/host_vars/ecu0.yaml site.yaml
+# Override target host (when hostname doesn't match ecu0/ecu1/raspi)
+DRS_TARGET_HOST=ecu0 ./drs-setup.sh
 
-# For ECU1
-ansible-playbook -i inventory/localhost.yaml -e @inventory/host_vars/ecu1.yaml site.yaml
+# Override playbook selection
+DRS_PLAYBOOK=drs-sensing.yaml ./drs-setup.sh
+
+# Override sensing system ID
+SENSING_SYSTEM_ID=aabbccdd ./drs-setup.sh
+
+# Override module ID
+MODULE_ID=eeffgghh ./drs-setup.sh
 ```
 
-### Available Tags
+### Dry run
 
-- `storage`: SSD and NAS mount configuration
-- `system`: System-level configurations (Jetpack, journald)
-- `network`: Network configuration (netplan)
-- `time`: Time synchronization (NTP, PTP)
-- `ros2`: ROS 2 installation
-- `docker`: Docker installation and configuration
-- `drs`: DRS core components
-- `environment`: DRS environment setup
-- `middleware`: CycloneDDS configuration
-- `build`: DRS build and installation
-- `services`: DRS systemd services
-- `recorder`: DRS recorder service
-- `sensor`: DRS sensor service
-- `drivers`: Hardware drivers (camera)
-- `camera`: Camera-related drivers and tools
-- `c2`: C2 readout delay setter utilities
-- `trigger`: Sensor trigger configuration
-- `nas`: NAS mounting
+```bash
+./drs-setup.sh --check
+```
+
+## Available Tags
+
+### Sensing module (`drs-sensing.yaml`)
+
+| Tag                       | Description                            |
+| ------------------------- | -------------------------------------- |
+| `cleanup`                 | Pre-installation cleanup               |
+| `drs`, `config`           | DRS environment and configuration      |
+| `ssd_mount`               | Internal SSD mount                     |
+| `jetpack`                 | NVIDIA Jetpack configuration           |
+| `jetson`                  | Jetson system tuning (jetson-clocks)   |
+| `journald`                | journald log size configuration        |
+| `netplan`                 | Network interface configuration        |
+| `can`                     | CAN interface setup (ECU0 only)        |
+| `iptables`                | Firewall rules                         |
+| `ptp`                     | PTP time synchronization               |
+| `ntp`, `ntp_server`       | NTP server (opt-in per host)           |
+| `ros2`                    | ROS 2 installation                     |
+| `docker`                  | Docker (Anvil/Jetson) installation     |
+| `cyclonedds`              | CycloneDDS middleware configuration    |
+| `drs_recorder_service`    | DRS recorder systemd service           |
+| `drs_sensor_service`      | DRS sensor systemd service             |
+| `drs_api_service`         | DRS API systemd service                |
+| `drs_ros2_bridge_service` | ROS 2 bridge service (opt-in)          |
+| `drs_dashboard_service`   | Dashboard service (opt-in)             |
+| `tier4_hdr_camera_driver` | TIER IV HDR camera driver              |
+| `c2_readout_delay_setter` | C2 readout delay utility               |
+| `sensor_trigger`          | Sensor trigger configuration           |
+| `external_storage`        | External SSD, NAS mount, data transfer |
+| `extra_apps`              | Additional utilities                   |
+
+### Control module (`drs-control.yaml`)
+
+| Tag                        | Description                     |
+| -------------------------- | ------------------------------- |
+| `raspi`, `raspi_time_sync` | Time synchronization via chrony |
+| `raspi`, `network`         | Network interfaces (VLAN)       |
+| `raspi`, `hostapd`         | WiFi Access Point               |
+| `raspi`, `dhcp`            | DHCP server                     |
+| `raspi`, `iptables`        | Firewall and NAT                |
+| `docker`                   | Docker installation             |
+| `tailscale`                | Tailscale VPN (optional)        |
+| `drs`, `config`            | DRS environment                 |
+| `journald`                 | journald configuration          |
+| `cyclonedds`               | CycloneDDS configuration        |
+| `drs_api_service`          | DRS API service                 |
+| `drs_ros2_bridge_service`  | ROS 2 bridge service            |
+| `drs_dashboard_service`    | Dashboard service               |
 
 ### Skip specific roles
 
 ```bash
 # Skip network configuration
-./run_local.sh --skip-tags network
+./drs-setup.sh --skip-tags netplan
 
 # Skip time synchronization
-./run_local.sh --skip-tags time
-```
-
-### Dry run
-
-To see what changes would be made without applying them:
-
-```bash
-./run_local.sh --check
+./drs-setup.sh --skip-tags ptp
 ```
 
 ## Configuration
@@ -95,85 +147,118 @@ Edit `inventory/group_vars/all.yaml` to configure:
 - DRS IDs (ECU, sensing system, module)
 - ROS 2 domain ID
 - CycloneDDS parameters
-- NAS mount settings
+- Data transfer settings
 - Time synchronization settings
 
-### ECU-specific Variables
+### Host-specific Variables
 
-ECU-specific configurations are stored in:
+Host configurations are stored in:
 
-- `inventory/host_vars/ecu0.yaml` - ECU0 configuration
-- `inventory/host_vars/ecu1.yaml` - ECU1 configuration
+- `inventory/host_vars/ecu0.yaml` — ECU0 (sensing module)
+- `inventory/host_vars/ecu1.yaml` — ECU1 (sensing module)
+- `inventory/host_vars/raspi.yaml` — Raspberry Pi (control module)
 
-These files contain:
+These files contain network interface configs, PTP settings, NAS addresses, and per-host feature flags.
 
-- ECU ID
-- Network interface configurations
-- Netplan file selections
+## Role Execution Order
 
-## Role Dependencies
+### Sensing module (`drs-sensing.yaml`)
 
-The playbook executes roles in this order based on dependencies:
+1. `cleanup` — pre-installation cleanup
+2. `drs_config` — DRS environment variables
+3. `ssd_mount` — internal SSD
+4. `jetpack` — NVIDIA Jetpack
+5. `jetson` — Jetson system tuning
+6. `journald` — log configuration
+7. `netplan` — network interfaces
+8. `can_interface` — CAN (ECU0 only)
+9. `iptables` — firewall
+10. `ptp` — PTP time sync
+11. `ntp_server` — NTP server (opt-in)
+12. `ros2` — ROS 2
+13. `anvil_docker` — Docker
+14. `cyclonedds` — middleware
+15. `drs` — DRS build/install
+16. `drs_recorder_service` / `drs_sensor_service` / `drs_api_service` — core services
+17. `drs_ros2_bridge_service` / `drs_dashboard_service` — optional services
+18. `tier4_hdr_camera_driver` / `c2_readout_delay_setter` / `sensor_trigger` — hardware drivers
+19. `external_ssd_mount` / `nas_mount` / `drs_transfer` — storage and data transfer
+20. `extra_apps` — additional utilities
 
-1. **Storage Setup**: `ssd_mount`
-2. **System Configuration**: `jetpack`, `journald`, `netplan`, `ptp`
-3. **Core Software**: `ros2`, `docker`
-4. **DRS Environment**: `drs_config`
-5. **Middleware**: `cyclonedds`
-6. **DRS Build**: `drs`
-7. **Services**: `drs_recorder_service`, `drs_sensor_service`
-8. **Additional Components**: `tier4_hdr_camera_driver`, `sensor_trigger`
-9. **Data Management**: `nas_mount`, `drs_transfer`
+### Control module (`drs-control.yaml`)
 
-## Environment Variables
-
-The playbook supports environment variables for configuration:
-
-```bash
-# Override ECU ID (if hostname detection fails)
-DRS_ECU_ID=0 ./run_local.sh
-
-# Override sensing system ID
-SENSING_SYSTEM_ID=aabbccdd ./run_local.sh
-
-# Override module ID
-MODULE_ID=eeffgghh ./run_local.sh
-```
+1. `raspi_time_sync` — time synchronization
+2. `raspi_network` — network interfaces (VLAN)
+3. `raspi_hostapd` — WiFi AP
+4. `raspi_dhcp` — DHCP server
+5. `raspi_iptables` — firewall/NAT
+6. `docker` — container runtime
+7. `tailscale` — VPN (optional)
+8. `drs_config` / `journald` / `cyclonedds` — DRS environment
+9. `drs_api_service` / `drs_ros2_bridge_service` / `drs_dashboard_service` — DRS services
 
 ## Prerequisites
 
-The script will automatically install required dependencies:
+The script automatically installs required dependencies:
 
-- python3-pip (if not installed)
-- ansible (if not installed)
+- `pipx` (via apt)
+- `ansible-core` (via pipx)
+- Ansible Galaxy collections: `ansible.posix`, `community.general`
 
 You only need:
 
-- Python 3 (usually pre-installed)
-- sudo access for system configuration
+- Python 3 (pre-installed on supported platforms)
+- `sudo` access for system configuration
 
 ## Troubleshooting
 
-### Check service status
+### Hostname must match exactly
 
-After installation, verify services are running:
+The script matches the hostname against the host_vars keys (`ecu0`, `ecu1`, `raspi`). To fix a mismatch:
 
 ```bash
-ssh user@host systemctl status drs_recorder.service
-ssh user@host systemctl status drs_sensor.service
+sudo hostnamectl set-hostname ecu0  # or ecu1 / raspi
+```
+
+Or override at runtime:
+
+```bash
+DRS_TARGET_HOST=ecu0 ./drs-setup.sh
+```
+
+> **Note for Raspberry Pi reruns:** `drs-control.yaml` can rename the host via `custom_hostname` in
+> `inventory/host_vars/raspi.yaml`. After that rename, the actual hostname no longer matches `raspi`,
+> so subsequent runs require the override:
+>
+> ```bash
+> DRS_TARGET_HOST=raspi ./drs-setup.sh
+> ```
+
+### Check service status
+
+```bash
+# Sensing module (ECU0/ECU1)
+systemctl status drs-recorder.service
+systemctl status drs-sensor.service
+systemctl status drs-api.service
+
+# Control module (Raspberry Pi)
+systemctl status drs-api.service
+systemctl status drs-dashboard.service
+systemctl status drs-ros2-bridge.service
+systemctl status hostapd.service
 ```
 
 ### View logs
 
 ```bash
-ssh user@host journalctl -u drs_recorder.service -f
-ssh user@host journalctl -u drs_sensor.service -f
+journalctl -u drs-recorder.service -f
+journalctl -u drs-sensor.service -f
+journalctl -u drs-api.service -f
 ```
 
 ### Rerun specific roles
 
-If a role fails, you can rerun just that role:
-
 ```bash
-ansible-playbook -i inventory/hosts.yaml site.yaml --tags <role_tag>
+ansible-playbook -i inventory/localhost.yaml -K -e "target_host=ecu0" drs-sensing.yaml --tags <tag>
 ```
