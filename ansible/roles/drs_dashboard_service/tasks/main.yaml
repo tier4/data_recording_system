@@ -1,14 +1,24 @@
-- name: Check if Docker build script exists
-  ansible.builtin.stat:
-    path: "{{ playbook_dir }}/../src/drs-api/docker/build.sh"
-  register: docker_build_script
+- name: Assert github_pat is set (required for private drs-api artifacts)
+  ansible.builtin.assert:
+    that: github_pat != ""
+    fail_msg: github_pat must be set to access private drs-api artifacts on GitHub Releases and GHCR
 
-- name: Build Docker images
-  ansible.builtin.shell: |
-    {{ playbook_dir }}/../src/drs-api/docker/build.sh
-  when: docker_build_script.stat.exists
-  register: build_result
-  changed_when: true
+- name: Login to GHCR
+  ansible.builtin.include_tasks: ../../common/tasks/ghcr_login.yml
+
+- name: Pre-pull drs-api-gateway image
+  community.docker.docker_image:
+    name: "{{ drs_api_gateway_image }}:{{ drs_api_version }}"
+    source: pull
+    state: present
+  become: true
+
+- name: Pre-pull drs-dashboard image
+  community.docker.docker_image:
+    name: "{{ drs_api_dashboard_image }}:{{ drs_api_version }}"
+    source: pull
+    state: present
+  become: true
 
 - name: Create DRS service directory
   ansible.builtin.file:
@@ -28,14 +38,15 @@
     mode: "0644"
   become: true
 
-- name: Copy docker-compose.yml file
-  ansible.builtin.copy:
-    src: docker-compose.yml
+- name: Deploy docker-compose.yml file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
     dest: /opt/drs/service/drs_dashboard/docker-compose.yml
     owner: root
     group: root
     mode: "0644"
   become: true
+  notify: restart drs-dashboard
 
 - name: Copy drs-dashboard systemd service file
   ansible.builtin.copy:

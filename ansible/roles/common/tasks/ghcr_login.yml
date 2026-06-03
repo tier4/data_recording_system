@@ -1,0 +1,6 @@
+- name: Login to GHCR
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: token
+    password: "{{ github_pat }}"
+  become: true

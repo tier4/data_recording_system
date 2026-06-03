@@ -170,6 +170,7 @@
 
     - role: drs_ros2_bridge_service
       tags: [drs, service, drs_ros2_bridge_service]
+      when: has_dashboard_service | bool
 
     - role: drs_dashboard_service
       tags: [drs, service, drs_dashboard_service]

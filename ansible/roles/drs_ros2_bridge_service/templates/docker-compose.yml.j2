@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   drs-ros2-bridge:
-    image: tier4/drs-ros2-bridge:latest
+    image: "{{ drs_api_ros2bridge_image }}:{{ drs_version }}"
     container_name: drs-ros2-bridge
     network_mode: host
     pid: host

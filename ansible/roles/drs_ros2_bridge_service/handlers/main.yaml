@@ -1,0 +1,6 @@
+- name: Restart drs-ros2-bridge
+  become: true
+  ansible.builtin.systemd:
+    name: drs-ros2-bridge
+    state: restarted
+  listen: restart drs-ros2-bridge
