@@ -1,14 +1,13 @@
-- name: Netplan apply required
+- name: Netplan config changed
   ansible.builtin.debug:
     msg: |
       ============================================
       IMPORTANT: Network configuration has changed!
       ============================================
 
-      To apply the network changes, run:
-        sudo netplan apply
+      Netplan configuration has been updated but NOT applied.
+      Network changes will take effect after the next system restart.
 
-      WARNING: This may temporarily disrupt network connectivity.
-      It's recommended to run this command when you're ready.
+      Please restart the system when ready:
+        sudo reboot
       ============================================
-  listen: netplan_apply_required
