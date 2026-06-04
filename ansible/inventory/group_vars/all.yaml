@@ -3,7 +3,7 @@
 
 # DRS API artifact version (GitHub Releases tag without 'v' prefix; used as Docker image tag)
 # GitHub Releases URL uses v{{ drs_api_version }}; Docker image tags use {{ drs_api_version }}
-drs_api_version: 0.2.0
+drs_api_version: 0.2.1
 drs_api_gateway_image: ghcr.io/tier4/pkg-drs-api-gateway
 drs_api_dashboard_image: ghcr.io/tier4/pkg-drs-dashboard
 
