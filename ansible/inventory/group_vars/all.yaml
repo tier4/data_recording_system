@@ -24,6 +24,7 @@ has_raspi_controller: false
 has_vehicle_can: false
 has_dashboard_service: false
 lidar_driver_type: seyond
+vehicle_can_config: pacmod_v3
 
 # This option specifies the camera configuration used.
 # If using both C3 and C2 cameras: "-4 C3 -4 C2"
