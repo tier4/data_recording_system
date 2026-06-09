@@ -12,7 +12,7 @@
        description="Root directory for sensor parameters"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
-  <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
+  <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN false)"
        description="Should be true when vehicle CAN is available"/>
   <arg name="has_fisheye" default="$(env HAS_FISHEYE False)"
        description="Should be True when a fisheye camera is present"/>
