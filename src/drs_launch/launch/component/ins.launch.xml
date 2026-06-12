@@ -1,13 +1,13 @@
 <launch>
   <arg name="launch_driver" default="true" />
-  <arg name="vehicle_id" default="$(env VEHICLE_ID default)"/>
+  <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(env VEHICLE_ID default)"/>
   <group>
     <push-ros-namespace namespace="ins"/>
     <group>
       <push-ros-namespace namespace="oxts"/>
       <include file="$(find-pkg-share oxts)/launch/run.py">
-        <arg name="driver_param_path" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)/oxts_driver.param.yaml"/>
-        <arg name="ins_param_path" value="$(find-pkg-share individual_params)/config/$(var vehicle_id)/oxts_ins.param.yaml"/>
+        <arg name="driver_param_path" value="$(var param_root_dir)/oxts_driver.param.yaml"/>
+        <arg name="ins_param_path" value="$(var param_root_dir)/oxts_ins.param.yaml"/>
         <arg name="launch_driver" value="$(var launch_driver)"/>
       </include>
     </group>

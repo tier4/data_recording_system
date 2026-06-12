@@ -138,7 +138,7 @@
   <!-- TF static publisher for all transforms -->
   <group if="$(var publish_tf)">
     <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.xml">
-      <arg name="vehicle_id" value="$(var vehicle_id)"/>
+      <arg name="param_root_dir" value="$(var param_root_dir)"/>
       <arg name="publish_camera_optical_link" value="true"/>
     </include>
   </group>
