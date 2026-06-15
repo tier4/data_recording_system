@@ -12,17 +12,4 @@
     mode: 0644
   with_items: "{{ netplan_files }}"
   become: true
-  register: netplan_config_changed
-
-- name: Validate netplan configuration
-  ansible.builtin.command: netplan generate
-  become: true
-  when: netplan_config_changed.changed
-  changed_when: true
-
-- name: Schedule netplan apply for later
-  ansible.builtin.debug:
-    msg: Netplan configuration has been updated. Run 'sudo netplan apply' after Ansible completes to apply network changes.
-  when: netplan_config_changed.changed
-  changed_when: netplan_config_changed.changed
-  notify: netplan_apply_required
+  notify: Netplan config changed
