@@ -44,12 +44,25 @@
 
 - name: Deploy module-manager configuration
   become: true
+  ansible.builtin.template:
+    src: "{{ module_manager_config }}.j2"
+    dest: /opt/drs/config/module-manager.yaml
+    owner: "{{ drs_user }}"
+    group: "{{ drs_group }}"
+    mode: "0644"
+  when: module_manager_config == "module-manager-ecu1.yaml"
+  notify: restart drs-api
+
+- name: Deploy module-manager configuration (static)
+  become: true
   ansible.builtin.copy:
     src: "{{ module_manager_config }}"
     dest: /opt/drs/config/module-manager.yaml
     owner: "{{ drs_user }}"
     group: "{{ drs_group }}"
     mode: "0644"
+  when: module_manager_config != "module-manager-ecu1.yaml"
+  notify: restart drs-api
 
 - name: Deploy systemd service file
   become: true

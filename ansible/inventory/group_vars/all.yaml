@@ -57,6 +57,8 @@ journald_system_max_use: 500M
 sensor_trigger_rtprio: 85
 sensor_trigger_memlock: infinity
 
+has_fisheye: false
+
 # NTP Server Configuration (common settings)
 # Default: disabled, enable per host in host_vars (ecu0/ecu1 only)
 # Note: raspi uses raspi_time_sync role instead

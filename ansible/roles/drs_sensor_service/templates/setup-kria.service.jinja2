@@ -1,0 +1,16 @@
+[Unit]
+Description=Kria GMSL Camera Board Setup Service
+Documentation=man:systemd.service(5)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/drs/service/drs_sensor/setup_kria.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=setup-kria
+
+[Install]
+WantedBy=multi-user.target

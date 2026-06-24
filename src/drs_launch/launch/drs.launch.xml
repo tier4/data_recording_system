@@ -12,12 +12,14 @@
        description="Root directory for sensor parameters"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"
        description="Type of LiDAR driver to use: nebula or seyond"/>
-  <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN)"
+  <arg name="has_vehicle_can" default="$(env HAS_VEHICLE_CAN false)"
        description="Should be true when vehicle CAN is available"/>
   <arg name="launch_cameras" default="all"
        description="Comma-separated camera IDs to launch, or 'all' (e.g. '0,1,2,3' or '0')"/>
   <arg name="launch_lidars" default="all"
        description="Comma-separated LiDAR positions to launch, or 'all' (e.g. 'front,right' or 'front')"/>
+  <arg name="has_fisheye" default="$(env HAS_FISHEYE False)"
+       description="Should be True when a fisheye camera is present"/>
 
   <include file="$(find-pkg-share drs_launch)/launch/drs_ecu$(var drs_ecu_id).launch.xml">
     <arg name="vehicle_id" value="$(var vehicle_id)"/>
@@ -29,6 +31,7 @@
     <arg name="has_vehicle_can" value="$(var has_vehicle_can)"/>
     <arg name="launch_cameras" value="$(var launch_cameras)"/>
     <arg name="launch_lidars" value="$(var launch_lidars)"/>
+    <arg name="has_fisheye" value="$(var has_fisheye)"/>
   </include>
 
 </launch>

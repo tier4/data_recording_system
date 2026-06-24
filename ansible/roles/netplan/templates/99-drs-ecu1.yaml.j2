@@ -9,11 +9,21 @@ network:
       dhcp6: false
       mtu: 9000
       optional: true
+{% if has_fisheye %}
+    # ADI Board
+    mgbe0:
+      addresses: [192.168.4.1/24]
+      dhcp4: false
+      dhcp6: false
+      mtu: 9000
+      optional: false
+{% else %}
     # Blank
     mgbe0:
       dhcp4: true
       dhcp6: true
       optional: true
+{% endif %}
     # LiDAR
     eqos0:
       addresses: [192.168.2.2/24]

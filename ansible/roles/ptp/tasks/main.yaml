@@ -2,6 +2,7 @@
   ansible.builtin.apt:
     name:
       - linuxptp
+      - ethtool
     state: present
     update_cache: false
   become: true
@@ -139,4 +140,29 @@
     state: stopped
     enabled: false
   become: true
+  ignore_errors: true
+
+- name: Disable EEE on master port
+  ansible.builtin.shell: |
+    ethtool --set-eee {{ ptp.master_port }} eee off
+  become: true
+  ignore_errors: true
+  changed_when: false
+
+- name: Disable and stop conflicting time services (chrony)
+  ansible.builtin.systemd:
+    name: chrony
+    state: stopped
+    enabled: false
+  become: true
+  when: ptp.time_sync_type == 'GNSS'
+  ignore_errors: true
+
+- name: Disable and stop conflicting time services (ntp)
+  ansible.builtin.systemd:
+    name: ntp
+    state: stopped
+    enabled: false
+  become: true
+  when: ptp.time_sync_type == 'GNSS'
   ignore_errors: true

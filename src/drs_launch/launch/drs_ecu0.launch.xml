@@ -5,6 +5,7 @@
   <arg name="publish_tf" default="true"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
+  <arg name="has_fisheye" default="false"/>
   <arg name="has_vehicle_can" default="false"/>
   <arg name="launch_cameras" default="0,1,2,3"/>
   <arg name="launch_lidars" default="front,right"/>

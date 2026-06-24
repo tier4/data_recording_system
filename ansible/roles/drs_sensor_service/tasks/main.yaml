@@ -36,6 +36,55 @@
   become: true
   notify: restart drs-sensor
 
+- name: Deploy Kria GMSL setup script
+  ansible.builtin.template:
+    src: setup_kria.sh.jinja2
+    dest: /opt/drs/service/drs_sensor/setup_kria.sh
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  when: has_fisheye | bool
+
+- name: Deploy trigger.json configuration
+  ansible.builtin.template:
+    src: trigger.json.jinja2
+    dest: /opt/drs/service/drs_sensor/trigger.json
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: has_fisheye | bool
+
+- name: Deploy setup-kria systemd service file
+  ansible.builtin.template:
+    src: setup-kria.service.jinja2
+    dest: /etc/systemd/system/setup-kria.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: has_fisheye | bool
+  notify: reload systemd
+
+- name: Enable and start setup-kria service
+  ansible.builtin.systemd:
+    name: setup-kria.service
+    daemon_reload: true
+    enabled: true
+  become: true
+  when: has_fisheye | bool
+
+- name: Disable and stop setup-kria service
+  ansible.builtin.systemd:
+    name: setup-kria.service
+    daemon_reload: true
+    enabled: false
+    state: stopped
+  become: true
+  when: not (has_fisheye | bool)
+  ignore_errors: true
+
 - name: Create systemd service file
   ansible.builtin.template:
     src: drs-sensor.service.jinja2
