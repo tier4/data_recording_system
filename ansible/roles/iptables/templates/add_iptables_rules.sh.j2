@@ -1,6 +1,17 @@
 #!/bin/bash
 
 # Add iptables rules for ECU network routing
-iptables -t nat -A POSTROUTING -s 192.168.20.0/24 -d 192.168.10.0/24 -j MASQUERADE
-iptables -A FORWARD -i enP1p1s0 -o mgbe1 -j ACCEPT
-iptables -A FORWARD -i mgbe1 -o enP1p1s0 -j ACCEPT
+iptables -t nat -C POSTROUTING -s 192.168.20.0/24 -d 192.168.10.0/24 -j MASQUERADE 2>/dev/null || \
+  iptables -t nat -A POSTROUTING -s 192.168.20.0/24 -d 192.168.10.0/24 -j MASQUERADE
+iptables -C FORWARD -i enP1p1s0 -o mgbe1 -j ACCEPT 2>/dev/null || \
+  iptables -A FORWARD -i enP1p1s0 -o mgbe1 -j ACCEPT
+iptables -C FORWARD -i mgbe1 -o enP1p1s0 -j ACCEPT 2>/dev/null || \
+  iptables -A FORWARD -i mgbe1 -o enP1p1s0 -j ACCEPT
+{% if (drs_ecu_id | int) == 0 %}
+iptables -t nat -C POSTROUTING -s 192.168.4.0/24 -o enP1p1s0 -j MASQUERADE 2>/dev/null || \
+  iptables -t nat -A POSTROUTING -s 192.168.4.0/24 -o enP1p1s0 -j MASQUERADE
+iptables -C FORWARD -i enP1p1s0 -o mgbe0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null || \
+  iptables -A FORWARD -i enP1p1s0 -o mgbe0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -C FORWARD -i mgbe0 -o enP1p1s0 -j ACCEPT 2>/dev/null || \
+  iptables -A FORWARD -i mgbe0 -o enP1p1s0 -j ACCEPT
+{% endif %}
