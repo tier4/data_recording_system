@@ -14,7 +14,7 @@
     <group>
       <push-ros-namespace namespace="camera"/>
 
-      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '4' in '$(var launch_cameras)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '4' in '$(var launch_cameras)'.replace(' ','').split(',')&quot;)">
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
           <arg name="camera_id" value="4"/>
           <arg name="param_root_dir" value="$(var param_root_dir)"/>
@@ -24,7 +24,7 @@
         </include>
       </group>
 
-      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '5' in '$(var launch_cameras)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '5' in '$(var launch_cameras)'.replace(' ','').split(',')&quot;)">
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
           <arg name="camera_id" value="5"/>
           <arg name="param_root_dir" value="$(var param_root_dir)"/>
@@ -34,7 +34,7 @@
         </include>
       </group>
 
-      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '6' in '$(var launch_cameras)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '6' in '$(var launch_cameras)'.replace(' ','').split(',')&quot;)">
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
           <arg name="camera_id" value="6"/>
           <arg name="param_root_dir" value="$(var param_root_dir)"/>
@@ -44,7 +44,7 @@
         </include>
       </group>
 
-      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '7' in '$(var launch_cameras)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_cameras)' or '7' in '$(var launch_cameras)'.replace(' ','').split(',')&quot;)">
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
           <arg name="camera_id" value="7"/>
           <arg name="param_root_dir" value="$(var param_root_dir)"/>
@@ -57,7 +57,7 @@
 
     <group>
       <push-ros-namespace namespace="lidar"/>
-      <group if="$(eval &quot;'all' == '$(var launch_lidars)' or 'rear' in '$(var launch_lidars)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_lidars)' or 'rear' in '$(var launch_lidars)'.replace(' ','').split(',')&quot;)">
         <push-ros-namespace namespace="rear"/>
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
           <arg name="lidar_position" value="rear"/>
@@ -73,7 +73,7 @@
         </include>
       </group>
 
-      <group if="$(eval &quot;'all' == '$(var launch_lidars)' or 'left' in '$(var launch_lidars)'.split(',')&quot;)">
+      <group if="$(eval &quot;'all' == '$(var launch_lidars)' or 'left' in '$(var launch_lidars)'.replace(' ','').split(',')&quot;)">
         <push-ros-namespace namespace="left"/>
         <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
           <arg name="lidar_position" value="left"/>
