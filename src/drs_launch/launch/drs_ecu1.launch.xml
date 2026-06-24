@@ -6,7 +6,7 @@
   <arg name="publish_tf" default="true"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
-  <arg name="launch_cameras" default="4,5,6,7"/>
+  <arg name="launch_cameras" default="all"/>
   <arg name="launch_lidars" default="rear,left"/>
   <arg name="has_fisheye" default="false"/>
 
@@ -59,6 +59,7 @@
     <group if="$(var has_fisheye)">
       <include file="$(find-pkg-share drs_launch)/launch/component/multi_fisheye_camera.launch.xml">
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
+        <arg name="launch_cameras" value="$(var launch_cameras)"/>
       </include>
     </group>
 
