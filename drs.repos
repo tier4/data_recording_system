@@ -52,3 +52,7 @@ repositories:
     type: git
     url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
     version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
+  dependencies/vehicle_can_decoder:
+    type: git
+    url: https://github.com/tier4/vehicle_can_decoder.git
+    version: dac3c1d76f0acca1c9426fc8bffb26a833336075  # main

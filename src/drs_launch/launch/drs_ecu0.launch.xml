@@ -6,6 +6,7 @@
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
   <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
   <arg name="has_vehicle_can" default="false"/>
+  <arg name="vehicle_can_config" default="$(env VEHICLE_CAN_CONFIG pacmod_v3)"/>
 
   <group>
     <push-ros-namespace namespace="sensing"/>
@@ -101,6 +102,7 @@
     <push-ros-namespace namespace="vehicle"/>
     <include file="$(find-pkg-share drs_launch)/launch/component/vehicle.launch.xml">
       <arg name="launch_driver" value="$(var live_sensor)"/>
+      <arg name="vehicle_can_config" value="$(var vehicle_can_config)"/>
     </include>
   </group>
 

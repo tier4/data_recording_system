@@ -11,6 +11,7 @@ drs_build_type: Release
 drs_packages:
   - drs_launch
   - proto_recorder
+  - vehicle_can_decoder
 
 # User and group for DRS installation
 drs_user: "{{ ansible_user | default('nvidia') }}"

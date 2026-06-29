@@ -149,6 +149,7 @@ Edit `inventory/group_vars/all.yaml` to configure:
 - CycloneDDS parameters
 - Data transfer settings
 - Time synchronization settings
+- `vehicle_can_config` — vehicle CAN decoder config name (e.g. `pacmod_v3`, `toyota_nodsu_pt_hybrid`); defaults to `pacmod_v3`
 
 ### Host-specific Variables
 
