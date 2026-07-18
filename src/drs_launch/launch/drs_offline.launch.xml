@@ -8,55 +8,7 @@
   <arg name="concatenate_pointcloud" default="false"
        description="If true, pointclouds from all LiDARs will be concatenated into a single topic"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
-  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)" description="Type of LiDAR driver to use: nebula or seyond"/>
-
-  <group if="$(eval &quot;'$(var lidar_driver_type)' == 'nebula'&quot;)">
-    <push-ros-namespace namespace="sensing"/>
-    <group>
-      <push-ros-namespace namespace="lidar"/>
-      <group>
-        <push-ros-namespace namespace="front"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_nebula_decoder.launch.xml" if="$(var publish_pointcloud)">
-          <arg name="lidar_position" value="front"/>
-          <arg name="lidar_model" value="Falcon"/>
-          <arg name="min_range" value="0.4"/>
-          <arg name="max_range" value="300.0"/>
-        </include>
-      </group>
-
-      <group>
-        <push-ros-namespace namespace="right"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_nebula_decoder.launch.xml" if="$(var publish_pointcloud)">
-          <arg name="lidar_position" value="right"/>
-          <arg name="lidar_model" value="RobinW"/>
-          <arg name="min_range" value="0.4"/>
-          <arg name="max_range" value="70.0"/>
-        </include>
-      </group>
-
-      <group>
-        <push-ros-namespace namespace="rear"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_nebula_decoder.launch.xml" if="$(var publish_pointcloud)">
-          <arg name="lidar_position" value="rear"/>
-          <arg name="lidar_model" value="Falcon"/>
-          <arg name="min_range" value="0.4"/>
-          <arg name="max_range" value="300.0"/>
-        </include>
-      </group>
-
-      <group>
-        <push-ros-namespace namespace="left"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_nebula_decoder.launch.xml" if="$(var publish_pointcloud)">
-          <arg name="lidar_position" value="left"/>
-          <arg name="lidar_model" value="RobinW"/>
-          <arg name="min_range" value="0.4"/>
-          <arg name="max_range" value="70.0"/>
-        </include>
-      </group>
-    </group>
-  </group>
-
-  <group if="$(eval &quot;'$(var lidar_driver_type)' == 'seyond'&quot;)">
+  <group>
     <push-ros-namespace namespace="sensing"/>
     <group>
       <push-ros-namespace namespace="lidar"/>

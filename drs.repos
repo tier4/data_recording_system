@@ -11,10 +11,6 @@ repositories:
     type: git
     url: https://github.com/tier4/accelerated_image_processor.git
     version: a93473691e88f24b7655025a1a5348bf9982933c  # main
-  dependencies/nebula:
-    type: git
-    url: https://github.com/tier4/nebula_drs.git
-    version: 7081f40b32341d8d82ef00dee20b856e4283d4e9  # aeva_seyond
   dependencies/seyond_ros_driver:
     type: git
     url: https://github.com/tier4/seyond_ros_driver.git
@@ -24,10 +20,6 @@ repositories:
     type: git
     url: https://github.com/Seyond-Inc/inno-lidar-sdk.git
     version: e7e40ca635605447dbf8d73735706aee56b13f70  # main
-  dependencies/transport_drivers:
-    type: git
-    url: https://github.com/mojomex/transport_drivers
-    version: abf8aa8e171f33e0acd6d845c3d795192c964e9c  # mutable-buffer-in-udp-callback
   dependencies/oxts_ros2_driver:
     type: git
     url: https://github.com/tier4/oxts_ros2_driver.git

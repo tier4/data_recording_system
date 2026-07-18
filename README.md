@@ -6,7 +6,7 @@ The Data Recording System (DRS) is a high-performance sensor data recording syst
 
 ### Key Features
 
-- **Multi-Sensor Support**: Cameras (v4l2-compatible, TIER IV C1/C2/C3 cams), LiDARs/Radars (Nebula integration), GNSS/INS (OxTS)
+- **Multi-Sensor Support**: Cameras (v4l2-compatible, TIER IV C1/C2/C3 cams), LiDARs (Seyond), GNSS/INS (OxTS)
 - **Distributed Architecture**: Parallel processing across multiple ECUs (ecu0/ecu1)
 - **High-Precision Time Synchronization**: Inter-sensor synchronization via PTP (Precision Time Protocol)
 - **Hardware Trigger**: GPIO-based sensor synchronization trigger generation
