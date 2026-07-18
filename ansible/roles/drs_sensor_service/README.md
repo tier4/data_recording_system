@@ -1,60 +1,53 @@
-# DRS Launch Service Role
+# DRS Sensor Service Role
 
-This Ansible role configures a systemd service to launch the DRS (Data Recording System) ROS 2 nodes.
+This Ansible role deploys the DRS sensor nodes as a systemd service (`drs-sensor.service`) that runs `ros2 launch drs_launch drs.launch.xml` on boot.
 
 ## Features
 
-- Systemd service management for ROS 2 launch files
-- Full journald integration for centralized logging
-- Resource limits and security hardening
+- Systemd service management for the DRS sensor launch entry point
+- Journald integration for centralized logging
 - Automatic restart on failure
-- Environment variable configuration
+- Optional custom parameter directory support
+- Real-time scheduling and memory-locking limits for the sensor trigger
 
 ## Role Variables
 
-### Required Variables
+### User Configuration
 
-- `drs_user`: User to run the service (default: ansible_user or 'nvidia')
-- `drs_group`: Group for the service (default: ansible_user or 'nvidia')
+- `drs_user`: User to run the service (default: `ansible_user` or `nvidia`)
+- `drs_group`: Group for the service (default: `ansible_user` or `nvidia`)
 
-### Optional Variables
+### DRS Paths
 
-- `drs_install_dir`: DRS installation directory (default: /opt/drs/install)
-- `ros_domain_id`: ROS domain ID (default: 0)
-- `ros_localhost_only`: Restrict ROS to localhost (default: 0)
-- `rmw_implementation`: RMW implementation (default: rmw_cyclonedds_cpp)
-- `drs_launch_args`: Additional launch arguments (default: "")
-- `drs_device_access`: List of devices to allow access (default: [])
-- `drs_extra_env`: Dictionary of extra environment variables (default: {})
+- `drs_install_dir`: DRS installation directory (default: `/opt/drs/install`)
 
-### Logging Configuration
+### Parameter Configuration
 
-- `drs_log_priority`: Log priority level (default: info)
-- `drs_log_rate_limit_interval`: Rate limit interval (default: 30s)
-- `drs_log_rate_limit_burst`: Rate limit burst (default: 1000)
+- `drs_use_custom_params`: If true, the launch script passes `param_root_dir:={{ drs_param_root_dir }}` to `drs.launch.xml`, and the default parameters shipped with `individual_params` are copied into `drs_param_root_dir` when the directory does not exist yet (default: `true`)
+- `drs_param_root_dir`: Root directory for sensor parameters (default: `/opt/drs/config/params`)
 
-## Dependencies
+### Service Limits
 
-- drs
-- drs_config
-- ros2
-- cyclonedds
+- `sensor_trigger_rtprio`: Real-time priority limit (`LimitRTPRIO`) of the service (default: `85`)
+- `sensor_trigger_memlock`: Locked memory limit (`LimitMEMLOCK`) of the service (default: `infinity`)
+
+## What This Role Does
+
+- Creates `/opt/drs/service/drs_sensor/`
+- Seeds `drs_param_root_dir` with the default parameters from `individual_params` if missing (only when `drs_use_custom_params` is true)
+- Deploys `/opt/drs/service/drs_sensor/launch.sh`, which sources `/opt/drs/config/drs.env`, the ROS 2 Humble setup, and the DRS install setup, then launches `drs_launch drs.launch.xml`
+- Deploys, enables, and starts `/etc/systemd/system/drs-sensor.service`
 
 ## Example Playbook
 
 ```yaml
-- hosts: drs_nodes
+- hosts: drs_ecus
   roles:
-    - role: drs_launch_service
+    - role: drs_sensor_service
       vars:
         drs_user: nvidia
-        ros_domain_id: 42
-        drs_launch_args: "use_sim_time:=false"
-        drs_device_access:
-          - "/dev/can*"
-          - "/dev/ttyUSB*"
-        drs_extra_env:
-          CUSTOM_VAR: "value"
+        drs_use_custom_params: true
+        drs_param_root_dir: /opt/drs/config/params
 ```
 
 ## Service Management
@@ -63,27 +56,27 @@ This Ansible role configures a systemd service to launch the DRS (Data Recording
 
 ```bash
 # Real-time logs
-journalctl -u drs-launch -f
+journalctl -u drs-sensor -f
 
 # Logs from the last hour
-journalctl -u drs-launch --since "1 hour ago"
+journalctl -u drs-sensor --since "1 hour ago"
 
 # Logs with specific priority
-journalctl -u drs-launch -p err
+journalctl -u drs-sensor -p err
 ```
 
 ### Service control
 
 ```bash
 # Check status
-systemctl status drs-launch
+systemctl status drs-sensor
 
 # Start/stop/restart
-sudo systemctl start drs-launch
-sudo systemctl stop drs-launch
-sudo systemctl restart drs-launch
+sudo systemctl start drs-sensor
+sudo systemctl stop drs-sensor
+sudo systemctl restart drs-sensor
 
 # Enable/disable at boot
-sudo systemctl enable drs-launch
-sudo systemctl disable drs-launch
+sudo systemctl enable drs-sensor
+sudo systemctl disable drs-sensor
 ```

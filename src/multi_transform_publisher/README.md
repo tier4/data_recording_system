@@ -10,6 +10,8 @@ This node replaces multiple `periodic_transform_publisher` instances with a sing
 
 - `config_file` (string, required): Path to YAML configuration file containing transform definitions
 - `publish_camera_optical_link` (bool, default: true): Whether to automatically publish camera_link to camera_optical_link transforms
+- `periodic_publish` (bool, default: false): Whether to publish transforms periodically instead of as static transforms
+- `publish_period` (double, default: 0.1): Period in seconds for periodic publishing (only used when `periodic_publish` is true)
 
 ## YAML Configuration Format
 
@@ -70,24 +72,12 @@ When `publish_camera_optical_link` is true, the node automatically creates trans
 
 ```xml
 <include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher.launch.xml">
-  <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
+  <arg name="param_root_dir" value="$(find-pkg-share individual_params)/config/default"/>
   <arg name="publish_camera_optical_link" value="true"/>
 </include>
 ```
 
-### Component Launch
-
-```xml
-<!-- First create a component container -->
-<node_container pkg="rclcpp_components" exec="component_container" name="my_container" namespace="/" />
-
-<!-- Then load the multi_transform_publisher component -->
-<include file="$(find-pkg-share drs_launch)/launch/component/multi_transform_publisher_component.launch.py">
-  <arg name="container_name" value="/my_container"/>
-  <arg name="config_file" value="$(find-pkg-share individual_params)/config/default/multi_tf_static.yaml"/>
-  <arg name="publish_camera_optical_link" value="true"/>
-</include>
-```
+The launch file passes `$(var param_root_dir)/multi_tf_static.yaml` to the node's `config_file` parameter.
 
 ### Command Line
 
