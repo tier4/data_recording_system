@@ -10,6 +10,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <fstream>
+#include <stdexcept>
 #include <vector>
 
 class MultiTfPublisher : public rclcpp::Node
@@ -21,8 +22,8 @@ public:
     // Declare parameters
     this->declare_parameter<std::string>("config_file", "");
     this->declare_parameter<bool>("publish_camera_optical_link", true);
-    this->declare_parameter<bool>("periodic_publish", false);
-    this->declare_parameter<double>("publish_period", 0.1);
+    this->declare_parameter<bool>("periodic_publish", true);
+    this->declare_parameter<double>("publish_period", 1.0);
 
     // Get parameters
     std::string config_file = this->get_parameter("config_file").as_string();
@@ -32,8 +33,14 @@ public:
 
     if (config_file.empty()) {
       RCLCPP_ERROR(this->get_logger(), "config_file parameter is required");
-      rclcpp::shutdown();
-      return;
+      throw std::runtime_error("config_file parameter is required");
+    }
+
+    if (publish_period <= 0.0) {
+      RCLCPP_ERROR(
+        this->get_logger(), "publish_period must be greater than 0, but %g was given",
+        publish_period);
+      throw std::runtime_error("publish_period must be greater than 0");
     }
 
     // Create static transform broadcaster
@@ -72,7 +79,7 @@ private:
       RCLCPP_INFO(this->get_logger(), "Loaded %zu transforms from config file", transforms_.size());
     } catch (const YAML::Exception & e) {
       RCLCPP_ERROR(this->get_logger(), "Failed to load YAML file: %s", e.what());
-      rclcpp::shutdown();
+      throw std::runtime_error(std::string("Failed to load YAML file: ") + e.what());
     }
   }
 

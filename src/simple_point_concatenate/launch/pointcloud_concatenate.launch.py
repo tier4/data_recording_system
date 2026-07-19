@@ -35,10 +35,10 @@ def launch_setup(context, *args, **kwargs):
         parameters=[
             {
                 "input_topics": [
-                    "/sensing/lidar/front/nebula_points",
-                    "/sensing/lidar/left/nebula_points",
-                    "/sensing/lidar/right/nebula_points",
-                    "/sensing/lidar/rear/nebula_points",
+                    "/sensing/lidar/front/seyond_points",
+                    "/sensing/lidar/left/seyond_points",
+                    "/sensing/lidar/right/seyond_points",
+                    "/sensing/lidar/rear/seyond_points",
                 ],
                 "input_offset_msec": [0.0, 0.0, 0.0, 0.0],
                 "angle_range_deg": [-35.0, 36.0],

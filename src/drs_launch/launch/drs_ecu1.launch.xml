@@ -5,14 +5,13 @@
   <arg name="has_vehicle_can" default="false"/>
   <arg name="publish_tf" default="true"/>
   <arg name="param_root_dir" default="$(find-pkg-share individual_params)/config/$(var vehicle_id)"/>
-  <arg name="lidar_driver_type" default="$(env LIDAR_DRIVER_TYPE seyond)"/>
 
   <group>
     <push-ros-namespace namespace="sensing"/>
     <group>
       <push-ros-namespace namespace="camera"/>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
+      <include file="$(find-pkg-share drs_launch)/launch/component/camera.launch.py">
         <arg name="camera_id" value="4"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -20,7 +19,7 @@
         <arg name="startup_delay" value="0.0"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
+      <include file="$(find-pkg-share drs_launch)/launch/component/camera.launch.py">
         <arg name="camera_id" value="5"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -28,7 +27,7 @@
         <arg name="startup_delay" value="0.1"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
+      <include file="$(find-pkg-share drs_launch)/launch/component/camera.launch.py">
         <arg name="camera_id" value="6"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -36,7 +35,7 @@
         <arg name="startup_delay" value="0.2"/>
       </include>
 
-      <include file="$(find-pkg-share drs_launch)/launch/component/drs_camera.launch.py">
+      <include file="$(find-pkg-share drs_launch)/launch/component/camera.launch.py">
         <arg name="camera_id" value="7"/>
         <arg name="param_root_dir" value="$(var param_root_dir)"/>
         <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -49,7 +48,7 @@
       <push-ros-namespace namespace="lidar"/>
       <group>
         <push-ros-namespace namespace="rear"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
+        <include file="$(find-pkg-share drs_launch)/launch/component/lidar.launch.xml">
           <arg name="lidar_position" value="rear"/>
           <arg name="lidar_model" value="Falcon"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>
@@ -65,7 +64,7 @@
 
       <group>
         <push-ros-namespace namespace="left"/>
-        <include file="$(find-pkg-share drs_launch)/launch/component/drs_$(var lidar_driver_type).launch.xml">
+        <include file="$(find-pkg-share drs_launch)/launch/component/lidar.launch.xml">
           <arg name="lidar_position" value="left"/>
           <arg name="lidar_model" value="RobinW"/>
           <arg name="live_sensor" value="$(var live_sensor)"/>

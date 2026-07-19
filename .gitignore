@@ -58,7 +58,6 @@ compile_commands.json
 .cache/
 
 # ── External repositories (managed via vcs import) ──────────
-src/bag_converter/
 src/drs-api/
 src/proto_recorder
 
