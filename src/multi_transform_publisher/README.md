@@ -4,14 +4,14 @@ A ROS 2 node (`multi_transform_publisher`) that publishes multiple static transf
 
 ## Overview
 
-This node replaces multiple `periodic_transform_publisher` instances with a single node that publishes all static transforms to `/tf_static`. It supports hierarchical YAML configuration and automatically publishes camera optical link transforms.
+This node publishes all static transforms to `/tf_static` from a single hierarchical YAML configuration file. It also automatically publishes camera optical link transforms.
 
 ## Parameters
 
 - `config_file` (string, required): Path to YAML configuration file containing transform definitions
 - `publish_camera_optical_link` (bool, default: true): Whether to automatically publish camera_link to camera_optical_link transforms
-- `periodic_publish` (bool, default: false): Whether to publish transforms periodically instead of as static transforms
-- `publish_period` (double, default: 0.1): Period in seconds for periodic publishing (only used when `periodic_publish` is true)
+- `periodic_publish` (bool, default: true): Whether to republish the transforms every `publish_period` seconds instead of publishing them once at startup. Both modes publish to `/tf_static` via `StaticTransformBroadcaster`; this only controls repetition. Republishing is needed because recording splits bags periodically, and a one-time publication would appear only in the first split file.
+- `publish_period` (double, default: 1.0): Period in seconds for periodic publishing (only used when `periodic_publish` is true)
 
 ## YAML Configuration Format
 
